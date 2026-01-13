@@ -668,3 +668,63 @@ footer{
   .team-card img{ height: 240px; }
 }
 
+/* Join Our Team page */
+.join-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.join-card{
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(226,232,240,0.9);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 12px 26px rgba(2,6,23,0.06);
+}
+
+.join-list{
+  margin: 10px 0 0;
+  padding-left: 18px;
+  line-height: 1.7;
+}
+
+.join-note{
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(14,165,167,0.08);
+  border: 1px solid rgba(14,165,167,0.20);
+}
+
+.form .form-row{
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.form input, .form select, .form textarea{
+  border: 1px solid rgba(226,232,240,0.95);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font: inherit;
+  outline: none;
+  background: rgba(255,255,255,0.96);
+}
+
+.form input:focus, .form select:focus, .form textarea:focus{
+  border-color: rgba(14,165,167,0.55);
+  box-shadow: 0 0 0 4px rgba(14,165,167,0.14);
+}
+
+.form-hint{
+  margin-top: 10px;
+  font-size: 13px;
+  opacity: .75;
+}
+
+@media (max-width: 900px){
+  .join-grid{ grid-template-columns: 1fr; }
+}
+

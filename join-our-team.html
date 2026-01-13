@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Join Our Team | Tomotina Kids</title>
+  <meta name="description" content="Join Tomotina Kids. Apply for teaching and therapy roles and help children grow in a supportive environment." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Header (copy/paste from your other pages) -->
+  <header class="site-header">
+    <div class="container">
+      <nav class="navbar" aria-label="Primary">
+        <a class="brand" href="index.html">
+          <img src="assets/images/logo.png" alt="Tomotina Kids logo" />
+          <div class="title">
+            <strong>Tomotina Kids</strong>
+            <span>Safe • Supportive • Skilled</span>
+          </div>
+        </a>
+
+        <div class="nav-links" aria-label="Main menu">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="programs.html">Programs</a>
+          <a href="admissions.html">Admissions</a>
+          <a href="team.html">Team</a>
+          <a href="contact.html">Contact</a>
+        </div>
+
+        <div class="nav-actions">
+          <a class="btn btn-primary" href="visit.html">Schedule Visit</a>
+          <button class="hamburger" data-hamburger aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+
+      <div id="mobileMenu" class="mobile-panel" data-mobile-panel>
+        <div class="nav-links" aria-label="Mobile menu">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="programs.html">Programs</a>
+          <a href="admissions.html">Admissions</a>
+          <a href="team.html">Team</a>
+          <a href="contact.html">Contact</a>
+          <a href="visit.html">Schedule Visit</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb">Home / Join Our Team</div>
+        <h1>Join Our Team</h1>
+        <p>We’re always looking for passionate educators and therapists who want to make a real impact.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="join-grid">
+
+          <div class="join-card">
+            <h2>Open Roles</h2>
+            <ul class="join-list">
+              <li>Special Educator</li>
+              <li>Speech & Language Therapist</li>
+              <li>Occupational Therapist</li>
+              <li>Behavior Therapist (ABA)</li>
+              <li>Shadow Teacher</li>
+              <li>Center Coordinator</li>
+            </ul>
+
+            <div class="join-note">
+              <strong>Tip:</strong> If you don’t see your role listed, apply anyway — we review all profiles.
+            </div>
+          </div>
+
+          <div class="join-card">
+            <h2>Apply Now</h2>
+            <p>Please share your details and we’ll contact you soon.</p>
+
+            <!-- Simple form: works with mailto for now -->
+            <form class="form" action="mailto:info@tomotinakids.com" method="post" enctype="text/plain">
+              <div class="form-row">
+                <label>Full Name</label>
+                <input type="text" name="Full Name" required />
+              </div>
+
+              <div class="form-row">
+                <label>Email</label>
+                <input type="email" name="Email" required />
+              </div>
+
+              <div class="form-row">
+                <label>Phone</label>
+                <input type="tel" name="Phone" />
+              </div>
+
+              <div class="form-row">
+                <label>Role Interested In</label>
+                <select name="Role">
+                  <option>Special Educator</option>
+                  <option>Speech & Language Therapist</option>
+                  <option>Occupational Therapist</option>
+                  <option>Behavior Therapist (ABA)</option>
+                  <option>Shadow Teacher</option>
+                  <option>Center Coordinator</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <label>Experience (brief)</label>
+                <textarea name="Experience" rows="4" placeholder="Example: 3 years in special education, ABA basics, IEP support..."></textarea>
+              </div>
+
+              <div class="form-row">
+                <label>Resume Link (Google Drive / Dropbox)</label>
+                <input type="url" name="Resume Link" placeholder="https://..." />
+              </div>
+
+              <button class="btn btn-primary" type="submit">Submit Application</button>
+              <p class="form-hint">This will open your email app to send the details. (We can upgrade this later to a Google Form or Supabase form.)</p>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-wrap">
+        <div>
+          <h4>Tomotina Kids</h4>
+          <p>Safe • Supportive • Skilled</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <p><a href="about.html">About</a></p>
+          <p><a href="programs.html">Programs</a></p>
+          <p><a href="admissions.html">Admissions</a></p>
+          <p><a href="team.html">Team</a></p>
+          <p><a href="contact.html">Contact</a></p>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <p>📍 Gurgaon, India</p>
+          <p>📞 +91-XXXXXXXXXX</p>
+          <p>✉️ info@tomotinakids.com</p>
+        </div>
+      </div>
+      <div class="footer-bottom">© <span id="year"></span> Tomotina Kids.</div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
