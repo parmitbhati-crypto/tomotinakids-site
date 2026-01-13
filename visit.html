@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Schedule a Visit | Tomotina Kids</title>
+  <meta name="description" content="Schedule a visit to Tomotina Kids. Choose a date and time that works for you." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    /* Make Calendly fit nicely */
+    .cal-wrap{
+      background: rgba(255,255,255,0.80);
+      border: 1px solid rgba(226,232,240,0.88);
+      border-radius: 16px;
+      box-shadow: 0 10px 26px rgba(2,6,23,0.06);
+      overflow: hidden;
+    }
+    .calendly-inline-widget{
+      min-width: 320px;
+      height: 820px;
+    }
+    @media (max-width: 520px){
+      .calendly-inline-widget{ height: 900px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Use same header layout as other pages (copy from your existing pages if you prefer).
+       For speed, you can copy/paste the header from contact.html and just add Visit in menu. -->
+
+  <header class="site-header">
+    <div class="container">
+      <nav class="navbar" aria-label="Primary">
+        <a class="brand" href="index.html">
+          <img src="assets/images/logo.png" alt="Tomotina Kids logo" />
+          <div class="title">
+            <strong>Tomotina Kids</strong>
+            <span>Safe • Supportive • Skilled</span>
+          </div>
+        </a>
+
+        <div class="nav-links" aria-label="Main menu">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="programs.html">Programs</a>
+          <a href="admissions.html">Admissions</a>
+          <a href="contact.html">Contact</a>
+          <a href="visit.html">Schedule Visit</a>
+        </div>
+
+        <div class="nav-actions">
+          <a class="btn btn-outline" href="contact.html">Contact</a>
+          <a class="btn btn-primary" href="visit.html">Schedule Visit</a>
+          <button class="hamburger" data-hamburger aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+
+      <div id="mobileMenu" class="mobile-panel" data-mobile-panel>
+        <div class="nav-links" aria-label="Mobile menu">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="programs.html">Programs</a>
+          <a href="admissions.html">Admissions</a>
+          <a href="contact.html">Contact</a>
+          <a href="visit.html">Schedule Visit</a>
+        </div>
+        <div class="nav-actions">
+          <a class="btn btn-outline" href="contact.html">Contact</a>
+          <a class="btn btn-primary" href="visit.html">Schedule Visit</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb">Home / Schedule a Visit</div>
+        <h1>Schedule a Visit</h1>
+        <p>
+          Choose a date and time that works for you. You’ll receive confirmation and we’ll be notified automatically.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cal-wrap">
+          <div class="calendly-inline-widget"
+               data-url="https://calendly.com/tomotinaofficial/30min" style="min-width:320px;height:820px;">
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-wrap">
+        <div>
+          <h4>Tomotina Kids</h4>
+          <p>We look forward to meeting you.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <p><a href="about.html">About</a></p>
+          <p><a href="programs.html">Programs</a></p>
+          <p><a href="admissions.html">Admissions</a></p>
+          <p><a href="contact.html">Contact</a></p>
+        </div>
+        <div>
+          <h4>Contact</h4>
+            <p>📍 1080 Sector-40 Gurgaon, India</p>
+            <p>📞 +91-9643294715,
+             +91-7009470084</p>
+            <p>✉️ tomotinaofficial@gmail.com</p>
+        </div>
+      </div>
+      <div class="footer-bottom">© <span id="year"></span> Tomotina Kids.</div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
