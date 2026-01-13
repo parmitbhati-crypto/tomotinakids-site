@@ -519,13 +519,28 @@ footer{
 
 .icon-btn:active{ transform: translateY(1px); }
 
+/* Brand-colored social buttons */
 .icon-btn svg{
-  width: 20px;
-  height: 20px;
-  fill: #0f172a;
+  fill: #fff; /* make icon white for brand buttons */
+}
+
+.icon-btn.instagram{
+  background: radial-gradient(circle at 30% 110%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  border: none;
+}
+
+.icon-btn.instagram:hover{
+  filter: brightness(1.03);
+}
+
+.icon-btn.whatsapp{
+  background: #25D366; /* WhatsApp green */
+  border: none;
 }
 
 .icon-btn.whatsapp:hover{
-  background: rgba(34,197,94,0.12);
-  border-color: rgba(34,197,94,0.25);
+  filter: brightness(1.03);
 }
+
+
+
