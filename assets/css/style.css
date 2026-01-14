@@ -140,9 +140,9 @@ header.site-header{
 .btn:active{ transform: translateY(1px); }
 
 .btn-primary{
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  color: #db1f1f4e;
-  box-shadow: 0 10px 24px rgba(14,165,167,0.20);
+  background: white;
+  color: #db1f3ea6;
+  box-shadow: 0 10px 24px rgba(14, 164, 167, 0.021);
 }
 .btn-primary:hover{ filter: brightness(1.02); }
 
