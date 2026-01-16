@@ -11,7 +11,11 @@ function monthLabel(d) {
 async function fetchMonthSessions(from, to) {
   const { data, error } = await window.sb
     .from("sessions")
-    .select("id, starts_at, ends_at, students(full_name)")
+    .select(`
+      id, starts_at, ends_at, location,
+      students(full_name),
+      session_programs(programs(name))
+    `)
     .gte("starts_at", from.toISOString())
     .lt("starts_at", to.toISOString())
     .order("starts_at", { ascending: true });
@@ -32,7 +36,7 @@ function buildDayMap(sessions) {
 }
 
 function firstGridDay(monthFirst) {
-  // Monday-start grid is nice, but we’ll keep Sunday-start for simplicity
+  // Sunday-start grid
   const day = monthFirst.getDay(); // 0=Sun
   const start = new Date(monthFirst);
   start.setDate(monthFirst.getDate() - day);
@@ -47,8 +51,13 @@ async function renderCalendar() {
 
   const profile = await getMyProfile();
   const programs = await loadMyPrograms();
+
   document.getElementById("who").textContent = (profile?.full_name || "Teacher");
-  document.getElementById("programs").textContent = "Programs: " + (programs.length ? programs.join(", ") : "—");
+  document.getElementById("programs").textContent =
+    "Programs: " + (programs.length ? programs.join(", ") : "—");
+
+  // Optional: show Admin link only if admin
+  await showAdminNavIfAdmin();
 
   const ms = monthStart(viewDate);
   const me = monthEndExclusive(viewDate);
@@ -86,7 +95,7 @@ async function renderCalendar() {
     grid.appendChild(cell);
   }
 
-  // Default select today
+  // Default select today if in month
   const today = new Date();
   if (today.getMonth() === ms.getMonth() && today.getFullYear() === ms.getFullYear()) {
     const key = ymdLocal(today);
@@ -109,11 +118,19 @@ function showDayDetails(dateObj, list) {
     const st = new Date(s.starts_at);
     const en = new Date(s.ends_at);
     const name = s.students?.full_name || "Student";
+
+    const progNames = (s.session_programs || [])
+      .map(x => x.programs?.name)
+      .filter(Boolean);
+
+    const progText = progNames.length ? ` • <small>${progNames.join(", ")}</small>` : "";
+    const locText = s.location ? ` • <small>${s.location}</small>` : "";
+
     return `
       <div style="margin:8px 0;">
         <a class="session-chip" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
           <strong>${toTimeLabel(st)}–${toTimeLabel(en)}</strong>
-          <small> • ${name}</small>
+          <small> • ${name}</small>${progText}${locText}
         </a>
       </div>
     `;

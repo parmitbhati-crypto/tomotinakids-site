@@ -9,7 +9,11 @@
   const programs = await loadMyPrograms();
 
   document.getElementById("who").textContent = (profile?.full_name || "Teacher");
-  document.getElementById("programs").textContent = "Programs: " + (programs.length ? programs.join(", ") : "—");
+  document.getElementById("programs").textContent =
+    "Programs: " + (programs.length ? programs.join(", ") : "—");
+
+  // Optional: show Admin link only if admin
+  await showAdminNavIfAdmin();
 
   // Week range: today -> next 7 days
   const today = new Date();
@@ -18,7 +22,11 @@
 
   const { data: sessions, error } = await window.sb
     .from("sessions")
-    .select("id, starts_at, ends_at, location, students(full_name), programs(name)")
+    .select(`
+      id, starts_at, ends_at, location,
+      students(full_name),
+      session_programs(programs(name))
+    `)
     .gte("starts_at", from.toISOString())
     .lt("starts_at", to.toISOString())
     .order("starts_at", { ascending: true });
@@ -47,6 +55,7 @@
     const d = addDays(from, i);
     const key = ymdLocal(d);
     const list = byDay.get(key) || [];
+
     html += `
       <div class="card">
         <div class="h2">${fmtDate(d)}</div>
@@ -54,11 +63,18 @@
           const st = new Date(s.starts_at);
           const en = new Date(s.ends_at);
           const student = s.students?.full_name || "Student";
-          const prog = s.programs?.name ? ` • ${s.programs.name}` : "";
+
+          const progNames = (s.session_programs || [])
+            .map(x => x.programs?.name)
+            .filter(Boolean);
+
+          const prog = progNames.length ? ` • ${progNames.join(", ")}` : "";
+          const loc = s.location ? ` • ${s.location}` : "";
+
           return `<div style="margin:8px 0;">
             <a class="session-chip" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
               <strong>${toTimeLabel(st)}–${toTimeLabel(en)}</strong>
-              <small> • ${student}${prog}</small>
+              <small> • ${student}${prog}${loc}</small>
             </a>
           </div>`;
         }).join("") : `<div class="muted">No sessions</div>`}
@@ -66,5 +82,6 @@
     `;
   }
   html += `</div>`;
+
   document.getElementById("weekWrap").innerHTML = html;
 })();
