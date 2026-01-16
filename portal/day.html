@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Day</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">
+        <span>🗓️</span>
+        <span>Teacher Portal</span>
+      </div>
+
+      <div class="nav">
+        <a class="active" href="/portal/day.html">My Day</a>
+        <a href="/portal/week.html">My Week</a>
+        <a href="/portal/calendar.html">My Calendar</a>
+      </div>
+
+      <button class="btn danger" id="btnLogout">Logout</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 class="h2" id="title">My Day</h2>
+        <div class="kv">
+          <span class="badge" id="who">Loading…</span>
+          <span class="badge" id="programs">Programs: —</span>
+        </div>
+        <hr />
+        <div id="dayTableWrap"></div>
+        <p class="muted" style="margin-top:10px;">Tip: click a student chip to update attendance/progress.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/day.js"></script>
+</body>
+</html>

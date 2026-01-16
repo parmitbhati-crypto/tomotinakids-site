@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teacher Login</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1 class="h1">Teacher Portal</h1>
+      <p class="muted">Sign in to view your sessions and update progress.</p>
+
+      <div class="fieldrow">
+        <div>
+          <label>Email</label>
+          <input id="email" type="email" placeholder="teacher@email.com" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input id="password" type="password" placeholder="••••••••" />
+        </div>
+      </div>
+
+      <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
+        <button class="btn primary" id="btnLogin">Login</button>
+        <button class="btn" id="btnForgot">Send reset link</button>
+        <span id="msg" class="muted"></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+
+  <script>
+    (async function () {
+      // If already logged in, go to My Day
+      const { data: { user } } = await window.sb.auth.getUser();
+      if (user) window.location.href = "/portal/day.html";
+    })();
+
+    document.getElementById("btnLogin").onclick = async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const msg = document.getElementById("msg");
+      msg.textContent = "Signing in...";
+
+      const { error } = await window.sb.auth.signInWithPassword({ email, password });
+      msg.textContent = error ? error.message : "Success!";
+      if (!error) window.location.href = "/portal/day.html";
+    };
+
+    document.getElementById("btnForgot").onclick = async () => {
+      const email = document.getElementById("email").value.trim();
+      const msg = document.getElementById("msg");
+      if (!email) { msg.textContent = "Enter your email first."; return; }
+
+      msg.textContent = "Sending reset link...";
+      const { error } = await window.sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/portal/login.html"
+      });
+      msg.textContent = error ? error.message : "Reset link sent (check email).";
+    };
+  </script>
+</body>
+</html>

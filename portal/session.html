@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Session Update</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand"><span>✅</span><span>Teacher Portal</span></div>
+
+      <div class="nav">
+        <a href="/portal/day.html">My Day</a>
+        <a href="/portal/week.html">My Week</a>
+        <a href="/portal/calendar.html">My Calendar</a>
+      </div>
+
+      <button class="btn danger" id="btnLogout">Logout</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 class="h2">Session Update</h2>
+        <div class="kv">
+          <span class="badge" id="who">Loading…</span>
+          <span class="badge" id="programs">Programs: —</span>
+        </div>
+
+        <hr />
+        <div id="sessionInfo" class="muted">Loading session…</div>
+
+        <hr />
+        <div class="fieldrow">
+          <div>
+            <label>Student</label>
+            <select id="studentSelect"></select>
+          </div>
+          <div>
+            <label>Attendance</label>
+            <select id="attendance">
+              <option value="present">Present</option>
+              <option value="absent">Absent</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="fieldrow" style="margin-top:10px;">
+          <div>
+            <label>Progress (0–100)</label>
+            <input id="progress" type="number" min="0" max="100" placeholder="e.g. 70" />
+          </div>
+          <div>
+            <label>Remarks</label>
+            <textarea id="remarks" placeholder="Quick notes…"></textarea>
+          </div>
+        </div>
+
+        <div style="margin-top:12px; display:flex; gap:10px; align-items:center;">
+          <button class="btn primary" id="btnSave">Save</button>
+          <a class="btn" href="/portal/day.html">Back</a>
+          <span id="msg" class="muted"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/sessionUpdate.js"></script>
+</body>
+</html>

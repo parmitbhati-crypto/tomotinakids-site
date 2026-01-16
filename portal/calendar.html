@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Calendar</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand"><span>🧭</span><span>Teacher Portal</span></div>
+
+      <div class="nav">
+        <a href="/portal/day.html">My Day</a>
+        <a href="/portal/week.html">My Week</a>
+        <a class="active" href="/portal/calendar.html">My Calendar</a>
+      </div>
+
+      <button class="btn danger" id="btnLogout">Logout</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div>
+            <h2 class="h2" id="monthTitle">My Calendar</h2>
+            <div class="kv">
+              <span class="badge" id="who">Loading…</span>
+              <span class="badge" id="programs">Programs: —</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn" id="prevBtn">◀</button>
+            <button class="btn" id="todayBtn">Today</button>
+            <button class="btn" id="nextBtn">▶</button>
+          </div>
+        </div>
+
+        <hr />
+        <div class="muted" style="margin-bottom:8px;">Click a date to see sessions. Click a session to update.</div>
+
+        <div class="cal-grid" id="calGrid"></div>
+
+        <hr />
+        <div id="dayDetails" class="card" style="margin-top:12px;">
+          <div class="h2" id="dayTitle">Select a date</div>
+          <div id="dayList" class="muted">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/calendar.js"></script>
+</body>
+</html>

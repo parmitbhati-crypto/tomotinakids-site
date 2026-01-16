@@ -1,0 +1,193 @@
+/* assets/css/portal.css */
+:root{
+  --bg:#0b1220;
+  --card:#121a2b;
+  --muted:#aab3c5;
+  --text:#eef2ff;
+  --line: rgba(255,255,255,.10);
+  --accent:#6ee7ff;
+  --danger:#ff6b6b;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: linear-gradient(180deg, #071024, #0b1220);
+  color:var(--text);
+}
+a{color:inherit; text-decoration:none}
+.container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:18px;
+}
+.topbar{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  justify-content:space-between;
+  border:1px solid var(--line);
+  background: rgba(18,26,43,.65);
+  backdrop-filter: blur(10px);
+  padding:12px 14px;
+  border-radius:14px;
+}
+.brand{
+  display:flex; gap:10px; align-items:center;
+  font-weight:700;
+}
+.nav{
+  display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+}
+.nav a{
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  color:var(--muted);
+}
+.nav a.active{
+  border-color: rgba(110,231,255,.45);
+  color:var(--text);
+  box-shadow: 0 0 0 2px rgba(110,231,255,.10) inset;
+}
+.btn{
+  padding:9px 12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.06);
+  color:var(--text);
+  cursor:pointer;
+}
+.btn.primary{
+  border-color: rgba(110,231,255,.5);
+  background: rgba(110,231,255,.15);
+}
+.btn.danger{
+  border-color: rgba(255,107,107,.5);
+  background: rgba(255,107,107,.12);
+}
+.grid{
+  margin-top:16px;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:14px;
+}
+.card{
+  border:1px solid var(--line);
+  background: rgba(18,26,43,.65);
+  backdrop-filter: blur(10px);
+  border-radius:14px;
+  padding:14px;
+}
+.muted{color:var(--muted)}
+.h1{font-size:20px; margin:0 0 6px 0}
+.h2{font-size:16px; margin:0 0 10px 0}
+
+.kv{
+  display:flex; flex-wrap:wrap; gap:8px;
+  font-size:13px;
+  color:var(--muted);
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 9px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.06);
+  color:var(--text);
+  font-size:12px;
+}
+
+/* Day view table */
+.day-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  overflow:hidden;
+  border-radius:12px;
+  border:1px solid var(--line);
+}
+.day-table th, .day-table td{
+  border-bottom:1px solid var(--line);
+  padding:10px;
+  vertical-align:top;
+}
+.day-table th{
+  text-align:left;
+  color:var(--muted);
+  background: rgba(255,255,255,.04);
+}
+.slot-time{
+  width:130px;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.session-chip{
+  display:inline-block;
+  margin:4px 6px 4px 0;
+  padding:7px 10px;
+  border-radius:999px;
+  border:1px solid rgba(110,231,255,.25);
+  background: rgba(110,231,255,.08);
+}
+.session-chip small{color:var(--muted)}
+.session-chip:hover{
+  border-color: rgba(110,231,255,.55);
+}
+
+/* Calendar grid */
+.cal-grid{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:10px;
+}
+.cal-cell{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  min-height:92px;
+  background: rgba(255,255,255,.03);
+  cursor:pointer;
+}
+.cal-cell .d{
+  font-size:12px;
+  color:var(--muted);
+}
+.cal-cell.today{
+  border-color: rgba(110,231,255,.55);
+  box-shadow: 0 0 0 2px rgba(110,231,255,.10) inset;
+}
+.cal-items{
+  margin-top:6px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.cal-item{
+  font-size:12px;
+  padding:5px 7px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.12);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Forms */
+.fieldrow{display:grid; grid-template-columns:1fr; gap:10px}
+@media (min-width: 760px){ .fieldrow{ grid-template-columns: 1fr 1fr; } }
+label{font-size:12px; color:var(--muted); display:block; margin-bottom:6px}
+input, select, textarea{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background: rgba(0,0,0,.15);
+  color:var(--text);
+}
+textarea{min-height:100px; resize:vertical}
+hr{border:0; border-top:1px solid var(--line); margin:14px 0}
