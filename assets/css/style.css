@@ -109,11 +109,11 @@ header.site-header{
 }
 .nav-links a:hover{
   background: rgba(14,165,167,0.10);
-  color: var(--text);
+  color: #194edfd5;
 }
 .nav-links a.active{
-  background: rgba(56,189,248,0.16);
-  color: var(--text);
+  background: rgba(248, 56, 98, 0.16);
+  color: #38BDF8;
   border: 1px solid rgba(56,189,248,0.28);
 }
 
