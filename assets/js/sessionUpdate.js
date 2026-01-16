@@ -25,7 +25,8 @@ function getQueryParam(name) {
   // Load session (RLS ensures teacher can only see their own)
   const { data: session, error: sessErr } = await window.sb
     .from("sessions")
-    .select("id, starts_at, ends_at, location, student_id, students(full_name), programs(name)")
+    .select("id, starts_at, ends_at, location, student_id, students(full_name), session_programs(programs(name))")
+
     .eq("id", sessionId)
     .single();
 
@@ -36,11 +37,16 @@ function getQueryParam(name) {
 
   const st = new Date(session.starts_at);
   const en = new Date(session.ends_at);
-  document.getElementById("sessionInfo").innerHTML = `
-    <div><strong>${session.students?.full_name || "Student"}</strong></div>
-    <div class="muted">${fmtDate(st)} • ${toTimeLabel(st)}–${toTimeLabel(en)} ${session.location ? "• " + session.location : ""}</div>
-    <div class="muted">${session.programs?.name ? "Program: " + session.programs.name : ""}</div>
-  `;
+const progNames = (session.session_programs || [])
+  .map(x => x.programs?.name)
+  .filter(Boolean);
+
+document.getElementById("sessionInfo").innerHTML = `
+  <div><strong>${session.students?.full_name || "Student"}</strong></div>
+  <div class="muted">${fmtDate(st)} • ${toTimeLabel(st)}–${toTimeLabel(en)} ${session.location ? "• " + session.location : ""}</div>
+  <div class="muted">${progNames.length ? "Programs: " + progNames.join(", ") : ""}</div>
+`;
+
 
   // Student dropdown (teachers can only read students in their sessions)
   const { data: students, error: studErr } = await window.sb

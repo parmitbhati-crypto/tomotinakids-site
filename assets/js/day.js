@@ -21,8 +21,9 @@
 
   // Fetch sessions for today (teacher only; RLS enforces)
   const { data: sessions, error } = await window.sb
-    .from("sessions")
-    .select("id, starts_at, ends_at, location, students(full_name), programs(name)")
+  .from("sessions")
+  .select("id, starts_at, ends_at, location, students(full_name), session_programs(programs(name))")
+
     .gte("starts_at", from.toISOString())
     .lt("starts_at", to.toISOString())
     .order("starts_at", { ascending: true });
@@ -79,7 +80,12 @@
           const st = new Date(s.starts_at);
           const en = new Date(s.ends_at);
           const student = s.students?.full_name || "Student";
-          const prog = s.programs?.name ? ` • <small>${s.programs.name}</small>` : "";
+         const progNames = (s.session_programs || [])
+  .map(x => x.programs?.name)
+  .filter(Boolean);
+
+const prog = progNames.length ? ` • <small>${progNames.join(", ")}</small>` : "";
+
           const loc = s.location ? ` • <small>${s.location}</small>` : "";
           return `<a class="session-chip" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
             <strong>${student}</strong><br/>
