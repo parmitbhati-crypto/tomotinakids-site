@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Scheduler</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand"><span>🛠️</span><span>Teacher Portal</span></div>
+
+      <div class="nav">
+        <a href="/portal/day.html">My Day</a>
+        <a href="/portal/week.html">My Week</a>
+        <a href="/portal/calendar.html">My Calendar</a>
+        <a class="active" href="/portal/admin.html">Admin</a>
+      </div>
+
+      <button class="btn danger" id="btnLogout">Logout</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 class="h2">Admin Scheduler</h2>
+        <div class="kv">
+          <span class="badge" id="who">Loading…</span>
+          <span class="badge" id="roleBadge">Role: —</span>
+        </div>
+
+        <hr />
+
+        <div class="fieldrow">
+          <div>
+            <label>Teacher</label>
+            <select id="teacherSelect"></select>
+          </div>
+          <div>
+            <label>Student</label>
+            <select id="studentSelect"></select>
+          </div>
+        </div>
+
+        <div class="fieldrow" style="margin-top:10px;">
+          <div>
+            <label>Date</label>
+            <input id="dateInput" type="date" />
+          </div>
+          <div>
+            <label>Start Time</label>
+            <input id="startTime" type="time" step="1800" />
+          </div>
+        </div>
+
+        <div class="fieldrow" style="margin-top:10px;">
+          <div>
+            <label>End Time</label>
+            <input id="endTime" type="time" step="1800" />
+          </div>
+          <div>
+            <label>Location (optional)</label>
+            <input id="locationInput" type="text" placeholder="Room 1 / Online / etc." />
+          </div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label>Programs / Classes (multi-select)</label>
+          <select id="programSelect" multiple size="6"></select>
+          <div class="muted" style="margin-top:6px;">Hold Ctrl (Windows) / Cmd (Mac) to select multiple.</div>
+        </div>
+
+        <div style="margin-top:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <button class="btn primary" id="btnSave">Save Session</button>
+          <button class="btn" id="btnClear">Clear</button>
+          <span id="msg" class="muted"></span>
+        </div>
+
+        <hr />
+
+        <div class="h2">Sessions for selected teacher/date</div>
+        <div id="sessionsList" class="muted">—</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin.js"></script>
+</body>
+</html>
