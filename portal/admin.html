@@ -9,24 +9,34 @@
 <body>
   <div class="container">
     <div class="topbar">
-      <div class="brand"><span>🛠️</span><span>Teacher Portal</span></div>
+      <div class="brand">
+        <img src="/assets/images/logo.png" alt="Tomotina Kids" class="top-logo" />
+        <div class="brand-text">
+          <div class="brand-title">Tomotina Kids</div>
+          <div class="brand-sub">Admin Scheduler</div>
+        </div>
+      </div>
 
       <div class="nav">
         <a href="/portal/day.html">My Day</a>
         <a href="/portal/week.html">My Week</a>
         <a href="/portal/calendar.html">My Calendar</a>
-        <a id="adminNav" href="/portal/admin.html" style="display:none;">Admin</a>
+        <a class="active" href="/portal/admin.html">Admin</a>
       </div>
 
-      <button class="btn danger" id="btnLogout">Logout</button>
+      <button id="btnLogout" class="btn danger">Logout</button>
     </div>
 
     <div class="grid">
       <div class="card">
-        <h2 class="h2">Admin Scheduler</h2>
-        <div class="kv">
-          <span class="badge" id="who">Loading…</span>
-          <span class="badge" id="roleBadge">Role: —</span>
+        <div class="row">
+          <div>
+            <h2 class="h2" style="margin:0;">Create Schedule</h2>
+            <div class="kv" style="margin-top:6px;">
+              <span class="badge" id="who">—</span>
+              <span class="badge" id="roleBadge">Role: —</span>
+            </div>
+          </div>
         </div>
 
         <hr />
@@ -48,43 +58,50 @@
             <input id="dateInput" type="date" />
           </div>
           <div>
-            <label>Start Time</label>
-            <input id="startTime" type="time" step="1800" />
+            <label>Location (optional)</label>
+            <input id="locationInput" type="text" placeholder="Room / Online / Center" />
           </div>
         </div>
 
         <div class="fieldrow" style="margin-top:10px;">
           <div>
-            <label>End Time</label>
-            <input id="endTime" type="time" step="1800" />
+            <label>Start time</label>
+            <input id="startTime" type="time" />
           </div>
           <div>
-            <label>Location (optional)</label>
-            <input id="locationInput" type="text" placeholder="Room 1 / Online / etc." />
+            <label>End time</label>
+            <input id="endTime" type="time" />
           </div>
         </div>
 
         <div style="margin-top:10px;">
           <label>Programs / Classes (multi-select)</label>
-          <select id="programSelect" multiple size="6"></select>
-          <div class="muted" style="margin-top:6px;">Hold Ctrl (Windows) / Cmd (Mac) to select multiple.</div>
+          <select id="programSelect" multiple size="5"></select>
+          <div class="muted" style="font-size:12px; margin-top:6px;">
+            Tip: hold <strong>Ctrl</strong> (Windows) or <strong>Cmd</strong> (Mac) to select multiple.
+          </div>
         </div>
 
-        <div style="margin-top:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <button class="btn primary" id="btnSave">Save Session</button>
-          <button class="btn" id="btnClear">Clear</button>
-          <span id="msg" class="muted"></span>
+        <div class="row" style="margin-top:14px;">
+          <button id="btnSave" class="btn primary">Save schedule</button>
+          <button id="btnClear" class="btn">Clear</button>
+          <div id="msg" class="muted right"></div>
         </div>
+      </div>
 
+      <div class="card">
+        <div class="row">
+          <h2 class="h2" style="margin:0;">Scheduled Sessions (Selected Teacher + Date)</h2>
+        </div>
+        <div class="muted" style="margin-top:6px;">
+          Click a session to open update page (same as teacher).
+        </div>
         <hr />
-
-        <div class="h2">Sessions for selected teacher/date</div>
-        <div id="sessionsList" class="muted">—</div>
+        <div id="sessionsList" class="muted">Loading…</div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/assets/js/env.js"></script>
   <script src="/assets/js/supabaseClient.js"></script>
   <script src="/assets/js/auth.js"></script>

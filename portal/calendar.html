@@ -9,7 +9,13 @@
 <body>
   <div class="container">
     <div class="topbar">
-      <div class="brand"><span>🧭</span><span>Teacher Portal</span></div>
+      <div class="brand">
+        <img src="/assets/images/logo.png" alt="Tomotina Kids" class="top-logo" />
+        <div class="brand-text">
+          <div class="brand-title">Tomotina Kids</div>
+          <div class="brand-sub">Teacher Portal</div>
+        </div>
+      </div>
 
       <div class="nav">
         <a href="/portal/day.html">My Day</a>
@@ -18,41 +24,47 @@
         <a id="adminNav" href="/portal/admin.html" style="display:none;">Admin</a>
       </div>
 
-      <button class="btn danger" id="btnLogout">Logout</button>
+      <button id="btnLogout" class="btn danger">Logout</button>
     </div>
 
     <div class="grid">
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div class="row">
           <div>
-            <h2 class="h2" id="monthTitle">My Calendar</h2>
-            <div class="kv">
-              <span class="badge" id="who">Loading…</span>
+            <h2 class="h2" style="margin:0;">My Calendar</h2>
+            <div class="kv" style="margin-top:6px;">
+              <span class="badge" id="who">—</span>
               <span class="badge" id="programs">Programs: —</span>
             </div>
           </div>
-          <div style="display:flex; gap:8px;">
-            <button class="btn" id="prevBtn">◀</button>
-            <button class="btn" id="todayBtn">Today</button>
-            <button class="btn" id="nextBtn">▶</button>
+
+          <div class="right row">
+            <button id="prevBtn" class="btn">◀</button>
+            <button id="todayBtn" class="btn primary">Today</button>
+            <button id="nextBtn" class="btn">▶</button>
           </div>
         </div>
 
         <hr />
-        <div class="muted" style="margin-bottom:8px;">Click a date to see sessions. Click a session to update.</div>
+        <div class="row" style="justify-content:space-between;">
+          <div class="h2" id="monthTitle" style="margin:0;">—</div>
+        </div>
 
-        <div class="cal-grid" id="calGrid"></div>
+        <div style="margin-top:12px;">
+          <div class="cal-header">
+            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+          </div>
+          <div id="calGrid" class="cal-grid"></div>
+        </div>
 
         <hr />
-        <div id="dayDetails" class="card" style="margin-top:12px;">
-          <div class="h2" id="dayTitle">Select a date</div>
-          <div id="dayList" class="muted">—</div>
-        </div>
+
+        <div class="h2" id="dayTitle" style="margin:0 0 10px 0;">Select a date</div>
+        <div id="dayList" class="muted">—</div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/assets/js/env.js"></script>
   <script src="/assets/js/supabaseClient.js"></script>
   <script src="/assets/js/auth.js"></script>

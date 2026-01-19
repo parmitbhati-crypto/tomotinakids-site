@@ -10,8 +10,11 @@
   <div class="container">
     <div class="topbar">
       <div class="brand">
-        <span>🗓️</span>
-        <span>Teacher Portal</span>
+        <img src="/assets/images/logo.png" alt="Tomotina Kids" class="top-logo" />
+        <div class="brand-text">
+          <div class="brand-title">Tomotina Kids</div>
+          <div class="brand-sub">Teacher Portal</div>
+        </div>
       </div>
 
       <div class="nav">
@@ -21,24 +24,22 @@
         <a id="adminNav" href="/portal/admin.html" style="display:none;">Admin</a>
       </div>
 
-      <button class="btn danger" id="btnLogout">Logout</button>
+      <button id="btnLogout" class="btn danger">Logout</button>
     </div>
 
     <div class="grid">
       <div class="card">
-        <h2 class="h2" id="title">My Day</h2>
+        <h2 class="h2">My Day</h2>
         <div class="kv">
-          <span class="badge" id="who">Loading…</span>
+          <span class="badge" id="who">—</span>
           <span class="badge" id="programs">Programs: —</span>
         </div>
         <hr />
-        <div id="dayTableWrap"></div>
-        <p class="muted" style="margin-top:10px;">Tip: click a student chip to update attendance/progress.</p>
+        <div id="dayTableWrap" class="muted">Loading…</div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/assets/js/env.js"></script>
   <script src="/assets/js/supabaseClient.js"></script>
   <script src="/assets/js/auth.js"></script>
