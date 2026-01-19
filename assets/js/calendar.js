@@ -50,14 +50,12 @@ async function renderCalendar() {
   document.getElementById("btnLogout").onclick = logout;
 
   const profile = await getMyProfile();
-  const programs = await loadMyPrograms();
+  await showAdminNavIfAdmin();
 
+  const programs = await loadMyPrograms();
   document.getElementById("who").textContent = (profile?.full_name || "Teacher");
   document.getElementById("programs").textContent =
     "Programs: " + (programs.length ? programs.join(", ") : "—");
-
-  // Optional: show Admin link only if admin
-  await showAdminNavIfAdmin();
 
   const ms = monthStart(viewDate);
   const me = monthEndExclusive(viewDate);

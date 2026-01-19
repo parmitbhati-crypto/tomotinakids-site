@@ -11,10 +11,12 @@ function getQueryParam(name) {
   document.getElementById("btnLogout").onclick = logout;
 
   const profile = await getMyProfile();
-  const programs = await loadMyPrograms();
+  await showAdminNavIfAdmin();
 
+  const programs = await loadMyPrograms();
   document.getElementById("who").textContent = (profile?.full_name || "Teacher");
-  document.getElementById("programs").textContent = "Programs: " + (programs.length ? programs.join(", ") : "—");
+  document.getElementById("programs").textContent =
+    "Programs: " + (programs.length ? programs.join(", ") : "—");
 
   const sessionId = getQueryParam("session");
   if (!sessionId) {
@@ -22,11 +24,14 @@ function getQueryParam(name) {
     return;
   }
 
-  // Load session (RLS ensures teacher can only see their own)
+  // Load session
   const { data: session, error: sessErr } = await window.sb
     .from("sessions")
-    .select("id, starts_at, ends_at, location, student_id, students(full_name), session_programs(programs(name))")
-
+    .select(`
+      id, starts_at, ends_at, location, student_id,
+      students(full_name),
+      session_programs(programs(name))
+    `)
     .eq("id", sessionId)
     .single();
 
@@ -37,18 +42,18 @@ function getQueryParam(name) {
 
   const st = new Date(session.starts_at);
   const en = new Date(session.ends_at);
-const progNames = (session.session_programs || [])
-  .map(x => x.programs?.name)
-  .filter(Boolean);
 
-document.getElementById("sessionInfo").innerHTML = `
-  <div><strong>${session.students?.full_name || "Student"}</strong></div>
-  <div class="muted">${fmtDate(st)} • ${toTimeLabel(st)}–${toTimeLabel(en)} ${session.location ? "• " + session.location : ""}</div>
-  <div class="muted">${progNames.length ? "Programs: " + progNames.join(", ") : ""}</div>
-`;
+  const progNames = (session.session_programs || [])
+    .map(x => x.programs?.name)
+    .filter(Boolean);
 
+  document.getElementById("sessionInfo").innerHTML = `
+    <div><strong>${session.students?.full_name || "Student"}</strong></div>
+    <div class="muted">${fmtDate(st)} • ${toTimeLabel(st)}–${toTimeLabel(en)} ${session.location ? "• " + session.location : ""}</div>
+    <div class="muted">${progNames.length ? "Programs: " + progNames.join(", ") : ""}</div>
+  `;
 
-  // Student dropdown (teachers can only read students in their sessions)
+  // Students dropdown
   const { data: students, error: studErr } = await window.sb
     .from("students")
     .select("id, full_name")
@@ -63,7 +68,7 @@ document.getElementById("sessionInfo").innerHTML = `
   sel.innerHTML = (students || []).map(s => `<option value="${s.id}">${s.full_name}</option>`).join("");
   sel.value = session.student_id;
 
-  // Load existing update (if any)
+  // Existing update
   const { data: upd, error: updErr } = await window.sb
     .from("session_updates")
     .select("attendance, progress_score, remarks")
@@ -88,7 +93,6 @@ document.getElementById("sessionInfo").innerHTML = `
       updated_by: user.id
     };
 
-    // Upsert using unique(session_id)
     const { error } = await window.sb
       .from("session_updates")
       .upsert(payload, { onConflict: "session_id" });

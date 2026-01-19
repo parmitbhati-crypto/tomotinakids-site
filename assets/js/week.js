@@ -6,14 +6,13 @@
   document.getElementById("btnLogout").onclick = logout;
 
   const profile = await getMyProfile();
+  await showAdminNavIfAdmin();
+
   const programs = await loadMyPrograms();
 
   document.getElementById("who").textContent = (profile?.full_name || "Teacher");
   document.getElementById("programs").textContent =
     "Programs: " + (programs.length ? programs.join(", ") : "—");
-
-  // Optional: show Admin link only if admin
-  await showAdminNavIfAdmin();
 
   // Week range: today -> next 7 days
   const today = new Date();

@@ -1,4 +1,5 @@
 // assets/js/admin.js
+
 function qs(id) { return document.getElementById(id); }
 
 function setMsg(text) {
@@ -8,14 +9,12 @@ function setMsg(text) {
 function todayYmd() {
   const d = new Date();
   const pad = n => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
 function toLocalDateTimeISO(dateStr, timeStr) {
-  // dateStr = YYYY-MM-DD, timeStr = HH:MM
-  // new Date('YYYY-MM-DDTHH:MM') interprets as LOCAL time
   const dt = new Date(`${dateStr}T${timeStr}`);
-  return dt.toISOString(); // store as UTC timestamptz
+  return dt.toISOString();
 }
 
 function selectedMultiValues(selectEl) {
@@ -45,7 +44,6 @@ async function requireAdmin() {
 }
 
 async function loadDropdowns() {
-  // Teachers
   const { data: teachers, error: tErr } = await window.sb
     .from("profiles")
     .select("id, full_name, role")
@@ -54,12 +52,10 @@ async function loadDropdowns() {
 
   if (tErr) throw new Error(tErr.message);
 
-  const teacherSelect = qs("teacherSelect");
-  teacherSelect.innerHTML = (teachers || []).map(t =>
+  qs("teacherSelect").innerHTML = (teachers || []).map(t =>
     `<option value="${t.id}">${t.full_name || t.id}</option>`
   ).join("");
 
-  // Students
   const { data: students, error: sErr } = await window.sb
     .from("students")
     .select("id, full_name")
@@ -67,12 +63,10 @@ async function loadDropdowns() {
 
   if (sErr) throw new Error(sErr.message);
 
-  const studentSelect = qs("studentSelect");
-  studentSelect.innerHTML = (students || []).map(s =>
+  qs("studentSelect").innerHTML = (students || []).map(s =>
     `<option value="${s.id}">${s.full_name}</option>`
   ).join("");
 
-  // Programs
   const { data: programs, error: pErr } = await window.sb
     .from("programs")
     .select("id, name")
@@ -80,8 +74,7 @@ async function loadDropdowns() {
 
   if (pErr) throw new Error(pErr.message);
 
-  const programSelect = qs("programSelect");
-  programSelect.innerHTML = (programs || []).map(p =>
+  qs("programSelect").innerHTML = (programs || []).map(p =>
     `<option value="${p.id}">${p.name}</option>`
   ).join("");
 }
@@ -97,18 +90,16 @@ async function loadSessionsForTeacherDate() {
   }
 
   const from = new Date(`${dateStr}T00:00`);
-  const to = new Date(`${dateStr}T23:59`);
-  // Better: next day exclusive
   const toEx = new Date(from);
   toEx.setDate(toEx.getDate() + 1);
 
-  // Pull sessions + student + programs via session_programs
   const { data, error } = await window.sb
     .from("sessions")
     .select(`
       id, starts_at, ends_at, location, status,
       students(full_name),
-      session_programs(programs(name))
+      session_programs(programs(name)),
+      session_updates(attendance, progress_score, remarks, updated_at)
     `)
     .eq("teacher_id", teacherId)
     .gte("starts_at", from.toISOString())
@@ -129,6 +120,7 @@ async function loadSessionsForTeacherDate() {
     const st = new Date(s.starts_at);
     const en = new Date(s.ends_at);
     const student = s.students?.full_name || "Student";
+
     const progs = (s.session_programs || [])
       .map(x => x.programs?.name)
       .filter(Boolean);
@@ -136,11 +128,16 @@ async function loadSessionsForTeacherDate() {
     const progText = progs.length ? ` • <small>${progs.join(", ")}</small>` : "";
     const locText = s.location ? ` • <small>${s.location}</small>` : "";
 
+    const upd = s.session_updates;
+    const updText = upd
+      ? ` • <small>Update: ${String(upd.attendance || "").toUpperCase()}${(upd.progress_score ?? null) !== null ? " • " + upd.progress_score + "%" : ""}${upd.remarks ? " • " + upd.remarks : ""}</small>`
+      : ` • <small class="muted">No update yet</small>`;
+
     return `
       <div style="margin:8px 0;">
         <a class="session-chip" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
           <strong>${student}</strong><br/>
-          <small>${fmtTime(st)}–${fmtTime(en)}</small>${progText}${locText}
+          <small>${fmtTime(st)}–${fmtTime(en)}</small>${progText}${locText}${updText}
         </a>
       </div>
     `;
@@ -173,7 +170,6 @@ async function saveSession() {
 
   setMsg("Saving...");
 
-  // 1) Insert session
   const { data: inserted, error: insErr } = await window.sb
     .from("sessions")
     .insert([{
@@ -194,7 +190,6 @@ async function saveSession() {
 
   const sessionId = inserted.id;
 
-  // 2) Insert program tags (if any)
   if (programIds.length) {
     const rows = programIds.map(pid => ({ session_id: sessionId, program_id: pid }));
     const { error: spErr } = await window.sb
@@ -212,7 +207,7 @@ async function saveSession() {
   await loadSessionsForTeacherDate();
 }
 
-function clearFormTimes() {
+function clearForm() {
   qs("startTime").value = "";
   qs("endTime").value = "";
   qs("locationInput").value = "";
@@ -221,11 +216,11 @@ function clearFormTimes() {
 }
 
 (async function init() {
-  await requireAdmin();
+  const ok = await requireAdmin();
+  if (!ok) return;
 
   qs("btnLogout").onclick = logout;
 
-  // Defaults
   qs("dateInput").value = todayYmd();
   qs("startTime").value = "10:00";
   qs("endTime").value = "10:30";
@@ -238,7 +233,7 @@ function clearFormTimes() {
   }
 
   qs("btnSave").onclick = saveSession;
-  qs("btnClear").onclick = clearFormTimes;
+  qs("btnClear").onclick = clearForm;
 
   qs("teacherSelect").addEventListener("change", loadSessionsForTeacherDate);
   qs("dateInput").addEventListener("change", loadSessionsForTeacherDate);
