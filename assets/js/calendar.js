@@ -1,5 +1,7 @@
 // assets/js/calendar.js
+
 let viewDate = new Date();
+let selectedKey = null;
 
 function monthStart(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
 function monthEndExclusive(d) { return new Date(d.getFullYear(), d.getMonth() + 1, 1); }
@@ -9,6 +11,9 @@ function monthLabel(d) {
 }
 
 async function fetchMonthSessions(from, to) {
+  const user = await requireAuth();
+  if (!user) return [];
+
   const { data, error } = await window.sb
     .from("sessions")
     .select(`
@@ -16,6 +21,7 @@ async function fetchMonthSessions(from, to) {
       students(full_name),
       session_programs(programs(name))
     `)
+    .eq("teacher_id", user.id) // ✅ filter to current teacher
     .gte("starts_at", from.toISOString())
     .lt("starts_at", to.toISOString())
     .order("starts_at", { ascending: true });
@@ -78,7 +84,11 @@ async function renderCalendar() {
     const list = dayMap.get(key) || [];
 
     const cell = document.createElement("div");
-    cell.className = "cal-cell" + (key === todayKey ? " today" : "");
+    cell.className =
+      "cal-cell" +
+      (key === todayKey ? " today" : "") +
+      (key === selectedKey ? " selected" : "");
+
     cell.style.opacity = inMonth ? "1" : "0.45";
 
     cell.innerHTML = `
@@ -89,15 +99,22 @@ async function renderCalendar() {
       </div>
     `;
 
-    cell.onclick = () => showDayDetails(d, list);
+    cell.onclick = () => {
+      selectedKey = key;
+      // update selected styling without full rerender
+      document.querySelectorAll(".cal-cell.selected").forEach(x => x.classList.remove("selected"));
+      cell.classList.add("selected");
+      showDayDetails(d, list);
+    };
+
     grid.appendChild(cell);
   }
 
   // Default select today if in month
   const today = new Date();
   if (today.getMonth() === ms.getMonth() && today.getFullYear() === ms.getFullYear()) {
-    const key = ymdLocal(today);
-    showDayDetails(today, dayMap.get(key) || []);
+    selectedKey = ymdLocal(today);
+    showDayDetails(today, dayMap.get(selectedKey) || []);
   } else {
     document.getElementById("dayTitle").textContent = "Select a date";
     document.getElementById("dayList").textContent = "—";
@@ -108,11 +125,11 @@ function showDayDetails(dateObj, list) {
   document.getElementById("dayTitle").textContent = fmtDate(dateObj);
 
   if (!list.length) {
-    document.getElementById("dayList").innerHTML = `<div class="muted">No sessions</div>`;
+    document.getElementById("dayList").innerHTML = `<div class="msg" data-type="info">No sessions</div>`;
     return;
   }
 
-  const html = list.map(s => {
+  const html = `<div class="list">` + list.map(s => {
     const st = new Date(s.starts_at);
     const en = new Date(s.ends_at);
     const name = s.students?.full_name || "Student";
@@ -121,18 +138,18 @@ function showDayDetails(dateObj, list) {
       .map(x => x.programs?.name)
       .filter(Boolean);
 
-    const progText = progNames.length ? ` • <small>${progNames.join(", ")}</small>` : "";
-    const locText = s.location ? ` • <small>${s.location}</small>` : "";
+    const progText = progNames.length ? progNames.join(", ") : "—";
+    const locText = s.location ? s.location : "—";
 
     return `
-      <div style="margin:8px 0;">
-        <a class="session-chip" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
-          <strong>${toTimeLabel(st)}–${toTimeLabel(en)}</strong>
-          <small> • ${name}</small>${progText}${locText}
-        </a>
-      </div>
+      <a class="list-item" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
+        <div class="li-main">
+          <div class="li-title">${toTimeLabel(st)}–${toTimeLabel(en)} • ${name}</div>
+          <div class="li-sub">Programs: ${progText} • Location: ${locText}</div>
+        </div>
+      </a>
     `;
-  }).join("");
+  }).join("") + `</div>`;
 
   document.getElementById("dayList").innerHTML = html;
 }

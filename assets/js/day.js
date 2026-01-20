@@ -1,4 +1,5 @@
 // assets/js/day.js
+
 (async function () {
   const user = await requireAuth();
   if (!user) return;
@@ -21,7 +22,7 @@
   const from = startOfLocalDay(today);
   const to = addDays(from, 1);
 
-  // Fetch sessions for today
+  // Fetch sessions for today (✅ filtered to this teacher)
   const { data: sessions, error } = await window.sb
     .from("sessions")
     .select(`
@@ -29,12 +30,14 @@
       students(full_name),
       session_programs(programs(name))
     `)
+    .eq("teacher_id", user.id) // ✅ IMPORTANT
     .gte("starts_at", from.toISOString())
     .lt("starts_at", to.toISOString())
     .order("starts_at", { ascending: true });
 
   if (error) {
-    document.getElementById("dayTableWrap").textContent = error.message;
+    document.getElementById("dayTableWrap").innerHTML =
+      `<div class="msg" data-type="error">${error.message}</div>`;
     return;
   }
 
@@ -104,5 +107,6 @@
 
   html += `</tbody></table>`;
 
-  document.getElementById("dayTableWrap").innerHTML = html;
+  document.getElementById("dayTableWrap").innerHTML =
+    (sessions && sessions.length) ? html : `<div class="msg" data-type="info">No sessions today.</div>`;
 })();

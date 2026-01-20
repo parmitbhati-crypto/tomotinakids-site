@@ -1,4 +1,5 @@
 // assets/js/week.js
+
 (async function () {
   const user = await requireAuth();
   if (!user) return;
@@ -26,12 +27,14 @@
       students(full_name),
       session_programs(programs(name))
     `)
+    .eq("teacher_id", user.id) // ✅ IMPORTANT
     .gte("starts_at", from.toISOString())
     .lt("starts_at", to.toISOString())
     .order("starts_at", { ascending: true });
 
   if (error) {
-    document.getElementById("weekWrap").textContent = error.message;
+    document.getElementById("weekWrap").innerHTML =
+      `<div class="msg" data-type="error">${error.message}</div>`;
     return;
   }
 
@@ -58,7 +61,7 @@
     html += `
       <div class="card">
         <div class="h2">${fmtDate(d)}</div>
-        ${list.length ? list.map(s => {
+        ${list.length ? `<div class="list">` + list.map(s => {
           const st = new Date(s.starts_at);
           const en = new Date(s.ends_at);
           const student = s.students?.full_name || "Student";
@@ -67,16 +70,18 @@
             .map(x => x.programs?.name)
             .filter(Boolean);
 
-          const prog = progNames.length ? ` • ${progNames.join(", ")}` : "";
-          const loc = s.location ? ` • ${s.location}` : "";
+          const prog = progNames.length ? progNames.join(", ") : "—";
+          const loc = s.location ? s.location : "—";
 
-          return `<div style="margin:8px 0;">
-            <a class="session-chip" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
-              <strong>${toTimeLabel(st)}–${toTimeLabel(en)}</strong>
-              <small> • ${student}${prog}${loc}</small>
+          return `
+            <a class="list-item" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
+              <div class="li-main">
+                <div class="li-title">${toTimeLabel(st)}–${toTimeLabel(en)} • ${student}</div>
+                <div class="li-sub">Programs: ${prog} • Location: ${loc}</div>
+              </div>
             </a>
-          </div>`;
-        }).join("") : `<div class="muted">No sessions</div>`}
+          `;
+        }).join("") + `</div>` : `<div class="msg" data-type="info">No sessions</div>`}
       </div>
     `;
   }

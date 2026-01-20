@@ -2,8 +2,12 @@
 
 function qs(id) { return document.getElementById(id); }
 
-function setMsg(text) {
-  qs("msg").textContent = text || "";
+function setMsg(text, type = "info") {
+  const el = qs("msg");
+  if (!el) return;
+  el.classList.add("msg");
+  el.dataset.type = type;
+  el.textContent = text || "";
 }
 
 function todayYmd() {
@@ -12,8 +16,10 @@ function todayYmd() {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+// Stores a local datetime (picked by user) as an ISO instant.
+// Works well when DB column is timestamptz (UTC stored, local shown later).
 function toLocalDateTimeISO(dateStr, timeStr) {
-  const dt = new Date(`${dateStr}T${timeStr}`);
+  const dt = new Date(`${dateStr}T${timeStr}:00`);
   return dt.toISOString();
 }
 
@@ -25,6 +31,13 @@ function selectedMultiValues(selectEl) {
 
 function fmtTime(d) {
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function statusClass(status) {
+  const s = String(status || "").toLowerCase();
+  if (s.includes("complete")) return "completed";
+  if (s.includes("cancel")) return "cancelled";
+  return "scheduled";
 }
 
 async function requireAdmin() {
@@ -79,6 +92,12 @@ async function loadDropdowns() {
   ).join("");
 }
 
+function renderSkeletonList(count = 4) {
+  return `<div class="list">
+    ${Array.from({ length: count }).map(() => `<div class="skeleton"></div>`).join("")}
+  </div>`;
+}
+
 async function loadSessionsForTeacherDate() {
   const teacherId = qs("teacherSelect").value;
   const dateStr = qs("dateInput").value;
@@ -89,7 +108,9 @@ async function loadSessionsForTeacherDate() {
     return;
   }
 
-  const from = new Date(`${dateStr}T00:00`);
+  listEl.innerHTML = renderSkeletonList(4);
+
+  const from = new Date(`${dateStr}T00:00:00`);
   const toEx = new Date(from);
   toEx.setDate(toEx.getDate() + 1);
 
@@ -107,45 +128,63 @@ async function loadSessionsForTeacherDate() {
     .order("starts_at", { ascending: true });
 
   if (error) {
-    listEl.textContent = error.message;
+    listEl.innerHTML = `<div class="msg" data-type="error">${error.message}</div>`;
     return;
   }
 
   if (!data || data.length === 0) {
-    listEl.innerHTML = `<div class="muted">No sessions</div>`;
+    listEl.innerHTML = `<div class="msg" data-type="info">No sessions for this date.</div>`;
     return;
   }
 
-  listEl.innerHTML = data.map(s => {
-    const st = new Date(s.starts_at);
-    const en = new Date(s.ends_at);
-    const student = s.students?.full_name || "Student";
+  listEl.innerHTML = `<div class="list">${
+    data.map(s => {
+      const st = new Date(s.starts_at);
+      const en = new Date(s.ends_at);
+      const student = s.students?.full_name || "Student";
 
-    const progs = (s.session_programs || [])
-      .map(x => x.programs?.name)
-      .filter(Boolean);
+      const progs = (s.session_programs || [])
+        .map(x => x.programs?.name)
+        .filter(Boolean);
 
-    const progText = progs.length ? ` • <small>${progs.join(", ")}</small>` : "";
-    const locText = s.location ? ` • <small>${s.location}</small>` : "";
+      const progText = progs.length ? progs.join(", ") : "—";
+      const locText = s.location ? s.location : "—";
 
-    const upd = s.session_updates;
-    const updText = upd
-      ? ` • <small>Update: ${String(upd.attendance || "").toUpperCase()}${(upd.progress_score ?? null) !== null ? " • " + upd.progress_score + "%" : ""}${upd.remarks ? " • " + upd.remarks : ""}</small>`
-      : ` • <small class="muted">No update yet</small>`;
+      // session_updates can be an array; pick latest by updated_at
+      let upd = s.session_updates;
+      if (Array.isArray(upd)) {
+        upd = upd.slice().sort((a, b) => {
+          const ad = a?.updated_at ? new Date(a.updated_at).getTime() : 0;
+          const bd = b?.updated_at ? new Date(b.updated_at).getTime() : 0;
+          return bd - ad;
+        })[0] || null;
+      }
 
-    return `
-      <div style="margin:8px 0;">
-        <a class="session-chip" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
-          <strong>${student}</strong><br/>
-          <small>${fmtTime(st)}–${fmtTime(en)}</small>${progText}${locText}${updText}
+      const updText = upd
+        ? `${String(upd.attendance || "").toUpperCase()}${(upd.progress_score ?? null) !== null ? ` • ${upd.progress_score}%` : ""}${upd.remarks ? ` • ${upd.remarks}` : ""}`
+        : "No update yet";
+
+      const sClass = statusClass(s.status);
+
+      return `
+        <a class="list-item" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
+          <div class="li-main">
+            <div class="li-title">${student}</div>
+            <div class="li-sub">${fmtTime(st)}–${fmtTime(en)} • Location: ${locText}</div>
+            <div class="li-meta">
+              <span class="badge">Programs: ${progText}</span>
+              <span class="status-pill ${sClass}">${(s.status || "scheduled").toUpperCase()}</span>
+              <span class="badge">${updText}</span>
+            </div>
+          </div>
         </a>
-      </div>
-    `;
-  }).join("");
+      `;
+    }).join("")
+  }</div>`;
 }
 
 async function saveSession() {
-  setMsg("");
+  setMsg("", "info");
 
   const teacherId = qs("teacherSelect").value;
   const studentId = qs("studentSelect").value;
@@ -156,7 +195,7 @@ async function saveSession() {
   const programIds = selectedMultiValues(qs("programSelect"));
 
   if (!teacherId || !studentId || !dateStr || !startTime || !endTime) {
-    setMsg("Please fill Teacher, Student, Date, Start time, End time.");
+    setMsg("Please fill Teacher, Student, Date, Start time, End time.", "error");
     return;
   }
 
@@ -164,11 +203,11 @@ async function saveSession() {
   const endsAt = toLocalDateTimeISO(dateStr, endTime);
 
   if (new Date(endsAt) <= new Date(startsAt)) {
-    setMsg("End time must be after start time.");
+    setMsg("End time must be after start time.", "error");
     return;
   }
 
-  setMsg("Saving...");
+  setMsg("Saving…", "info");
 
   const { data: inserted, error: insErr } = await window.sb
     .from("sessions")
@@ -184,7 +223,7 @@ async function saveSession() {
     .single();
 
   if (insErr) {
-    setMsg(insErr.message);
+    setMsg(insErr.message, "error");
     return;
   }
 
@@ -192,18 +231,16 @@ async function saveSession() {
 
   if (programIds.length) {
     const rows = programIds.map(pid => ({ session_id: sessionId, program_id: pid }));
-    const { error: spErr } = await window.sb
-      .from("session_programs")
-      .insert(rows);
+    const { error: spErr } = await window.sb.from("session_programs").insert(rows);
 
     if (spErr) {
-      setMsg("Session saved, but programs failed: " + spErr.message);
+      setMsg("Session saved, but programs failed: " + spErr.message, "error");
       await loadSessionsForTeacherDate();
       return;
     }
   }
 
-  setMsg("Saved ✅");
+  setMsg("Saved ✅", "success");
   await loadSessionsForTeacherDate();
 }
 
@@ -212,7 +249,7 @@ function clearForm() {
   qs("endTime").value = "";
   qs("locationInput").value = "";
   Array.from(qs("programSelect").options).forEach(o => o.selected = false);
-  setMsg("");
+  setMsg("", "info");
 }
 
 (async function init() {

@@ -1,7 +1,15 @@
 // assets/js/sessionUpdate.js
+
 function getQueryParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
+}
+
+function setInlineMsg(el, text, type = "info") {
+  if (!el) return;
+  el.classList.add("msg");
+  el.dataset.type = type;
+  el.textContent = text || "";
 }
 
 (async function () {
@@ -20,15 +28,16 @@ function getQueryParam(name) {
 
   const sessionId = getQueryParam("session");
   if (!sessionId) {
-    document.getElementById("sessionInfo").textContent = "Missing session id.";
+    document.getElementById("sessionInfo").innerHTML =
+      `<div class="msg" data-type="error">Missing session id.</div>`;
     return;
   }
 
-  // Load session
+  // Load session (✅ optional extra safety filter to teacher_id)
   const { data: session, error: sessErr } = await window.sb
     .from("sessions")
     .select(`
-      id, starts_at, ends_at, location, student_id,
+      id, starts_at, ends_at, location, student_id, teacher_id,
       students(full_name),
       session_programs(programs(name))
     `)
@@ -36,7 +45,15 @@ function getQueryParam(name) {
     .single();
 
   if (sessErr) {
-    document.getElementById("sessionInfo").textContent = sessErr.message;
+    document.getElementById("sessionInfo").innerHTML =
+      `<div class="msg" data-type="error">${sessErr.message}</div>`;
+    return;
+  }
+
+  // If someone tries to open another teacher's session via URL
+  if (session.teacher_id && session.teacher_id !== user.id) {
+    document.getElementById("sessionInfo").innerHTML =
+      `<div class="msg" data-type="error">Access denied.</div>`;
     return;
   }
 
@@ -83,12 +100,14 @@ function getQueryParam(name) {
 
   document.getElementById("btnSave").onclick = async () => {
     const msg = document.getElementById("msg");
-    msg.textContent = "Saving...";
+    setInlineMsg(msg, "Saving…", "info");
 
     const payload = {
       session_id: sessionId,
       attendance: document.getElementById("attendance").value,
-      progress_score: document.getElementById("progress").value === "" ? null : parseInt(document.getElementById("progress").value, 10),
+      progress_score: document.getElementById("progress").value === ""
+        ? null
+        : parseInt(document.getElementById("progress").value, 10),
       remarks: document.getElementById("remarks").value || null,
       updated_by: user.id
     };
@@ -97,6 +116,10 @@ function getQueryParam(name) {
       .from("session_updates")
       .upsert(payload, { onConflict: "session_id" });
 
-    msg.textContent = error ? error.message : "Saved ✅";
+    if (error) {
+      setInlineMsg(msg, error.message, "error");
+      return;
+    }
+    setInlineMsg(msg, "Saved ✅", "success");
   };
 })();
