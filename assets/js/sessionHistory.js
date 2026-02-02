@@ -8,7 +8,12 @@
   document.getElementById("btnLogout").onclick = logout;
 
   const studentSelect = document.getElementById("studentSelect");
-  const tableWrap = document.getElementById("sessionTableWrap");
+  const container = document.getElementById("historyContainer");
+
+  if (!studentSelect || !container) {
+    console.error("Required DOM elements missing");
+    return;
+  }
 
   // -----------------------------
   // Load students
@@ -19,32 +24,35 @@
     .order("full_name");
 
   if (studentErr) {
-    tableWrap.innerHTML = `<div class="msg" data-type="error">${studentErr.message}</div>`;
+    container.innerHTML =
+      `<div class="msg" data-type="error">${studentErr.message}</div>`;
     return;
   }
 
   studentSelect.innerHTML =
-    `<option value="">Select student</option>` +
+    `<option value="">— Select student —</option>` +
     students.map(s => `<option value="${s.id}">${s.full_name}</option>`).join("");
 
+  container.innerHTML =
+    `<div class="msg" data-type="info">Select a student to view session history.</div>`;
+
   // -----------------------------
-  // On student selection
+  // Student selection
   // -----------------------------
   studentSelect.addEventListener("change", async () => {
     const studentId = studentSelect.value;
 
     if (!studentId) {
-      tableWrap.innerHTML =
-        `<div class="msg" data-type="info">Select a student to view history.</div>`;
+      container.innerHTML =
+        `<div class="msg" data-type="info">Select a student to view session history.</div>`;
       return;
     }
 
-    tableWrap.textContent = "Loading session history…";
+    container.textContent = "Loading session history…";
 
     const { data, error } = await window.sb
       .from("sessions")
       .select(`
-        id,
         starts_at,
         ends_at,
         teacher:profiles(full_name),
@@ -58,13 +66,13 @@
       .order("starts_at", { ascending: false });
 
     if (error) {
-      tableWrap.innerHTML =
+      container.innerHTML =
         `<div class="msg" data-type="error">${error.message}</div>`;
       return;
     }
 
     if (!data || data.length === 0) {
-      tableWrap.innerHTML =
+      container.innerHTML =
         `<div class="msg" data-type="info">No sessions found.</div>`;
       return;
     }
@@ -87,16 +95,16 @@
         <tbody>
     `;
 
-    data.forEach(session => {
-      const start = new Date(session.starts_at);
-      const end = new Date(session.ends_at);
-      const upd = session.session_updates?.[0] || {};
+    data.forEach(s => {
+      const st = new Date(s.starts_at);
+      const en = new Date(s.ends_at);
+      const upd = s.session_updates?.[0] || {};
 
       html += `
         <tr>
-          <td>${fmtDate(start)}</td>
-          <td>${toTimeLabel(start)} – ${toTimeLabel(end)}</td>
-          <td>${session.teacher?.full_name ?? "—"}</td>
+          <td>${fmtDate(st)}</td>
+          <td>${toTimeLabel(st)} – ${toTimeLabel(en)}</td>
+          <td>${s.teacher?.full_name ?? "—"}</td>
           <td>${upd.attendance ?? "—"}</td>
           <td>${upd.progress_score ?? "—"}</td>
           <td>${upd.remarks ?? "—"}</td>
@@ -105,9 +113,6 @@
     });
 
     html += `</tbody></table>`;
-    tableWrap.innerHTML = html;
+    container.innerHTML = html;
   });
-
-  tableWrap.innerHTML =
-    `<div class="msg" data-type="info">Select a student to view history.</div>`;
 })();

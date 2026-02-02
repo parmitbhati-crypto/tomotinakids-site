@@ -1,118 +1,62 @@
-// assets/js/sessionHistory.js
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Session History</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body>
+  <div class="container">
 
-(async function () {
-  const user = await requireAuth();
-  if (!user) return;
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="brand">
+        <img src="/assets/images/logo.png" class="top-logo" />
+        <div class="brand-text">
+          <div class="brand-title">Tomotina Kids</div>
+          <div class="brand-sub">Admin</div>
+        </div>
+      </div>
 
-  await showAdminNavIfAdmin();
-  document.getElementById("btnLogout").onclick = logout;
+      <div class="nav">
+        <a href="/portal/admin.html">Create Schedule</a>
+        <a class="active" href="/portal/session-history.html">Session History</a>
+        <a href="/portal/registrations.html">Registrations</a>
+      </div>
 
-  const studentSelect = document.getElementById("studentSelect");
-  const container = document.getElementById("historyContainer");
+      <button id="btnLogout" class="btn danger">Logout</button>
+    </div>
 
-  if (!studentSelect || !container) {
-    console.error("Required DOM elements missing");
-    return;
-  }
+    <!-- Content -->
+    <div class="grid">
+      <div class="card">
 
-  // -----------------------------
-  // Load students
-  // -----------------------------
-  const { data: students, error: studentErr } = await window.sb
-    .from("students")
-    .select("id, full_name")
-    .order("full_name");
+        <h2 class="h2">Session History (Student-wise)</h2>
 
-  if (studentErr) {
-    container.innerHTML =
-      `<div class="msg" data-type="error">${studentErr.message}</div>`;
-    return;
-  }
+        <div class="fieldrow">
+          <div>
+            <label>Select Student</label>
+            <select id="studentSelect">
+              <option value="">— Select student —</option>
+            </select>
+          </div>
+        </div>
 
-  studentSelect.innerHTML =
-    `<option value="">— Select student —</option>` +
-    students.map(s => `<option value="${s.id}">${s.full_name}</option>`).join("");
+        <hr />
 
-  container.innerHTML =
-    `<div class="msg" data-type="info">Select a student to view session history.</div>`;
+        <div id="historyContainer" class="muted">
+          Select a student to view session history.
+        </div>
 
-  // -----------------------------
-  // Student selection
-  // -----------------------------
-  studentSelect.addEventListener("change", async () => {
-    const studentId = studentSelect.value;
+      </div>
+    </div>
+  </div>
 
-    if (!studentId) {
-      container.innerHTML =
-        `<div class="msg" data-type="info">Select a student to view session history.</div>`;
-      return;
-    }
-
-    container.textContent = "Loading session history…";
-
-    const { data, error } = await window.sb
-      .from("sessions")
-      .select(`
-        starts_at,
-        ends_at,
-        teacher:profiles(full_name),
-        session_updates (
-          attendance,
-          progress_score,
-          remarks
-        )
-      `)
-      .eq("student_id", studentId)
-      .order("starts_at", { ascending: false });
-
-    if (error) {
-      container.innerHTML =
-        `<div class="msg" data-type="error">${error.message}</div>`;
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      container.innerHTML =
-        `<div class="msg" data-type="info">No sessions found.</div>`;
-      return;
-    }
-
-    // -----------------------------
-    // Render table
-    // -----------------------------
-    let html = `
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Teacher</th>
-            <th>Attendance</th>
-            <th>Progress</th>
-            <th>Remarks</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-
-    data.forEach(s => {
-      const st = new Date(s.starts_at);
-      const en = new Date(s.ends_at);
-      const upd = s.session_updates?.[0] || {};
-
-      html += `
-        <tr>
-          <td>${fmtDate(st)}</td>
-          <td>${toTimeLabel(st)} – ${toTimeLabel(en)}</td>
-          <td>${s.teacher?.full_name ?? "—"}</td>
-          <td>${upd.attendance ?? "—"}</td>
-          <td>${upd.progress_score ?? "—"}</td>
-          <td>${upd.remarks ?? "—"}</td>
-        </tr>
-      `;
-    });
-
-    html += `</tbody></table>`;
-    container.innerHTML = html;
-  });
-})();
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/sessionHistory.js"></script>
+</body>
+</html>
