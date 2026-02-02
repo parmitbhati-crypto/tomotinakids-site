@@ -53,27 +53,27 @@ async function requireAuth() {
   const isAdminPage = adminPages.includes(path);
 
   // ─────────────────────────────
-  // ROLE-BASED ROUTING
+  // ROLE RULES (NON-INTRUSIVE)
   // ─────────────────────────────
 
-  // Teacher rules
-  if (role === "teacher") {
-    if (isAdminPage || isLoginPage) {
-      window.location.href = "/portal/day.html";
-      return null;
-    }
+  // Teachers cannot access admin pages
+  if (role === "teacher" && isAdminPage) {
+    window.location.href = "/portal/day.html";
+    return null;
   }
 
-  // Admin rules
-  if (role === "admin") {
-    if (isTeacherPage || isLoginPage) {
-      window.location.href = "/portal/admin.html";
-      return null;
-    }
+  // Admins should not stay on login page
+  if (role === "admin" && isLoginPage) {
+    window.location.href = "/portal/admin.html";
+    return null;
   }
 
   return user;
 }
+
+// ─────────────────────────────
+// PROFILE HELPERS
+// ─────────────────────────────
 
 async function getMyProfile() {
   const user = await requireAuth();
@@ -112,12 +112,19 @@ async function loadMyPrograms() {
     .filter(Boolean);
 }
 
+// ─────────────────────────────
+// LOGOUT
+// ─────────────────────────────
+
 async function logout() {
   await window.sb.auth.signOut();
   window.location.href = "/portal/login.html";
 }
 
-// Admin link control (if you still use it anywhere)
+// ─────────────────────────────
+// ADMIN NAV VISIBILITY
+// ─────────────────────────────
+
 async function showAdminNavIfAdmin() {
   const el = document.getElementById("adminNav");
   if (!el) return;
@@ -126,7 +133,9 @@ async function showAdminNavIfAdmin() {
   el.style.display = profile?.role === "admin" ? "" : "none";
 }
 
-// ───────── Utilities ─────────
+// ─────────────────────────────
+// UTILITIES
+// ─────────────────────────────
 
 function fmtDate(d) {
   return d.toLocaleDateString(undefined, {

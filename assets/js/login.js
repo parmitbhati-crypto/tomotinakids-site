@@ -1,102 +1,50 @@
 // assets/js/login.js
 
-function qs(id) {
-  return document.getElementById(id);
-}
+(async function () {
+  if (!window.sb) return;
 
-function setMsg(text) {
-  const el = qs("msg");
-  if (el) el.textContent = text || "";
-}
+  const form = document.getElementById("loginForm");
+  if (!form) return;
 
-async function ensureClientReady() {
-  if (!window.sb) {
-    throw new Error(
-      "Supabase client not initialized. Check env.js, supabaseClient.js, and Supabase CDN script order."
-    );
-  }
-}
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-/**
- * If user is already logged in, do NOT stay on login page
- */
-async function redirectIfAlreadyLoggedIn() {
-  await ensureClientReady();
+    const email = document.getElementById("email")?.value?.trim();
+    const password = document.getElementById("password")?.value;
 
-  const { data: { user } } = await window.sb.auth.getUser();
-  if (user) {
-    window.location.href = "/portal/day.html";
-  }
-}
+    if (!email || !password) {
+      alert("Email and password are required");
+      return;
+    }
 
-async function doLogin() {
-  setMsg("Logging in...");
-  await ensureClientReady();
-
-  const email = (qs("email").value || "").trim();
-  const password = qs("password").value || "";
-
-  if (!email || !password) {
-    setMsg("Enter email and password.");
-    return;
-  }
-
-  const { error } = await window.sb.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    setMsg(error.message);
-    return;
-  }
-
-  // Successful login
-  window.location.href = "/portal/day.html";
-}
-
-async function sendReset() {
-  setMsg("Sending reset link...");
-  await ensureClientReady();
-
-  const email = (qs("email").value || "").trim();
-  if (!email) {
-    setMsg("Enter your email first.");
-    return;
-  }
-
-  const redirectTo = `${window.location.origin}/portal/login.html`;
-
-  const { error } = await window.sb.auth.resetPasswordForEmail(email, {
-    redirectTo
-  });
-
-  if (error) {
-    setMsg(error.message);
-    return;
-  }
-
-  setMsg("Reset link sent. Check your email.");
-}
-
-(async function init() {
-  try {
-    await redirectIfAlreadyLoggedIn();
-  } catch (e) {
-    console.warn(e.message);
-  }
-
-  const btnLogin = qs("btnLogin");
-  const btnReset = qs("btnReset");
-
-  if (btnLogin) btnLogin.onclick = doLogin;
-  if (btnReset) btnReset.onclick = sendReset;
-
-  // Enter key triggers login
-  const pwd = qs("password");
-  if (pwd) {
-    pwd.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") doLogin();
+    const { data, error } = await window.sb.auth.signInWithPassword({
+      email,
+      password
     });
-  }
+
+    if (error || !data?.user) {
+      alert(error?.message || "Login failed");
+      return;
+    }
+
+    // 🔑 Fetch role AFTER login
+    const { data: profile, error: profileError } = await window.sb
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
+
+    if (profileError || !profile?.role) {
+      console.error("Profile fetch failed", profileError);
+      alert("Unable to determine user role");
+      return;
+    }
+
+    // ✅ ROLE-BASED LANDING PAGE
+    if (profile.role === "admin") {
+      window.location.href = "/portal/admin.html";
+    } else {
+      window.location.href = "/portal/day.html";
+    }
+  });
 })();
