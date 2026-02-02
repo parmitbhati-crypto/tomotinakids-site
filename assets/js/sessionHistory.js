@@ -1,81 +1,77 @@
 // assets/js/sessionHistory.js
 
 (async function () {
+  // --- Auth & setup ---
   const user = await requireAuth();
   if (!user) return;
 
+  await showAdminNavIfAdmin();
   document.getElementById("btnLogout").onclick = logout;
 
   const studentSelect = document.getElementById("studentSelect");
-  const container = document.getElementById("historyContainer");
+  const tableWrap = document.getElementById("sessionTableWrap");
 
-  // ─────────────────────────────
-  // LOAD STUDENTS (ADMIN)
-  // ─────────────────────────────
-  const { data: students, error: studErr } = await window.sb
+  // --- Load students for dropdown ---
+  const { data: students, error: studentErr } = await window.sb
     .from("students")
     .select("id, full_name")
     .order("full_name", { ascending: true });
 
-  if (studErr) {
-    container.innerHTML =
-      `<div class="msg" data-type="error">${studErr.message}</div>`;
+  if (studentErr) {
+    tableWrap.innerHTML =
+      `<div class="msg" data-type="error">${studentErr.message}</div>`;
     return;
   }
 
   studentSelect.innerHTML =
-    `<option value="">— Select student —</option>` +
+    `<option value="">Select student</option>` +
     students.map(s =>
       `<option value="${s.id}">${s.full_name}</option>`
     ).join("");
 
-  // ─────────────────────────────
-  // ON STUDENT CHANGE → LOAD HISTORY
-  // ─────────────────────────────
-  studentSelect.addEventListener("change", async () => {
-    const studentId = studentSelect.value;
-
+  // --- On student change ---
+  studentSelect.onchange = async function () {
+    const studentId = this.value;
     if (!studentId) {
-      container.innerHTML = "Select a student to view session history.";
+      tableWrap.innerHTML =
+        `<div class="msg" data-type="info">Select a student to view history.</div>`;
       return;
     }
 
-    container.innerHTML = "Loading session history…";
+    tableWrap.innerHTML = "Loading session history…";
 
-    const { data, error } = await window.sb
-  .from("sessions")
-  .select(`
-    id,
-    starts_at,
-    ends_at,
-    teacher:profiles(full_name),
-    session_updates (
-      attendance,
-      progress_score,
-      remarks
-    )
-  `)
-  .eq("student_id", studentId)
-  .order("starts_at", { ascending: false });
-
+    // --- CORE QUERY (FIXED JOIN) ---
+    const { data: sessions, error } = await window.sb
+      .from("sessions")
+      .select(`
+        id,
+        starts_at,
+        ends_at,
+        teacher:profiles(full_name),
+        session_updates (
+          attendance,
+          progress_score,
+          remarks
+        )
+      `)
+      .eq("student_id", studentId)
+      .order("starts_at", { ascending: false });
 
     if (error) {
-      container.innerHTML =
+      tableWrap.innerHTML =
         `<div class="msg" data-type="error">${error.message}</div>`;
       return;
     }
 
     if (!sessions || sessions.length === 0) {
-      container.innerHTML =
-        `<div class="msg" data-type="info">No sessions found for this student.</div>`;
+      tableWrap.innerHTML =
+        `<div class="msg" data-type="info">No sessions found.</div>`;
       return;
     }
 
-    // ─────────────────────────────
-    // RENDER TABLE
-    // ─────────────────────────────
+    // --- Build table ---
     let html = `
-      <table class="history-table">
+      <table class="data-table">
         <thead>
           <tr>
             <th>Date</th>
@@ -90,23 +86,37 @@
     `;
 
     sessions.forEach(s => {
-      const st = new Date(s.starts_at);
-      const en = new Date(s.ends_at);
-      const upd = (s.session_updates && s.session_updates[0]) || {};
+      const start = new Date(s.starts_at);
+      const end = new Date(s.ends_at);
+
+      // session_updates is an array (0 or 1 row)
+      const upd = s.session_updates?.[0];
+
+      const attendance = upd?.attendance ?? "—";
+      const progress = upd?.progress_score ?? "—";
+      const remarks = upd?.remarks ?? "—";
 
       html += `
         <tr>
-          <td>${fmtDate(st)}</td>
-          <td>${toTimeLabel(st)}–${toTimeLabel(en)}</td>
-          <td>${s.profiles?.full_name || "—"}</td>
-          <td>${upd.attendance || "—"}</td>
-          <td>${upd.progress_score != null ? upd.progress_score + "%" : "—"}</td>
-          <td>${upd.remarks || "—"}</td>
+          <td>${fmtDate(start)}</td>
+          <td>${toTimeLabel(start)} – ${toTimeLabel(end)}</td>
+          <td>${s.teacher?.full_name ?? "—"}</td>
+          <td>${attendance}</td>
+          <td>${progress}</td>
+          <td>${remarks}</td>
         </tr>
       `;
     });
 
-    html += `</tbody></table>`;
-    container.innerHTML = html;
-  });
+    html += `
+        </tbody>
+      </table>
+    `;
+
+    tableWrap.innerHTML = html;
+  };
+
+  // Initial message
+  tableWrap.innerHTML =
+    `<div class="msg" data-type="info">Select a student to view history.</div>`;
 })();
