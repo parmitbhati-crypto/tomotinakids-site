@@ -9,12 +9,13 @@
 <body>
   <div class="container">
 
+    <!-- Topbar -->
     <div class="topbar">
       <div class="brand">
         <img src="/assets/images/logo.png" class="top-logo" />
         <div class="brand-text">
           <div class="brand-title">Tomotina Kids</div>
-          <div class="brand-sub">Session History</div>
+          <div class="brand-sub">Admin</div>
         </div>
       </div>
 
@@ -27,35 +28,35 @@
       <button id="btnLogout" class="btn danger">Logout</button>
     </div>
 
+    <!-- Content -->
     <div class="grid">
       <div class="card">
-        <h2 class="h2">Student Session History</h2>
 
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Student</th>
-              <th>Teacher</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody id="historyBody">
-            <tr>
-              <td colspan="5" class="muted">Loading…</td>
-            </tr>
-          </tbody>
-        </table>
+        <h2 class="h2">Session History (Student-wise)</h2>
+
+        <div class="fieldrow">
+          <div>
+            <label>Select Student</label>
+            <select id="studentSelect">
+              <option value="">— Select student —</option>
+            </select>
+          </div>
+        </div>
+
+        <hr />
+
+        <div id="historyContainer" class="muted">
+          Select a student to view session history.
+        </div>
+
       </div>
     </div>
-
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/assets/js/env.js"></script>
   <script src="/assets/js/supabaseClient.js"></script>
   <script src="/assets/js/auth.js"></script>
-  <script src="/assets/js/session-history.js"></script>
+  <script src="/assets/js/sessionHistory.js"></script>
 </body>
 </html>
