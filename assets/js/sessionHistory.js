@@ -1,7 +1,6 @@
 // assets/js/sessionHistory.js
 
 (async function () {
-  // --- Auth & setup ---
   const user = await requireAuth();
   if (!user) return;
 
@@ -11,37 +10,38 @@
   const studentSelect = document.getElementById("studentSelect");
   const tableWrap = document.getElementById("sessionTableWrap");
 
-  // --- Load students for dropdown ---
+  // -----------------------------
+  // Load students
+  // -----------------------------
   const { data: students, error: studentErr } = await window.sb
     .from("students")
     .select("id, full_name")
-    .order("full_name", { ascending: true });
+    .order("full_name");
 
   if (studentErr) {
-    tableWrap.innerHTML =
-      `<div class="msg" data-type="error">${studentErr.message}</div>`;
+    tableWrap.innerHTML = `<div class="msg" data-type="error">${studentErr.message}</div>`;
     return;
   }
 
   studentSelect.innerHTML =
     `<option value="">Select student</option>` +
-    students.map(s =>
-      `<option value="${s.id}">${s.full_name}</option>`
-    ).join("");
+    students.map(s => `<option value="${s.id}">${s.full_name}</option>`).join("");
 
-  // --- On student change ---
-  studentSelect.onchange = async function () {
-    const studentId = this.value;
+  // -----------------------------
+  // On student selection
+  // -----------------------------
+  studentSelect.addEventListener("change", async () => {
+    const studentId = studentSelect.value;
+
     if (!studentId) {
       tableWrap.innerHTML =
         `<div class="msg" data-type="info">Select a student to view history.</div>`;
       return;
     }
 
-    tableWrap.innerHTML = "Loading session history…";
+    tableWrap.textContent = "Loading session history…";
 
-    // --- CORE QUERY (FIXED JOIN) ---
-    const { data: sessions, error } = await window.sb
+    const { data, error } = await window.sb
       .from("sessions")
       .select(`
         id,
@@ -63,13 +63,15 @@
       return;
     }
 
-    if (!sessions || sessions.length === 0) {
+    if (!data || data.length === 0) {
       tableWrap.innerHTML =
         `<div class="msg" data-type="info">No sessions found.</div>`;
       return;
     }
 
-    // --- Build table ---
+    // -----------------------------
+    // Render table
+    // -----------------------------
     let html = `
       <table class="data-table">
         <thead>
@@ -85,38 +87,27 @@
         <tbody>
     `;
 
-    sessions.forEach(s => {
-      const start = new Date(s.starts_at);
-      const end = new Date(s.ends_at);
-
-      // session_updates is an array (0 or 1 row)
-      const upd = s.session_updates?.[0];
-
-      const attendance = upd?.attendance ?? "—";
-      const progress = upd?.progress_score ?? "—";
-      const remarks = upd?.remarks ?? "—";
+    data.forEach(session => {
+      const start = new Date(session.starts_at);
+      const end = new Date(session.ends_at);
+      const upd = session.session_updates?.[0] || {};
 
       html += `
         <tr>
           <td>${fmtDate(start)}</td>
           <td>${toTimeLabel(start)} – ${toTimeLabel(end)}</td>
-          <td>${s.teacher?.full_name ?? "—"}</td>
-          <td>${attendance}</td>
-          <td>${progress}</td>
-          <td>${remarks}</td>
+          <td>${session.teacher?.full_name ?? "—"}</td>
+          <td>${upd.attendance ?? "—"}</td>
+          <td>${upd.progress_score ?? "—"}</td>
+          <td>${upd.remarks ?? "—"}</td>
         </tr>
       `;
     });
 
-    html += `
-        </tbody>
-      </table>
-    `;
-
+    html += `</tbody></table>`;
     tableWrap.innerHTML = html;
-  };
+  });
 
-  // Initial message
   tableWrap.innerHTML =
     `<div class="msg" data-type="info">Select a student to view history.</div>`;
 })();
