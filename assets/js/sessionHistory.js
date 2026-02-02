@@ -1,62 +1,66 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Session History</title>
-  <link rel="stylesheet" href="/assets/css/portal.css" />
-</head>
-<body>
-  <div class="container">
+// assets/js/sessionHistory.js
 
-    <!-- Topbar -->
-    <div class="topbar">
-      <div class="brand">
-        <img src="/assets/images/logo.png" class="top-logo" />
-        <div class="brand-text">
-          <div class="brand-title">Tomotina Kids</div>
-          <div class="brand-sub">Admin</div>
-        </div>
+document.addEventListener("DOMContentLoaded", async () => {
+  // Ensure user is authenticated and admin
+  const user = await requireAuth();
+  if (!user) return;
+
+  const profile = await getMyProfile();
+  if (!profile || profile.role !== "admin") {
+    console.warn("Not an admin");
+    return;
+  }
+
+  const studentSelect = document.getElementById("studentSelect");
+  const historyContainer = document.getElementById("historyContainer");
+
+  if (!studentSelect || !historyContainer) {
+    console.error("Missing DOM elements");
+    return;
+  }
+
+  // ─────────────────────────────
+  // LOAD STUDENTS (ADMIN)
+  // ─────────────────────────────
+  const { data: students, error } = await window.sb
+    .from("students")
+    .select("id, full_name")
+    .order("full_name");
+
+  if (error) {
+    console.error("Failed to load students:", error);
+    historyContainer.textContent = "Failed to load students.";
+    return;
+  }
+
+  // Populate dropdown
+  students.forEach(student => {
+    const opt = document.createElement("option");
+    opt.value = student.id;
+    opt.textContent = student.full_name;
+    studentSelect.appendChild(opt);
+  });
+
+  // ─────────────────────────────
+  // STUDENT CHANGE HANDLER
+  // ─────────────────────────────
+  studentSelect.addEventListener("change", async () => {
+    const studentId = studentSelect.value;
+
+    if (!studentId) {
+      historyContainer.textContent =
+        "Select a student to view session history.";
+      return;
+    }
+
+    historyContainer.textContent = "Loading session history...";
+
+    // 🔹 We will implement this query next
+    // For now just placeholder
+    historyContainer.innerHTML = `
+      <div class="muted">
+        Session history will appear here for selected student.
       </div>
-
-      <div class="nav">
-        <a href="/portal/admin.html">Create Schedule</a>
-        <a class="active" href="/portal/session-history.html">Session History</a>
-        <a href="/portal/registrations.html">Registrations</a>
-      </div>
-
-      <button id="btnLogout" class="btn danger">Logout</button>
-    </div>
-
-    <!-- Content -->
-    <div class="grid">
-      <div class="card">
-
-        <h2 class="h2">Session History (Student-wise)</h2>
-
-        <div class="fieldrow">
-          <div>
-            <label>Select Student</label>
-            <select id="studentSelect">
-              <option value="">— Select student —</option>
-            </select>
-          </div>
-        </div>
-
-        <hr />
-
-        <div id="historyContainer" class="muted">
-          Select a student to view session history.
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/assets/js/env.js"></script>
-  <script src="/assets/js/supabaseClient.js"></script>
-  <script src="/assets/js/auth.js"></script>
-  <script src="/assets/js/sessionHistory.js"></script>
-</body>
-</html>
+    `;
+  });
+});
