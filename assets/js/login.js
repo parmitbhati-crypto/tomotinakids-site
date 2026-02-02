@@ -1,5 +1,8 @@
 // assets/js/login.js
-function qs(id) { return document.getElementById(id); }
+
+function qs(id) {
+  return document.getElementById(id);
+}
 
 function setMsg(text) {
   const el = qs("msg");
@@ -7,7 +10,23 @@ function setMsg(text) {
 }
 
 async function ensureClientReady() {
-  if (!window.sb) throw new Error("Supabase client not initialized (sb missing). Check env.js + supabaseClient.js + supabase CDN script).");
+  if (!window.sb) {
+    throw new Error(
+      "Supabase client not initialized. Check env.js, supabaseClient.js, and Supabase CDN script order."
+    );
+  }
+}
+
+/**
+ * If user is already logged in, do NOT stay on login page
+ */
+async function redirectIfAlreadyLoggedIn() {
+  await ensureClientReady();
+
+  const { data: { user } } = await window.sb.auth.getUser();
+  if (user) {
+    window.location.href = "/portal/day.html";
+  }
 }
 
 async function doLogin() {
@@ -22,13 +41,17 @@ async function doLogin() {
     return;
   }
 
-  const { data, error } = await window.sb.auth.signInWithPassword({ email, password });
+  const { error } = await window.sb.auth.signInWithPassword({
+    email,
+    password
+  });
+
   if (error) {
     setMsg(error.message);
     return;
   }
 
-  // Signed in
+  // Successful login
   window.location.href = "/portal/day.html";
 }
 
@@ -42,10 +65,12 @@ async function sendReset() {
     return;
   }
 
-  // IMPORTANT: this must be allowed in Supabase Auth -> URL Configuration
   const redirectTo = `${window.location.origin}/portal/login.html`;
 
-  const { error } = await window.sb.auth.resetPasswordForEmail(email, { redirectTo });
+  const { error } = await window.sb.auth.resetPasswordForEmail(email, {
+    redirectTo
+  });
+
   if (error) {
     setMsg(error.message);
     return;
@@ -54,7 +79,13 @@ async function sendReset() {
   setMsg("Reset link sent. Check your email.");
 }
 
-(function init() {
+(async function init() {
+  try {
+    await redirectIfAlreadyLoggedIn();
+  } catch (e) {
+    console.warn(e.message);
+  }
+
   const btnLogin = qs("btnLogin");
   const btnReset = qs("btnReset");
 

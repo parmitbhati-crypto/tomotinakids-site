@@ -1,9 +1,9 @@
 // assets/js/auth.js
 
 async function requireAuth() {
-  const currentPath = window.location.pathname;
+  const path = window.location.pathname.replace(/\/+$/, "");
 
-  // Make sure Supabase client exists
+  // Ensure Supabase client exists
   if (!window.sb) {
     console.error("Supabase client not initialized");
     return null;
@@ -11,17 +11,19 @@ async function requireAuth() {
 
   const { data: { user }, error } = await window.sb.auth.getUser();
 
-  // Not logged in → redirect ONLY if not already on login page
+  const isLoginPage = path === "/portal/login";
+
+  // Not logged in → redirect ONLY if not already on login
   if (error || !user) {
-    if (!currentPath.includes("login.html")) {
-      window.location.href = "/portal/login.html";
+    if (!isLoginPage) {
+      window.location.href = "/portal/login";
     }
     return null;
   }
 
-  // Logged in → if user is on login page, send them to dashboard
-  if (currentPath.includes("login.html")) {
-    window.location.href = "/portal/day.html";
+  // Logged in → never stay on login page
+  if (isLoginPage) {
+    window.location.href = "/portal/day";
     return null;
   }
 
@@ -42,6 +44,7 @@ async function getMyProfile() {
     console.error("getMyProfile error:", error);
     return { id: user.id, full_name: "", role: "teacher" };
   }
+
   return data;
 }
 
@@ -66,26 +69,22 @@ async function loadMyPrograms() {
 
 async function logout() {
   await window.sb.auth.signOut();
-
-  // Always go to login after logout
-  window.location.href = "/portal/login.html";
+  window.location.href = "/portal/login";
 }
 
 // Admin link control
-// HTML must contain: <a id="adminNav" href="/portal/admin.html" style="display:none;">Admin</a>
+// HTML must contain:
+// <a id="adminNav" href="/portal/admin" style="display:none;">Admin</a>
 async function showAdminNavIfAdmin() {
   const el = document.getElementById("adminNav");
   if (!el) return;
 
   const profile = await getMyProfile();
-  if (profile?.role === "admin") {
-    el.style.display = "";
-  } else {
-    el.style.display = "none";
-  }
+  el.style.display = profile?.role === "admin" ? "" : "none";
 }
 
-// Utilities
+// ───────── Utilities ─────────
+
 function fmtDate(d) {
   return d.toLocaleDateString(undefined, {
     weekday: "short",
@@ -114,5 +113,8 @@ function addDays(d, n) {
 }
 
 function toTimeLabel(dt) {
-  return dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return dt.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 }
