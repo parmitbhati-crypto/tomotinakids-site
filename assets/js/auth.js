@@ -13,7 +13,9 @@ async function requireAuth() {
 
   const isLoginPage = path === "/portal/login.html";
 
-  
+  // ─────────────────────────────
+  // NOT LOGGED IN
+  // ─────────────────────────────
   if (error || !user) {
     if (!isLoginPage) {
       window.location.href = "/portal/login.html";
@@ -21,10 +23,58 @@ async function requireAuth() {
     return null;
   }
 
-  // Logged in → never stay on login page
-  if (isLoginPage) {
-    window.location.href = "/portal/day.html";
+  // ─────────────────────────────
+  // FETCH PROFILE (ROLE)
+  // ─────────────────────────────
+  const { data: profile, error: profileError } = await window.sb
+    .from("profiles")
+    .select("id, full_name, role")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || !profile) {
+    console.error("Profile fetch failed", profileError);
     return null;
+  }
+
+  const role = profile.role;
+
+  // ─────────────────────────────
+  // PAGE GROUPS
+  // ─────────────────────────────
+  const teacherPages = [
+    "/portal/day.html",
+    "/portal/week.html",
+    "/portal/calendar.html"
+  ];
+
+  const adminPages = [
+    "/portal/admin.html",
+    "/portal/session-history.html",
+    "/portal/registrations.html"
+  ];
+
+  const isTeacherPage = teacherPages.includes(path);
+  const isAdminPage = adminPages.includes(path);
+
+  // ─────────────────────────────
+  // ROLE-BASED ROUTING
+  // ─────────────────────────────
+
+  // Teacher rules
+  if (role === "teacher") {
+    if (isAdminPage || isLoginPage) {
+      window.location.href = "/portal/day.html";
+      return null;
+    }
+  }
+
+  // Admin rules
+  if (role === "admin") {
+    if (isTeacherPage || isLoginPage) {
+      window.location.href = "/portal/admin.html";
+      return null;
+    }
   }
 
   return user;
@@ -72,9 +122,7 @@ async function logout() {
   window.location.href = "/portal/login.html";
 }
 
-// Admin link control
-// HTML must contain:
-// <a id="adminNav" href="/portal/admin" style="display:none;">Admin</a>
+// Admin link control (if you still use it anywhere)
 async function showAdminNavIfAdmin() {
   const el = document.getElementById("adminNav");
   if (!el) return;
