@@ -11,19 +11,19 @@ async function requireAuth() {
 
   const { data: { user }, error } = await window.sb.auth.getUser();
 
-  const isLoginPage = path === "/portal/login";
+  const isLoginPage = path === "/portal/login.html";
 
-  // Not logged in → redirect ONLY if not already on login
+  
   if (error || !user) {
     if (!isLoginPage) {
-      window.location.href = "/portal/login";
+      window.location.href = "/portal/login.html";
     }
     return null;
   }
 
   // Logged in → never stay on login page
   if (isLoginPage) {
-    window.location.href = "/portal/day";
+    window.location.href = "/portal/day.html";
     return null;
   }
 
@@ -69,7 +69,7 @@ async function loadMyPrograms() {
 
 async function logout() {
   await window.sb.auth.signOut();
-  window.location.href = "/portal/login";
+  window.location.href = "/portal/login.html";
 }
 
 // Admin link control
