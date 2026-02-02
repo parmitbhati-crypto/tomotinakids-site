@@ -63,7 +63,8 @@
         )
       `)
       .eq("student_id", studentId)
-      .order("starts_at", { ascending: false });
+      .order("starts_at", { ascending: false })
+      .order("updated_at", { foreignTable: "session_updates", ascending: false });
 
     if (error) {
       container.innerHTML =
@@ -98,7 +99,10 @@
     data.forEach(s => {
       const st = new Date(s.starts_at);
       const en = new Date(s.ends_at);
-      const upd = s.session_updates?.[0] || {};
+      const upd = Array.isArray(s.session_updates) && s.session_updates.length
+  ? s.session_updates[0]
+  : {};
+
 
       html += `
         <tr>
