@@ -2,16 +2,11 @@
 
 async function requireAuth() {
   const path = window.location.pathname.replace(/\/+$/, "");
+  const isLoginPage = path === "/portal/login.html";
 
-  // Ensure Supabase client exists
-  if (!window.sb) {
-    console.error("Supabase client not initialized");
-    return null;
-  }
+  if (!window.sb) return null;
 
   const { data: { user }, error } = await window.sb.auth.getUser();
-
-  const isLoginPage = path === "/portal/login.html";
 
   // ─────────────────────────────
   // NOT LOGGED IN
