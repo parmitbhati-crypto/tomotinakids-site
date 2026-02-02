@@ -1,66 +1,113 @@
 // assets/js/sessionHistory.js
 
-document.addEventListener("DOMContentLoaded", async () => {
-  // Ensure user is authenticated and admin
+(async function () {
   const user = await requireAuth();
   if (!user) return;
 
-  const profile = await getMyProfile();
-  if (!profile || profile.role !== "admin") {
-    console.warn("Not an admin");
-    return;
-  }
+  document.getElementById("btnLogout").onclick = logout;
 
   const studentSelect = document.getElementById("studentSelect");
-  const historyContainer = document.getElementById("historyContainer");
-
-  if (!studentSelect || !historyContainer) {
-    console.error("Missing DOM elements");
-    return;
-  }
+  const container = document.getElementById("historyContainer");
 
   // ─────────────────────────────
   // LOAD STUDENTS (ADMIN)
   // ─────────────────────────────
-  const { data: students, error } = await window.sb
+  const { data: students, error: studErr } = await window.sb
     .from("students")
     .select("id, full_name")
-    .order("full_name");
+    .order("full_name", { ascending: true });
 
-  if (error) {
-    console.error("Failed to load students:", error);
-    historyContainer.textContent = "Failed to load students.";
+  if (studErr) {
+    container.innerHTML =
+      `<div class="msg" data-type="error">${studErr.message}</div>`;
     return;
   }
 
-  // Populate dropdown
-  students.forEach(student => {
-    const opt = document.createElement("option");
-    opt.value = student.id;
-    opt.textContent = student.full_name;
-    studentSelect.appendChild(opt);
-  });
+  studentSelect.innerHTML =
+    `<option value="">— Select student —</option>` +
+    students.map(s =>
+      `<option value="${s.id}">${s.full_name}</option>`
+    ).join("");
 
   // ─────────────────────────────
-  // STUDENT CHANGE HANDLER
+  // ON STUDENT CHANGE → LOAD HISTORY
   // ─────────────────────────────
   studentSelect.addEventListener("change", async () => {
     const studentId = studentSelect.value;
 
     if (!studentId) {
-      historyContainer.textContent =
-        "Select a student to view session history.";
+      container.innerHTML = "Select a student to view session history.";
       return;
     }
 
-    historyContainer.textContent = "Loading session history...";
+    container.innerHTML = "Loading session history…";
 
-    // 🔹 We will implement this query next
-    // For now just placeholder
-    historyContainer.innerHTML = `
-      <div class="muted">
-        Session history will appear here for selected student.
-      </div>
+    const { data: sessions, error } = await window.sb
+      .from("sessions")
+      .select(`
+        id,
+        starts_at,
+        ends_at,
+        location,
+        students(full_name),
+        profiles!sessions_teacher_id_fkey(full_name),
+        session_updates(
+          attendance,
+          progress_score,
+          remarks
+        )
+      `)
+      .eq("student_id", studentId)
+      .order("starts_at", { ascending: false });
+
+    if (error) {
+      container.innerHTML =
+        `<div class="msg" data-type="error">${error.message}</div>`;
+      return;
+    }
+
+    if (!sessions || sessions.length === 0) {
+      container.innerHTML =
+        `<div class="msg" data-type="info">No sessions found for this student.</div>`;
+      return;
+    }
+
+    // ─────────────────────────────
+    // RENDER TABLE
+    // ─────────────────────────────
+    let html = `
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Teacher</th>
+            <th>Attendance</th>
+            <th>Progress</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
     `;
+
+    sessions.forEach(s => {
+      const st = new Date(s.starts_at);
+      const en = new Date(s.ends_at);
+      const upd = (s.session_updates && s.session_updates[0]) || {};
+
+      html += `
+        <tr>
+          <td>${fmtDate(st)}</td>
+          <td>${toTimeLabel(st)}–${toTimeLabel(en)}</td>
+          <td>${s.profiles?.full_name || "—"}</td>
+          <td>${upd.attendance || "—"}</td>
+          <td>${upd.progress_score != null ? upd.progress_score + "%" : "—"}</td>
+          <td>${upd.remarks || "—"}</td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
   });
-});
+})();
