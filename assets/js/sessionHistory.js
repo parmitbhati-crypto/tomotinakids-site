@@ -42,23 +42,22 @@
 
     container.innerHTML = "Loading session history…";
 
-    const { data: sessions, error } = await window.sb
-      .from("sessions")
-      .select(`
-        id,
-        starts_at,
-        ends_at,
-        location,
-        students(full_name),
-        profiles!sessions_teacher_id_fkey(full_name),
-        session_updates(
-          attendance,
-          progress_score,
-          remarks
-        )
-      `)
-      .eq("student_id", studentId)
-      .order("starts_at", { ascending: false });
+    const { data, error } = await window.sb
+  .from("sessions")
+  .select(`
+    id,
+    starts_at,
+    ends_at,
+    teacher:profiles(full_name),
+    session_updates (
+      attendance,
+      progress_score,
+      remarks
+    )
+  `)
+  .eq("student_id", studentId)
+  .order("starts_at", { ascending: false });
+
 
     if (error) {
       container.innerHTML =
