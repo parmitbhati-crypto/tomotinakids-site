@@ -1,11 +1,30 @@
 // assets/js/auth.js
 
 async function requireAuth() {
-  const { data: { user }, error } = await window.sb.auth.getUser();
-  if (error || !user) {
-    window.location.href = "/portal/login.html";
+  const currentPath = window.location.pathname;
+
+  // Make sure Supabase client exists
+  if (!window.sb) {
+    console.error("Supabase client not initialized");
     return null;
   }
+
+  const { data: { user }, error } = await window.sb.auth.getUser();
+
+  // Not logged in → redirect ONLY if not already on login page
+  if (error || !user) {
+    if (!currentPath.includes("login.html")) {
+      window.location.href = "/portal/login.html";
+    }
+    return null;
+  }
+
+  // Logged in → if user is on login page, send them to dashboard
+  if (currentPath.includes("login.html")) {
+    window.location.href = "/portal/day.html";
+    return null;
+  }
+
   return user;
 }
 
@@ -47,10 +66,12 @@ async function loadMyPrograms() {
 
 async function logout() {
   await window.sb.auth.signOut();
+
+  // Always go to login after logout
   window.location.href = "/portal/login.html";
 }
 
-// Admin link control: show only for admins.
+// Admin link control
 // HTML must contain: <a id="adminNav" href="/portal/admin.html" style="display:none;">Admin</a>
 async function showAdminNavIfAdmin() {
   const el = document.getElementById("adminNav");
@@ -74,7 +95,9 @@ function fmtDate(d) {
   });
 }
 
-function pad2(n) { return String(n).padStart(2, "0"); }
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
 
 function ymdLocal(d) {
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
