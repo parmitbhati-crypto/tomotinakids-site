@@ -1,50 +1,130 @@
 // assets/js/login.js
 
-(async function () {
-  if (!window.sb) return;
+function qs(id) {
+  return document.getElementById(id);
+}
 
-  const form = document.getElementById("loginForm");
-  if (!form) return;
+function setMsg(text) {
+  const el = qs("msg");
+  if (el) el.textContent = text || "";
+}
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+async function ensureClientReady() {
+  if (!window.sb) {
+    throw new Error(
+      "Supabase client not initialized. Check env.js, supabaseClient.js, and Supabase CDN script order."
+    );
+  }
+}
 
-    const email = document.getElementById("email")?.value?.trim();
-    const password = document.getElementById("password")?.value;
+/**
+ * Redirect logged-in users away from login page (ROLE AWARE)
+ */
+async function redirectIfAlreadyLoggedIn() {
+  await ensureClientReady();
 
-    if (!email || !password) {
-      alert("Email and password are required");
-      return;
-    }
+  const { data: { user } } = await window.sb.auth.getUser();
+  if (!user) return;
 
-    const { data, error } = await window.sb.auth.signInWithPassword({
-      email,
-      password
-    });
+  const { data: profile, error } = await window.sb
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
 
-    if (error || !data?.user) {
-      alert(error?.message || "Login failed");
-      return;
-    }
+  if (error || !profile?.role) return;
 
-    // 🔑 Fetch role AFTER login
-    const { data: profile, error: profileError } = await window.sb
-      .from("profiles")
-      .select("role")
-      .eq("id", data.user.id)
-      .single();
+  if (profile.role === "admin") {
+    window.location.href = "/portal/admin.html";
+  } else {
+    window.location.href = "/portal/day.html";
+  }
+}
 
-    if (profileError || !profile?.role) {
-      console.error("Profile fetch failed", profileError);
-      alert("Unable to determine user role");
-      return;
-    }
+async function doLogin() {
+  setMsg("Logging in...");
+  await ensureClientReady();
 
-    // ✅ ROLE-BASED LANDING PAGE
-    if (profile.role === "admin") {
-      window.location.href = "/portal/admin.html";
-    } else {
-      window.location.href = "/portal/day.html";
-    }
+  const email = (qs("email").value || "").trim();
+  const password = qs("password").value || "";
+
+  if (!email || !password) {
+    setMsg("Enter email and password.");
+    return;
+  }
+
+  const { data, error } = await window.sb.auth.signInWithPassword({
+    email,
+    password
   });
+
+  if (error || !data?.user) {
+    setMsg(error?.message || "Login failed.");
+    return;
+  }
+
+  // 🔑 FETCH ROLE AFTER LOGIN
+  const { data: profile, error: profileError } = await window.sb
+    .from("profiles")
+    .select("role")
+    .eq("id", data.user.id)
+    .single();
+
+  if (profileError || !profile?.role) {
+    setMsg("Login successful, but role not found.");
+    return;
+  }
+
+  // ✅ ROLE-BASED LANDING
+  if (profile.role === "admin") {
+    window.location.href = "/portal/admin.html";
+  } else {
+    window.location.href = "/portal/day.html";
+  }
+}
+
+async function sendReset() {
+  setMsg("Sending reset link...");
+  await ensureClientReady();
+
+  const email = (qs("email").value || "").trim();
+  if (!email) {
+    setMsg("Enter your email first.");
+    return;
+  }
+
+  const redirectTo = `${window.location.origin}/portal/login.html`;
+
+  const { error } = await window.sb.auth.resetPasswordForEmail(email, {
+    redirectTo
+  });
+
+  if (error) {
+    setMsg(error.message);
+    return;
+  }
+
+  setMsg("Reset link sent. Check your email.");
+}
+
+(async function init() {
+  try {
+    await redirectIfAlreadyLoggedIn();
+  } catch (e) {
+    console.warn(e.message);
+  }
+
+  const btnLogin = qs("btnLogin");
+  const btnReset = qs("btnReset");
+
+  if (btnLogin) btnLogin.onclick = doLogin;
+  if (btnReset) btnReset.onclick = sendReset;
+
+  // Enter key triggers login
+  const pwd = qs("password");
+  if (pwd) {
+    pwd.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") doLogin();
+    });
+  }
 })();
