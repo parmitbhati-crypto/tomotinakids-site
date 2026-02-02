@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registrations</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body>
+  <div class="container">
+
+    <div class="topbar">
+      <div class="brand">
+        <img src="/assets/images/logo.png" class="top-logo" />
+        <div class="brand-text">
+          <div class="brand-title">Tomotina Kids</div>
+          <div class="brand-sub">Registrations</div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <a href="/portal/admin.html">Create Schedule</a>
+        <a href="/portal/session-history.html">Session History</a>
+        <a class="active" href="/portal/registrations.html">Registrations</a>
+      </div>
+
+      <button id="btnLogout" class="btn danger">Logout</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 class="h2">Registrations</h2>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Parent Name</th>
+              <th>Student Name</th>
+              <th>Program</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="4" class="muted">No registrations yet</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+
+  <script>
+    (async function () {
+      const user = await requireAuth();
+      if (!user) return;
+
+      const profile = await getMyProfile();
+      if (profile?.role !== "admin") {
+        window.location.href = "/portal/day.html";
+        return;
+      }
+
+      document.getElementById("btnLogout").onclick = logout;
+    })();
+  </script>
+</body>
+</html>
