@@ -107,19 +107,25 @@
       const st = new Date(s.starts_at);
       const en = new Date(s.ends_at);
 
-      const updates = Array.isArray(s.session_updates)
-        ? s.session_updates
-        : [];
+      // ✅ FINAL FIX: normalize session_updates
+      let updates = [];
 
-      console.log(`📝 Updates for session ${s.id}:`, updates);
+      if (Array.isArray(s.session_updates)) {
+        updates = s.session_updates;
+      } else if (s.session_updates && typeof s.session_updates === "object") {
+        // Supabase returns a single object for 1–1 rows
+        updates = [s.session_updates];
+      }
+
+      console.log(`📝 Normalized updates for session ${s.id}:`, updates);
 
       const upd = updates.length
         ? updates
             .slice()
             .sort(
               (a, b) =>
-                new Date(b.updated_at).getTime() -
-                new Date(a.updated_at).getTime()
+                new Date(b.updated_at || 0).getTime() -
+                new Date(a.updated_at || 0).getTime()
             )[0]
         : null;
 
