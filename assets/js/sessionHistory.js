@@ -8,7 +8,6 @@
   if (!user) return;
 
   await showAdminNavIfAdmin();
-  document.getElementById("btnLogout").onclick = logout;
 
   const studentSelect = document.getElementById("studentSelect");
   const container = document.getElementById("historyContainer");
@@ -90,7 +89,6 @@
     }
 
     if (!data || data.length === 0) {
-      console.warn("⚠️ No sessions returned for student", studentId);
       container.innerHTML =
         `<div class="msg" data-type="info">No sessions found.</div>`;
       return;
@@ -107,13 +105,11 @@
       const st = new Date(s.starts_at);
       const en = new Date(s.ends_at);
 
-      // ✅ FINAL FIX: normalize session_updates
+      /* ✅ Normalize session_updates */
       let updates = [];
-
       if (Array.isArray(s.session_updates)) {
         updates = s.session_updates;
       } else if (s.session_updates && typeof s.session_updates === "object") {
-        // Supabase returns a single object for 1–1 rows
         updates = [s.session_updates];
       }
 

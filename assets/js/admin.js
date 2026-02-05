@@ -285,7 +285,7 @@ function clearForm() {
   const ok = await requireAdmin();
   if (!ok) return;
 
-  qs("btnLogout").onclick = logout;
+  //qs("btnLogout").onclick = logout;
 
   qs("dateInput").value = todayYmd();
   qs("startTime").value = "10:00";

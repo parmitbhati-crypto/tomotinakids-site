@@ -1,5 +1,13 @@
-function getQueryParam(name) {
-  return new URLSearchParams(window.location.href).get(name);
+/* =========================
+   Helpers
+========================= */
+function getSessionIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return (
+    params.get("session") ||
+    params.get("session_id") ||
+    params.get("id")
+  );
 }
 
 function setInlineMsg(el, text, type = "info") {
@@ -12,6 +20,9 @@ function setInlineMsg(el, text, type = "info") {
 let isSaving = false;
 let sessionCompleted = false;
 
+/* =========================
+   MAIN
+========================= */
 (async function () {
   const user = await requireAuth();
   if (!user) return;
@@ -26,7 +37,12 @@ let sessionCompleted = false;
   document.getElementById("programs").textContent =
     "Programs: " + (programs.length ? programs.join(", ") : "—");
 
-  const sessionId = getQueryParam("session");
+  /* =========================
+     SESSION ID (FIXED)
+  ========================= */
+  const sessionId = getSessionIdFromUrl();
+  console.log("📌 Session ID from URL:", sessionId);
+
   if (!sessionId) {
     document.getElementById("sessionInfo").innerHTML =
       `<div class="msg" data-type="error">Missing session id.</div>`;
@@ -46,9 +62,9 @@ let sessionCompleted = false;
     .eq("id", sessionId)
     .single();
 
-  if (sessErr) {
+  if (sessErr || !session) {
     document.getElementById("sessionInfo").innerHTML =
-      `<div class="msg" data-type="error">${sessErr.message}</div>`;
+      `<div class="msg" data-type="error">${sessErr?.message || "Session not found"}</div>`;
     return;
   }
 
@@ -58,7 +74,8 @@ let sessionCompleted = false;
     return;
   }
 
-  sessionCompleted = session.status === "completed" || session.status === "cancelled";
+  sessionCompleted =
+    session.status === "completed" || session.status === "cancelled";
 
   const st = new Date(session.starts_at);
   const en = new Date(session.ends_at);
@@ -69,8 +86,13 @@ let sessionCompleted = false;
 
   document.getElementById("sessionInfo").innerHTML = `
     <div><strong>${session.students?.full_name || "Student"}</strong></div>
-    <div class="muted">${fmtDate(st)} • ${toTimeLabel(st)}–${toTimeLabel(en)} ${session.location ? "• " + session.location : ""}</div>
-    <div class="muted">${progNames.length ? "Programs: " + progNames.join(", ") : ""}</div>
+    <div class="muted">
+      ${fmtDate(st)} • ${toTimeLabel(st)}–${toTimeLabel(en)}
+      ${session.location ? "• " + session.location : ""}
+    </div>
+    <div class="muted">
+      ${progNames.length ? "Programs: " + progNames.join(", ") : ""}
+    </div>
   `;
 
   /* =========================
@@ -82,9 +104,11 @@ let sessionCompleted = false;
     .order("full_name");
 
   const sel = document.getElementById("studentSelect");
-  sel.innerHTML = students.map(s => `<option value="${s.id}">${s.full_name}</option>`).join("");
+  sel.innerHTML = students
+    .map(s => `<option value="${s.id}">${s.full_name}</option>`)
+    .join("");
   sel.value = session.student_id;
-  sel.disabled = true; // teacher should not change student
+  sel.disabled = true;
 
   /* =========================
      LOAD EXISTING UPDATE
@@ -102,7 +126,7 @@ let sessionCompleted = false;
   }
 
   /* =========================
-     LOCK UI IF COMPLETED
+     LOCK IF COMPLETED
   ========================= */
   if (sessionCompleted) {
     lockTeacherUI();
@@ -146,7 +170,7 @@ let sessionCompleted = false;
 
       if (updErr) throw updErr;
 
-      /* ✅ AUTO-COMPLETE SESSION */
+      // ✅ Auto-complete session
       await sb
         .from("sessions")
         .update({ status: "completed" })
@@ -157,9 +181,10 @@ let sessionCompleted = false;
       lockTeacherUI();
 
       setInlineMsg(msg, "Session completed ✅", "success");
+
       setTimeout(() => {
-      window.location.href = "/portal/day.html";
-    }, 1500);
+        window.location.href = "/portal/day.html";
+      }, 1500);
 
     } catch (e) {
       setInlineMsg(msg, e.message || "Save failed", "error");
@@ -172,15 +197,10 @@ let sessionCompleted = false;
 })();
 
 /* =========================
-   LOCK TEACHER UI
+   LOCK UI
 ========================= */
 function lockTeacherUI() {
-  [
-    "attendance",
-    "progress",
-    "remarks",
-    "btnSave"
-  ].forEach(id => {
+  ["attendance", "progress", "remarks", "btnSave"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.disabled = true;
   });
