@@ -15,17 +15,14 @@
     return;
   }
 
-  /* --------------------------------------------------
-   * Load students
-   * -------------------------------------------------- */
+  /* ---------------- Load students ---------------- */
   const { data: students, error: studentErr } = await window.sb
     .from("students")
     .select("id, full_name")
     .order("full_name");
 
   if (studentErr) {
-    container.innerHTML =
-      `<div class="msg" data-type="error">${studentErr.message}</div>`;
+    container.innerHTML = `<div class="msg" data-type="error">${studentErr.message}</div>`;
     return;
   }
 
@@ -36,12 +33,9 @@
   container.innerHTML =
     `<div class="msg" data-type="info">Select a student to view session history.</div>`;
 
-  /* --------------------------------------------------
-   * Student selection
-   * -------------------------------------------------- */
+  /* ---------------- Student selection ---------------- */
   studentSelect.addEventListener("change", async () => {
     const studentId = studentSelect.value;
-
     if (!studentId) {
       container.innerHTML =
         `<div class="msg" data-type="info">Select a student to view session history.</div>`;
@@ -50,10 +44,7 @@
 
     container.textContent = "Loading session history…";
 
-    /* --------------------------------------------------
-     * Fetch sessions + program + latest session update
-     * IMPORTANT: explicit FK for programs
-     * -------------------------------------------------- */
+    /* ---------------- Fetch sessions ---------------- */
     const { data, error } = await window.sb
       .from("sessions")
       .select(`
@@ -61,7 +52,9 @@
         starts_at,
         ends_at,
         teacher:profiles(full_name),
-        program:programs!sessions_program_id_fkey(name),
+        session_programs (
+          programs(name)
+        ),
         session_updates (
           attendance,
           progress_score,
@@ -70,35 +63,41 @@
         )
       `)
       .eq("student_id", studentId)
-      .order("starts_at", { ascending: false })
-      .order("updated_at", { foreignTable: "session_updates", ascending: false })
-      .limit(1, { foreignTable: "session_updates" });
+      .order("starts_at", { ascending: false });
 
     if (error) {
-      container.innerHTML =
-        `<div class="msg" data-type="error">${error.message}</div>`;
+      container.innerHTML = `<div class="msg" data-type="error">${error.message}</div>`;
       return;
     }
 
     if (!data || data.length === 0) {
-      container.innerHTML =
-        `<div class="msg" data-type="info">No sessions found.</div>`;
+      container.innerHTML = `<div class="msg" data-type="info">No sessions found.</div>`;
       return;
     }
 
-    /* --------------------------------------------------
-     * Render session cards
-     * -------------------------------------------------- */
+    /* ---------------- Render cards ---------------- */
     let html = `<div class="session-history">`;
 
     data.forEach(s => {
       const st = new Date(s.starts_at);
       const en = new Date(s.ends_at);
 
-      const upd =
-        Array.isArray(s.session_updates) && s.session_updates.length
-          ? s.session_updates[0]
-          : null;
+      // Programs (many-to-many)
+      const programs = (s.session_programs || [])
+        .map(x => x.programs?.name)
+        .filter(Boolean);
+
+      const programText = programs.length
+        ? programs.join(", ")
+        : "No program";
+
+      // Latest update
+      let upd = null;
+      if (Array.isArray(s.session_updates) && s.session_updates.length) {
+        upd = s.session_updates
+          .slice()
+          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
+      }
 
       html += `
         <div class="session-card">
@@ -113,7 +112,7 @@
 
           <div class="session-meta">
             <span class="badge">👩‍🏫 ${s.teacher?.full_name ?? "—"}</span>
-            <span class="badge">📘 ${s.program?.name ?? "No program"}</span>
+            <span class="badge">📘 ${programText}</span>
           </div>
 
           <div class="session-details">
