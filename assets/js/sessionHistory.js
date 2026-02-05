@@ -52,6 +52,7 @@
 
     /* --------------------------------------------------
      * Fetch sessions + program + latest session update
+     * IMPORTANT: explicit FK for programs
      * -------------------------------------------------- */
     const { data, error } = await window.sb
       .from("sessions")
@@ -60,7 +61,7 @@
         starts_at,
         ends_at,
         teacher:profiles(full_name),
-        program:programs(name),
+        program:programs!sessions_program_id_fkey(name),
         session_updates (
           attendance,
           progress_score,
@@ -86,23 +87,9 @@
     }
 
     /* --------------------------------------------------
-     * Render table
+     * Render session cards
      * -------------------------------------------------- */
-    let html = `
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Teacher</th>
-            <th>Program</th>
-            <th>Attendance</th>
-            <th>Progress</th>
-            <th>Remarks</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
+    let html = `<div class="session-history">`;
 
     data.forEach(s => {
       const st = new Date(s.starts_at);
@@ -111,26 +98,45 @@
       const upd =
         Array.isArray(s.session_updates) && s.session_updates.length
           ? s.session_updates[0]
-          : {};
+          : null;
 
       html += `
-        <tr>
-          <td>${fmtDate(st)}</td>
-          <td>${toTimeLabel(st)} – ${toTimeLabel(en)}</td>
-          <td>${s.teacher?.full_name ?? "—"}</td>
-          <td>${s.program?.name ?? "—"}</td>
-          <td>${upd.attendance ?? "—"}</td>
-          <td>${upd.progress_score ?? "—"}</td>
-          <td>${upd.remarks ?? "—"}</td>
-        </tr>
+        <div class="session-card">
+          <div class="session-card-header">
+            <div>
+              <div class="session-date">${fmtDate(st)}</div>
+              <div class="session-time">
+                ${toTimeLabel(st)} – ${toTimeLabel(en)}
+              </div>
+            </div>
+          </div>
+
+          <div class="session-meta">
+            <span class="badge">👩‍🏫 ${s.teacher?.full_name ?? "—"}</span>
+            <span class="badge">📘 ${s.program?.name ?? "No program"}</span>
+          </div>
+
+          <div class="session-details">
+            <div class="session-detail">
+              <strong>Attendance</strong>
+              ${upd?.attendance ?? `<span class="session-empty">Not marked</span>`}
+            </div>
+
+            <div class="session-detail">
+              <strong>Progress</strong>
+              ${upd?.progress_score ?? `<span class="session-empty">—</span>`}
+            </div>
+
+            <div class="session-detail">
+              <strong>Remarks</strong>
+              ${upd?.remarks ?? `<span class="session-empty">No remarks</span>`}
+            </div>
+          </div>
+        </div>
       `;
     });
 
-    html += `
-        </tbody>
-      </table>
-    `;
-
+    html += `</div>`;
     container.innerHTML = html;
   });
 })();

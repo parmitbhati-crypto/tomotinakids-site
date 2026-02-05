@@ -546,3 +546,76 @@ hr{border:0; border-top:1px solid rgba(15,23,42,.10); margin:14px 0}
   border-color: rgba(249,115,22,.38);
   box-shadow: 0 0 0 3px rgba(249,115,22,.14) inset;
 }
+
+
+/* session history*/
+/* ===== Session History Cards ===== */
+.session-history{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.session-card{
+  border:1px solid rgba(15,23,42,.10);
+  border-radius:18px;
+  background: rgba(255,255,255,.92);
+  padding:14px 16px;
+  box-shadow: 0 10px 22px rgba(2,6,23,.08);
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.session-card:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px rgba(2,6,23,.12);
+  border-color: rgba(37,99,235,.18);
+}
+
+.session-card-header{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 14px;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.session-date{
+  font-weight:900;
+  font-size:14px;
+}
+.session-time{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.session-meta{
+  margin-top:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.session-meta .badge{
+  font-size:11px;
+}
+
+.session-details{
+  margin-top:10px;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap:10px;
+}
+
+.session-detail{
+  font-size:13px;
+}
+.session-detail strong{
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:2px;
+}
+
+.session-empty{
+  font-style:italic;
+  color:var(--muted);
+}
