@@ -35,7 +35,7 @@ async function redirectIfAlreadyLoggedIn() {
   if (error || !profile?.role) return;
 
   if (profile.role === "admin") {
-    window.location.href = "/portal/admin.html";
+    window.location.href = "/portal/admin-home.html";
   } else {
     window.location.href = "/portal/day.html";
   }
@@ -77,7 +77,7 @@ async function doLogin() {
 
   // ✅ ROLE-BASED LANDING
   if (profile.role === "admin") {
-    window.location.href = "/portal/admin.html";
+    window.location.href = "/portal/admin-home.html";
   } else {
     window.location.href = "/portal/day.html";
   }

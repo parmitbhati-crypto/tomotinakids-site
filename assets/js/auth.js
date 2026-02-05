@@ -44,7 +44,7 @@ async function requireAuth() {
   ];
 
   const adminPages = [
-    "/portal/admin.html",
+    "/portal/admin-home.html",
     "/portal/session-history.html",
     "/portal/registrations.html"
   ];
@@ -64,7 +64,7 @@ async function requireAuth() {
 
   // Admins should not stay on login page
   if (role === "admin" && isLoginPage) {
-    window.location.href = "/portal/admin.html";
+    window.location.href = "/portal/admin-home.html";
     return null;
   }
 

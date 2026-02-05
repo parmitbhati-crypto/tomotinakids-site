@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body>
+  <div class="container">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="brand">
+        <img src="/assets/images/logo.png" class="top-logo" />
+        <div class="brand-text">
+          <div class="brand-title">Tomotina Kids</div>
+          <div class="brand-sub">Admin Dashboard</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="grid" style="margin-top:28px;">
+      <div class="card">
+        <h2 class="h2">Welcome, <span id="who">Admin</span></h2>
+        <div class="muted">Choose what you want to manage</div>
+
+        <div class="dashboard-tiles" style="margin-top:18px;">
+
+          <a href="/portal/admin.html" class="dashboard-tile">
+            <div class="tile-icon">📅</div>
+            <div class="tile-title">Create Schedule</div>
+            <div class="tile-desc">Schedule new therapy sessions</div>
+          </a>
+
+          <a href="/portal/session-history.html" class="dashboard-tile">
+            <div class="tile-icon">📖</div>
+            <div class="tile-title">Session History</div>
+            <div class="tile-desc">View attendance & progress</div>
+          </a>
+
+          <a href="/portal/registrations.html" class="dashboard-tile">
+            <div class="tile-icon">🧾</div>
+            <div class="tile-title">Registrations</div>
+            <div class="tile-desc">View student registrations</div>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <div class="card" style="margin-top:10px;">
+        <button id="btnLogout" class="btn danger" style="width:100%;">
+          Logout
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin-home.js"></script>
+</body>
+</html>

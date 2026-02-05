@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Session</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body>
+  <div class="container">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="brand">
+        <img src="/assets/images/logo.png" class="top-logo" />
+        <div class="brand-text">
+          <div class="brand-title">Tomotina Kids</div>
+          <div class="brand-sub">Edit Session</div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <a href="/portal/admin-home.html">Dashboard</a>
+        <a href="/portal/admin.html">Create Schedule</a>
+        <a href="/portal/session-history.html">Session History</a>
+      </div>
+
+      <button id="btnLogout" class="btn danger">Logout</button>
+    </div>
+
+    <!-- Content -->
+    <div class="grid">
+      <div class="card">
+        <h2 class="h2">Edit Scheduled Session</h2>
+        <div class="kv" style="margin-bottom:10px;">
+          <span class="badge" id="studentName">Student: —</span>
+          <span class="badge" id="teacherName">Teacher: —</span>
+        </div>
+
+        <hr />
+
+        <div class="fieldrow">
+          <div>
+            <label>Date</label>
+            <input id="dateInput" type="date" />
+          </div>
+          <div>
+            <label>Location</label>
+            <input id="locationInput" type="text" />
+          </div>
+        </div>
+
+        <div class="fieldrow" style="margin-top:10px;">
+          <div>
+            <label>Start Time</label>
+            <input id="startTime" type="time" />
+          </div>
+          <div>
+            <label>End Time</label>
+            <input id="endTime" type="time" />
+          </div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label>Programs / Classes</label>
+          <select id="programSelect" multiple size="6"></select>
+        </div>
+
+        <div class="row" style="margin-top:16px;">
+          <button id="btnSave" class="btn primary">Save Changes</button>
+          <button id="btnCancel" class="btn">Back</button>
+          <div id="msg" class="muted right"></div>
+        </div>
+
+        <div class="row">
+        <button id="btnReschedule" class="btn">Reschedule</button>
+        <button id="btnCancelSession" class="btn danger">Cancel Session</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/admin-session-edit.js"></script>
+</body>
+</html>

@@ -619,3 +619,44 @@ hr{border:0; border-top:1px solid rgba(15,23,42,.10); margin:14px 0}
   font-style:italic;
   color:var(--muted);
 }
+
+/* ===== Admin Dashboard Tiles ===== */
+.dashboard-tiles{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap:16px;
+}
+
+.dashboard-tile{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:22px;
+  border-radius:20px;
+  border:1px solid rgba(15,23,42,.10);
+  background: linear-gradient(180deg, rgba(37,99,235,.10), rgba(255,255,255,.9));
+  box-shadow: var(--shadow2);
+  text-decoration:none;
+  color:inherit;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.dashboard-tile:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 20px 42px rgba(2,6,23,.14);
+  border-color: rgba(37,99,235,.28);
+}
+
+.tile-icon{
+  font-size:28px;
+}
+
+.tile-title{
+  font-weight:900;
+  font-size:16px;
+}
+
+.tile-desc{
+  font-size:13px;
+  color:var(--muted);
+}
