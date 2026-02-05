@@ -1,7 +1,10 @@
 // assets/js/sessionHistory.js
 
 (async function () {
+  console.log("🚀 sessionHistory.js loaded");
+
   const user = await requireAuth();
+  console.log("👤 Auth user:", user);
   if (!user) return;
 
   await showAdminNavIfAdmin();
@@ -11,7 +14,7 @@
   const container = document.getElementById("historyContainer");
 
   if (!studentSelect || !container) {
-    console.error("Missing DOM elements");
+    console.error("❌ Missing DOM elements", { studentSelect, container });
     return;
   }
 
@@ -23,8 +26,11 @@
     .select("id, full_name")
     .order("full_name");
 
+  console.log("📚 Students:", students, "Error:", studentErr);
+
   if (studentErr) {
-    container.innerHTML = `<div class="msg" data-type="error">${studentErr.message}</div>`;
+    container.innerHTML =
+      `<div class="msg" data-type="error">${studentErr.message}</div>`;
     return;
   }
 
@@ -40,6 +46,7 @@
    * ----------------------------- */
   studentSelect.addEventListener("change", async () => {
     const studentId = studentSelect.value;
+    console.log("🎯 Selected studentId:", studentId);
 
     if (!studentId) {
       container.innerHTML =
@@ -50,17 +57,19 @@
     container.textContent = "Loading session history…";
 
     /* -----------------------------
-     * Fetch sessions + programs + ALL updates
-     * (NO foreign-table limit — critical)
+     * Fetch sessions
      * ----------------------------- */
     const { data, error } = await window.sb
       .from("sessions")
       .select(`
         id,
+        student_id,
         starts_at,
         ends_at,
         teacher:profiles(full_name),
-        session_programs(programs(name)),
+        session_programs(
+          programs(name)
+        ),
         session_updates(
           attendance,
           progress_score,
@@ -71,6 +80,9 @@
       .eq("student_id", studentId)
       .order("starts_at", { ascending: false });
 
+    console.log("🗓 Sessions query result:", data);
+    console.log("❗ Sessions query error:", error);
+
     if (error) {
       container.innerHTML =
         `<div class="msg" data-type="error">${error.message}</div>`;
@@ -78,6 +90,7 @@
     }
 
     if (!data || data.length === 0) {
+      console.warn("⚠️ No sessions returned for student", studentId);
       container.innerHTML =
         `<div class="msg" data-type="info">No sessions found.</div>`;
       return;
@@ -88,21 +101,27 @@
      * ----------------------------- */
     let html = `<div class="session-history">`;
 
-    data.forEach(s => {
+    data.forEach((s, index) => {
+      console.log(`📌 Session[${index}] raw:`, s);
+
       const st = new Date(s.starts_at);
       const en = new Date(s.ends_at);
 
-      // Pick LATEST update in JS (safe + reliable)
-      const upd =
-        Array.isArray(s.session_updates) && s.session_updates.length
-          ? s.session_updates
-              .slice()
-              .sort(
-                (a, b) =>
-                  new Date(b.updated_at).getTime() -
-                  new Date(a.updated_at).getTime()
-              )[0]
-          : null;
+      const updates = Array.isArray(s.session_updates)
+        ? s.session_updates
+        : [];
+
+      console.log(`📝 Updates for session ${s.id}:`, updates);
+
+      const upd = updates.length
+        ? updates
+            .slice()
+            .sort(
+              (a, b) =>
+                new Date(b.updated_at).getTime() -
+                new Date(a.updated_at).getTime()
+            )[0]
+        : null;
 
       const programs = (s.session_programs || [])
         .map(p => p.programs?.name)
