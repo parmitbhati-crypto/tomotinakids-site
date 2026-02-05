@@ -11,11 +11,13 @@
   const container = document.getElementById("historyContainer");
 
   if (!studentSelect || !container) {
-    console.error("Required DOM elements missing");
+    console.error("Missing DOM elements");
     return;
   }
 
-  /* ---------------- Load students ---------------- */
+  /* -----------------------------
+   * Load students
+   * ----------------------------- */
   const { data: students, error: studentErr } = await window.sb
     .from("students")
     .select("id, full_name")
@@ -33,9 +35,12 @@
   container.innerHTML =
     `<div class="msg" data-type="info">Select a student to view session history.</div>`;
 
-  /* ---------------- Student selection ---------------- */
+  /* -----------------------------
+   * Student selection
+   * ----------------------------- */
   studentSelect.addEventListener("change", async () => {
     const studentId = studentSelect.value;
+
     if (!studentId) {
       container.innerHTML =
         `<div class="msg" data-type="info">Select a student to view session history.</div>`;
@@ -44,7 +49,10 @@
 
     container.textContent = "Loading session history…";
 
-    /* ---------------- Fetch sessions ---------------- */
+    /* -----------------------------
+     * Fetch sessions + programs + ALL updates
+     * (NO foreign-table limit — critical)
+     * ----------------------------- */
     const { data, error } = await window.sb
       .from("sessions")
       .select(`
@@ -52,10 +60,8 @@
         starts_at,
         ends_at,
         teacher:profiles(full_name),
-        session_programs (
-          programs(name)
-        ),
-        session_updates (
+        session_programs(programs(name)),
+        session_updates(
           attendance,
           progress_score,
           remarks,
@@ -66,38 +72,41 @@
       .order("starts_at", { ascending: false });
 
     if (error) {
-      container.innerHTML = `<div class="msg" data-type="error">${error.message}</div>`;
+      container.innerHTML =
+        `<div class="msg" data-type="error">${error.message}</div>`;
       return;
     }
 
     if (!data || data.length === 0) {
-      container.innerHTML = `<div class="msg" data-type="info">No sessions found.</div>`;
+      container.innerHTML =
+        `<div class="msg" data-type="info">No sessions found.</div>`;
       return;
     }
 
-    /* ---------------- Render cards ---------------- */
+    /* -----------------------------
+     * Render cards
+     * ----------------------------- */
     let html = `<div class="session-history">`;
 
     data.forEach(s => {
       const st = new Date(s.starts_at);
       const en = new Date(s.ends_at);
 
-      // Programs (many-to-many)
+      // Pick LATEST update in JS (safe + reliable)
+      const upd =
+        Array.isArray(s.session_updates) && s.session_updates.length
+          ? s.session_updates
+              .slice()
+              .sort(
+                (a, b) =>
+                  new Date(b.updated_at).getTime() -
+                  new Date(a.updated_at).getTime()
+              )[0]
+          : null;
+
       const programs = (s.session_programs || [])
-        .map(x => x.programs?.name)
+        .map(p => p.programs?.name)
         .filter(Boolean);
-
-      const programText = programs.length
-        ? programs.join(", ")
-        : "No program";
-
-      // Latest update
-      let upd = null;
-      if (Array.isArray(s.session_updates) && s.session_updates.length) {
-        upd = s.session_updates
-          .slice()
-          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
-      }
 
       html += `
         <div class="session-card">
@@ -112,7 +121,7 @@
 
           <div class="session-meta">
             <span class="badge">👩‍🏫 ${s.teacher?.full_name ?? "—"}</span>
-            <span class="badge">📘 ${programText}</span>
+            <span class="badge">📘 ${programs.length ? programs.join(", ") : "No program"}</span>
           </div>
 
           <div class="session-details">

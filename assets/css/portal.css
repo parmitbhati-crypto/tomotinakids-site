@@ -660,3 +660,28 @@ hr{border:0; border-top:1px solid rgba(15,23,42,.10); margin:14px 0}
   font-size:13px;
   color:var(--muted);
 }
+
+
+/* Clear disabled state */
+input:disabled,
+select:disabled,
+textarea:disabled,
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  background: rgba(15,23,42,.04);
+}
+.btn.completed {
+  background: rgba(22,163,74,.12);
+  border-color: rgba(22,163,74,.35);
+  color: #14532d;
+  font-weight: 900;
+}
+.msg[data-type="success"] {
+  animation: pop-in 0.25s ease-out;
+}
+
+@keyframes pop-in {
+  from { transform: scale(.96); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
