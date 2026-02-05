@@ -15,9 +15,9 @@
     return;
   }
 
-  // -----------------------------
-  // Load students
-  // -----------------------------
+  /* --------------------------------------------------
+   * Load students
+   * -------------------------------------------------- */
   const { data: students, error: studentErr } = await window.sb
     .from("students")
     .select("id, full_name")
@@ -36,9 +36,9 @@
   container.innerHTML =
     `<div class="msg" data-type="info">Select a student to view session history.</div>`;
 
-  // -----------------------------
-  // Student selection
-  // -----------------------------
+  /* --------------------------------------------------
+   * Student selection
+   * -------------------------------------------------- */
   studentSelect.addEventListener("change", async () => {
     const studentId = studentSelect.value;
 
@@ -50,21 +50,28 @@
 
     container.textContent = "Loading session history…";
 
+    /* --------------------------------------------------
+     * Fetch sessions + program + latest session update
+     * -------------------------------------------------- */
     const { data, error } = await window.sb
       .from("sessions")
       .select(`
+        id,
         starts_at,
         ends_at,
         teacher:profiles(full_name),
+        program:programs(name),
         session_updates (
           attendance,
           progress_score,
-          remarks
+          remarks,
+          updated_at
         )
       `)
       .eq("student_id", studentId)
       .order("starts_at", { ascending: false })
-      .order("updated_at", { foreignTable: "session_updates", ascending: false });
+      .order("updated_at", { foreignTable: "session_updates", ascending: false })
+      .limit(1, { foreignTable: "session_updates" });
 
     if (error) {
       container.innerHTML =
@@ -78,9 +85,9 @@
       return;
     }
 
-    // -----------------------------
-    // Render table
-    // -----------------------------
+    /* --------------------------------------------------
+     * Render table
+     * -------------------------------------------------- */
     let html = `
       <table class="data-table">
         <thead>
@@ -88,6 +95,7 @@
             <th>Date</th>
             <th>Time</th>
             <th>Teacher</th>
+            <th>Program</th>
             <th>Attendance</th>
             <th>Progress</th>
             <th>Remarks</th>
@@ -99,16 +107,18 @@
     data.forEach(s => {
       const st = new Date(s.starts_at);
       const en = new Date(s.ends_at);
-      const upd = Array.isArray(s.session_updates) && s.session_updates.length
-  ? s.session_updates[0]
-  : {};
 
+      const upd =
+        Array.isArray(s.session_updates) && s.session_updates.length
+          ? s.session_updates[0]
+          : {};
 
       html += `
         <tr>
           <td>${fmtDate(st)}</td>
           <td>${toTimeLabel(st)} – ${toTimeLabel(en)}</td>
           <td>${s.teacher?.full_name ?? "—"}</td>
+          <td>${s.program?.name ?? "—"}</td>
           <td>${upd.attendance ?? "—"}</td>
           <td>${upd.progress_score ?? "—"}</td>
           <td>${upd.remarks ?? "—"}</td>
@@ -116,7 +126,11 @@
       `;
     });
 
-    html += `</tbody></table>`;
+    html += `
+        </tbody>
+      </table>
+    `;
+
     container.innerHTML = html;
   });
 })();
