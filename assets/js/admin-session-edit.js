@@ -212,7 +212,7 @@ async function cancelSession() {
 (async function init() {
   await requireAdminEdit();
 
-  qs("btnLogout").onclick = logout;
+ // qs("btnLogout").onclick = logout;
   qs("btnCancel").onclick = () => history.back();
 
   qs("btnSave").onclick = () => saveChanges(false);
