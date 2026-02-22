@@ -1,6 +1,9 @@
 // Tomotina Kids - basic site interactions
 
 (function () {
+  // Mark JS enabled (prevents reveal hiding content if JS fails)
+  document.documentElement.classList.add('js');
+
   const hamburger = document.querySelector('[data-hamburger]');
   const mobilePanel = document.querySelector('[data-mobile-panel]');
 
@@ -20,10 +23,10 @@
   }
 
   // Active nav link based on current page
-  const path = window.location.pathname.split('/').pop() || 'index.html';
+  const current = (window.location.pathname.split('/').pop() || 'index.html').split('?')[0];
   document.querySelectorAll('.nav-links a').forEach(link => {
-    const href = link.getAttribute('href');
-    if (href === path) link.classList.add('active');
+    const href = (link.getAttribute('href') || '').split('?')[0];
+    if (href === current) link.classList.add('active');
   });
 
   // Hero carousel (auto + dots)
@@ -49,6 +52,7 @@
     };
 
     const goTo = (next) => {
+      if (!slides.length) return;
       idx = (next + slides.length) % slides.length;
       track.style.transform = `translateX(-${idx * 100}%)`;
       dotsWrap?.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
@@ -74,18 +78,25 @@
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
   }
 
-  // Scroll reveal (subtle premium motion)
+  // Scroll reveal (subtle premium motion) — bulletproof fallback
   const revealEls = Array.from(document.querySelectorAll('.card, .hero-card, .hero-side, .cta-wrap, .page-hero-card'));
   revealEls.forEach(el => el.classList.add('reveal'));
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-  revealEls.forEach(el => io.observe(el));
+
+  if (!('IntersectionObserver' in window)) {
+    // Fallback: show everything (prevents blank/white sections)
+    revealEls.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+    revealEls.forEach(el => io.observe(el));
+  }
 
   // Mobile contact bar: hide on scroll down, show on scroll up
   const mcb = document.querySelector('.mobile-contact-bar');
@@ -101,7 +112,6 @@
       lastY = y;
     }, { passive: true });
   }
-
 
   // Testimonials slider (home)
   const tRoot = document.querySelector('[data-testimonials]');
@@ -119,8 +129,11 @@
     const goTo = (i) => {
       if (!cards.length) return;
       tIdx = (i + cards.length) % cards.length;
-      const cardWidth = cards[0].getBoundingClientRect().width + 16; // gap
-      track.scrollTo({ left: tIdx * cardWidth, behavior: prefersReduced ? 'auto' : 'smooth' });
+
+      // More robust than hardcoding gap: use actual offsetLeft
+      const left = cards[tIdx].offsetLeft;
+      track.scrollTo({ left, behavior: prefersReduced ? 'auto' : 'smooth' });
+
       dotsWrap?.querySelectorAll('.t-dot').forEach((d, di) => d.classList.toggle('active', di === tIdx));
     };
 
@@ -197,6 +210,7 @@
       if (openIndex >= 0) openAt(openIndex);
     });
   }
+
   // Gallery lightbox (simple, dependency-free)
   const gallery = document.querySelector('[data-gallery]');
   if (gallery) {
@@ -211,11 +225,15 @@
       </figure>
     `;
     document.body.appendChild(lb);
+
     const lbImg = lb.querySelector('img');
     const caption = lb.querySelector('figcaption');
     const closeBtn = lb.querySelector('.close');
 
+    let prevOverflow = '';
+
     const open = (src, alt) => {
+      prevOverflow = document.documentElement.style.overflow || '';
       lbImg.src = src;
       lbImg.alt = alt || '';
       caption.textContent = alt || '';
@@ -225,14 +243,17 @@
 
     const close = () => {
       lb.classList.remove('open');
-      document.documentElement.style.overflow = '';
+      document.documentElement.style.overflow = prevOverflow;
       lbImg.src = '';
     };
 
     imgs.forEach(img => {
       img.addEventListener('click', () => open(img.src, img.alt));
       img.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(img.src, img.alt); }
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open(img.src, img.alt);
+        }
       });
       img.tabIndex = 0;
     });
@@ -242,21 +263,23 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('open')) close(); });
   }
 
-
 })();
 
 
 // Enquiry form (UI-only for now; Supabase logging will be added later)
-document.addEventListener('submit', (e) => {
-  const form = e.target;
-  if (!form || !form.matches('[data-enquiry-form]')) return;
-  e.preventDefault();
-  const success = form.querySelector('.form-success');
-  if (success) {
-    success.hidden = false;
-    success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } else {
-    alert('Thanks! We will get back to you shortly.');
-  }
-  form.reset();
-});
+(() => {
+  const form = document.querySelector('[data-enquiry-form]');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const success = form.querySelector('.form-success');
+    if (success) {
+      success.hidden = false;
+      success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      alert('Thanks! We will get back to you shortly.');
+    }
+    form.reset();
+  });
+})();
