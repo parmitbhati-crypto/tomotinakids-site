@@ -75,7 +75,7 @@
   }
 
   // Scroll reveal (subtle premium motion)
-  const revealEls = Array.from(document.querySelectorAll('.card, .hero-card, .hero-side, .cta-wrap, .page-hero'));
+  const revealEls = Array.from(document.querySelectorAll('.card, .hero-card, .hero-side, .cta-wrap, .page-hero-card'));
   revealEls.forEach(el => el.classList.add('reveal'));
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
