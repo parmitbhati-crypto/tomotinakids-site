@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teacher Attendance • Admin</title>
+
+  <link rel="stylesheet" href="../assets/css/portal.css" />
+
+  <script src="../assets/js/env.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabaseClient.js"></script>
+</head>
+<body>
+
+<main class="portal-shell">
+  <header class="portal-header">
+    <div>
+      <h1 class="portal-title">Teacher Attendance</h1>
+      <p class="portal-subtitle">Mark daily attendance. Re-saving the same day updates existing records.</p>
+    </div>
+    <div class="portal-actions">
+      <a class="btn btn-outline" href="./admin-home.html">Back</a>
+      <a class="btn btn-outline" href="./teacher-attendance-history.html">History</a>
+    </div>
+  </header>
+
+  <section class="portal-card">
+    <div class="toolbar">
+      <label style="min-width:220px;">
+        <span style="display:block; font-size:12px; font-weight:800; color:var(--muted); margin-bottom:6px;">Date</span>
+        <input id="datePick" class="input" type="date" />
+      </label>
+
+      <button id="markAllPresent" class="btn btn-outline" type="button">Mark All Present</button>
+      <button id="saveBtn" class="btn btn-primary" type="button">Save Attendance</button>
+      <span id="msg" class="msg" data-type="info" style="display:none;"></span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Teacher</th>
+            <th>Specialization</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="4" class="muted">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+  // ---------- Admin Guard ----------
+  async function requireAdmin() {
+    const { data: { user } } = await window.sb.auth.getUser();
+    if (!user) { window.location.href = "./login.html"; return null; }
+
+    const { data: profile, error } = await window.sb
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (error || !profile || profile.role !== "admin") {
+      alert("Admins only.");
+      window.location.href = "./admin-home.html";
+      return null;
+    }
+    return user;
+  }
+
+  const tbody = document.getElementById("tbody");
+  const datePick = document.getElementById("datePick");
+  const saveBtn = document.getElementById("saveBtn");
+  const markAllPresentBtn = document.getElementById("markAllPresent");
+  const msg = document.getElementById("msg");
+
+  let teachers = [];
+  let existingMap = new Map(); // teacher_id -> {status, notes}
+
+  function showMsg(text, type="info"){
+    msg.style.display = "inline-flex";
+    msg.dataset.type = type;
+    msg.textContent = text;
+    setTimeout(() => { msg.style.display = "none"; }, 3500);
+  }
+
+  function escapeHtml(s=""){
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[c]));
+  }
+
+  function render(){
+    if (!teachers.length) {
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">No teachers found in profiles.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = teachers.map(t => {
+      const existing = existingMap.get(t.id) || {};
+      const status = existing.status || "present";
+      const notes = existing.notes || "";
+
+      return `
+        <tr>
+          <td><strong>${escapeHtml(t.full_name || "")}</strong></td>
+          <td class="muted">${escapeHtml(t.specialization || "")}</td>
+          <td>
+            <select class="select statusSel" data-id="${t.id}">
+              <option value="present" ${status==="present"?"selected":""}>Present</option>
+              <option value="absent" ${status==="absent"?"selected":""}>Absent</option>
+              <option value="late" ${status==="late"?"selected":""}>Late</option>
+              <option value="leave" ${status==="leave"?"selected":""}>On Leave</option>
+            </select>
+          </td>
+          <td>
+            <input class="input noteInp" data-id="${t.id}" placeholder="Optional notes…" value="${escapeHtml(notes)}" />
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  async function loadTeachers(){
+    const { data, error } = await window.sb
+      .from("profiles")
+      .select("id, full_name, specialization, role")
+      .eq("role", "teacher")
+      .order("full_name", { ascending: true });
+
+    if (error) throw error;
+    teachers = data || [];
+  }
+
+  async function loadExistingForDate(dateStr){
+    existingMap = new Map();
+    const { data, error } = await window.sb
+      .from("teacher_attendance")
+      .select("teacher_id, status, notes")
+      .eq("date", dateStr);
+
+    if (error) throw error;
+
+    (data || []).forEach(r => {
+      existingMap.set(r.teacher_id, { status: r.status, notes: r.notes || "" });
+    });
+  }
+
+  function getRowsFromUI(){
+    const rows = [];
+    const dateStr = datePick.value;
+
+    document.querySelectorAll(".statusSel").forEach(sel => {
+      const teacherId = sel.getAttribute("data-id");
+      const status = sel.value;
+
+      const noteEl = document.querySelector(`.noteInp[data-id="${teacherId}"]`);
+      const notes = noteEl ? noteEl.value.trim() : "";
+
+      rows.push({
+        teacher_id: teacherId,
+        date: dateStr,
+        status,
+        notes
+      });
+    });
+
+    return rows;
+  }
+
+  async function saveAttendance(){
+    const dateStr = datePick.value;
+    if (!dateStr) {
+      alert("Please select a date.");
+      return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Saving…";
+
+    try {
+      const rows = getRowsFromUI();
+
+      // UPSERT by unique (teacher_id, date)
+      const { error } = await window.sb
+        .from("teacher_attendance")
+        .upsert(rows, { onConflict: "teacher_id,date" });
+
+      if (error) throw error;
+
+      showMsg("✅ Attendance saved", "success");
+      await loadExistingForDate(dateStr);
+    } catch (e) {
+      console.error(e);
+      showMsg("❌ " + (e.message || "Failed to save"), "error");
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save Attendance";
+    }
+  }
+
+  markAllPresentBtn.addEventListener("click", () => {
+    document.querySelectorAll(".statusSel").forEach(sel => sel.value = "present");
+    showMsg("Marked all as Present (not saved yet).", "info");
+  });
+
+  saveBtn.addEventListener("click", saveAttendance);
+
+  datePick.addEventListener("change", async () => {
+    if (!datePick.value) return;
+    tbody.innerHTML = `<tr><td colspan="4" class="muted">Loading…</td></tr>`;
+    try {
+      await loadExistingForDate(datePick.value);
+      render();
+    } catch (e) {
+      console.error(e);
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">Error: ${escapeHtml(e.message)}</td></tr>`;
+    }
+  });
+
+  (async function init(){
+    await requireAdmin();
+
+    // default today
+    const today = new Date().toISOString().slice(0,10);
+    datePick.value = today;
+
+    try {
+      await loadTeachers();
+      await loadExistingForDate(today);
+      render();
+    } catch (e) {
+      console.error(e);
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">Error: ${escapeHtml(e.message)}</td></tr>`;
+    }
+  })();
+</script>
+</body>
+</html>

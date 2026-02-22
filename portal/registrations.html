@@ -3,70 +3,208 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Registrations</title>
-  <link rel="stylesheet" href="/assets/css/portal.css" />
+  <title>Registrations • Admin</title>
+
+  <link rel="stylesheet" href="../assets/css/portal.css" />
+
+  <!-- Your env + supabase + client bootstrap -->
+  <script src="../assets/js/env.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabaseClient.js"></script>
 </head>
+
 <body>
-  <div class="container">
-
-    <div class="topbar">
-      <div class="brand">
-        <img src="/assets/images/logo.png" class="top-logo" />
-        <div class="brand-text">
-          <div class="brand-title">Tomotina Kids</div>
-          <div class="brand-sub">Registrations</div>
-        </div>
+  <main class="portal-shell">
+    <header class="portal-header">
+      <div>
+        <h1 class="portal-title">Registrations</h1>
+        <p class="portal-subtitle">Create and manage student registrations. Toggle Active/Inactive for scheduling.</p>
       </div>
 
-      <div class="nav">
-        <a href="/portal/admin-home.html">Dashboard</a>
-        <a class="active" href="/portal/registrations.html">Registrations</a>
+      <div class="portal-actions">
+        <a class="btn btn-primary" href="./registration-new.html">+ New Registration</a>
+        <a class="btn btn-outline" href="./admin-home.html">Back</a>
+      </div>
+    </header>
+
+    <section class="portal-card">
+      <div class="toolbar">
+        <input id="q" class="input" placeholder="Search student / parent / phone..." />
+        <select id="statusFilter" class="select">
+          <option value="all">All</option>
+          <option value="active">Active only</option>
+          <option value="inactive">Inactive only</option>
+        </select>
+        <button id="refreshBtn" class="btn btn-outline" type="button">Refresh</button>
       </div>
 
-  
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <h2 class="h2">Registrations</h2>
-
+      <div class="table-wrap">
         <table class="table">
           <thead>
             <tr>
-              <th>Parent Name</th>
-              <th>Student Name</th>
-              <th>Program</th>
-              <th>Status</th>
+              <th>Student</th>
+              <th>Parent</th>
+              <th>Phone</th>
+              <th>Address</th>
+              <th>Reg Date</th>
+              <th>Active</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td colspan="4" class="muted">No registrations yet</td>
-            </tr>
+          <tbody id="tbody">
+            <tr><td colspan="6" class="muted">Loading…</td></tr>
           </tbody>
         </table>
       </div>
-    </div>
-
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/assets/js/env.js"></script>
-  <script src="/assets/js/supabaseClient.js"></script>
-  <script src="/assets/js/auth.js"></script>
+    </section>
+  </main>
 
   <script>
-    (async function () {
-      const user = await requireAuth();
-      if (!user) return;
+    // ---------- Helpers ----------
+    function escapeHtml(s = "") {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[c]));
+    }
 
-      const profile = await getMyProfile();
-      if (profile?.role !== "admin") {
-        window.location.href = "/portal/day.html";
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    // ---------- Auth Guard: Admin only ----------
+    async function requireAdmin() {
+      const { data: { user }, error: userErr } = await window.sb.auth.getUser();
+      if (userErr) console.warn(userErr);
+      if (!user) {
+        window.location.href = "./login.html";
+        return null;
+      }
+
+      const { data: profile, error } = await window.sb
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (error || !profile || profile.role !== "admin") {
+        alert("Admins only.");
+        window.location.href = "./admin-home.html";
+        return null;
+      }
+
+      return user;
+    }
+
+    // ---------- Page Logic ----------
+    const tbody = document.getElementById("tbody");
+    const qInput = document.getElementById("q");
+    const statusFilter = document.getElementById("statusFilter");
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    let allRows = [];
+
+    function render(rows) {
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="muted">No registrations found.</td></tr>`;
         return;
       }
 
-      document.getElementById("btnLogout").onclick = logout;
+      tbody.innerHTML = rows.map(r => {
+        const student = escapeHtml(r.full_name || "");
+        const parent  = escapeHtml(r.parent_name || "");
+        const phone   = escapeHtml(r.parent_phone || "");
+        const addr    = escapeHtml(r.address || "");
+        const regDate = r.registration_date ? new Date(r.registration_date).toLocaleDateString() : "";
+        const checked = r.is_active ? "checked" : "";
+
+        return `
+          <tr>
+            <td>
+              <a class="link" href="./registration-details.html?student_id=${r.id}">
+                ${student}
+              </a>
+            </td>
+            <td>${parent}</td>
+            <td>${phone}</td>
+            <td class="truncate" title="${addr}">${addr}</td>
+            <td>${regDate}</td>
+            <td>
+              <label class="switch">
+                <input data-id="${r.id}" type="checkbox" class="activeToggle" ${checked} />
+                <span class="slider"></span>
+              </label>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".activeToggle").forEach(el => {
+        el.addEventListener("change", async (e) => {
+          const id = e.target.getAttribute("data-id");
+          const is_active = e.target.checked;
+
+          const { error } = await window.sb
+            .from("students")
+            .update({ is_active })
+            .eq("id", id);
+
+          if (error) {
+            alert("Failed to update status: " + error.message);
+            e.target.checked = !is_active;
+          } else {
+            const idx = allRows.findIndex(x => x.id === id);
+            if (idx >= 0) allRows[idx].is_active = is_active;
+            applyFilters();
+          }
+        });
+      });
+    }
+
+    function applyFilters() {
+      const q = (qInput.value || "").toLowerCase().trim();
+      const sf = statusFilter.value;
+
+      let rows = [...allRows];
+
+      if (sf === "active") rows = rows.filter(r => r.is_active === true);
+      if (sf === "inactive") rows = rows.filter(r => r.is_active === false);
+
+      if (q) {
+        rows = rows.filter(r =>
+          (r.full_name || "").toLowerCase().includes(q) ||
+          (r.parent_name || "").toLowerCase().includes(q) ||
+          (r.parent_phone || "").toLowerCase().includes(q) ||
+          (r.address || "").toLowerCase().includes(q)
+        );
+      }
+
+      render(rows);
+    }
+
+    async function load() {
+      tbody.innerHTML = `<tr><td colspan="6" class="muted">Loading…</td></tr>`;
+
+      const { data, error } = await window.sb
+        .from("students")
+        .select("id, full_name, parent_name, parent_phone, address, registration_date, is_active, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        tbody.innerHTML = `<tr><td colspan="6" class="muted">Error: ${escapeHtml(error.message)}</td></tr>`;
+        return;
+      }
+
+      allRows = data || [];
+      applyFilters();
+    }
+
+    qInput.addEventListener("input", applyFilters);
+    statusFilter.addEventListener("change", applyFilters);
+    refreshBtn.addEventListener("click", load);
+
+    (async function init() {
+      await requireAdmin();
+      await load();
     })();
   </script>
 </body>

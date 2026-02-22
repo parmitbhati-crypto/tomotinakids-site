@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Attendance History • Admin</title>
+
+  <link rel="stylesheet" href="../assets/css/portal.css" />
+
+  <script src="../assets/js/env.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabaseClient.js"></script>
+
+  <style>
+    .summary-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .summary-card{
+      border:1px solid rgba(15,23,42,.08);
+      background: rgba(255,255,255,.90);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow2);
+    }
+    .summary-card strong{ font-size: 22px; display:block; }
+    .summary-card span{ color: var(--muted); font-weight: 800; font-size: 12px; letter-spacing:.04em; text-transform: uppercase; }
+    .pill{
+      display:inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(15,23,42,.10);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .pill.present{ border-color: rgba(22,163,74,.25); background: rgba(22,163,74,.08); }
+    .pill.absent{ border-color: rgba(239,68,68,.25); background: rgba(239,68,68,.08); }
+    .pill.late{ border-color: rgba(249,115,22,.28); background: rgba(249,115,22,.10); }
+    .pill.leave{ border-color: rgba(37,99,235,.22); background: rgba(37,99,235,.08); }
+  </style>
+</head>
+
+<body>
+<main class="portal-shell">
+  <header class="portal-header">
+    <div>
+      <h1 class="portal-title">Attendance History</h1>
+      <p class="portal-subtitle">Filter by teacher and month. View summary + daily entries.</p>
+    </div>
+    <div class="portal-actions">
+      <a class="btn btn-outline" href="./teacher-attendance.html">Mark Attendance</a>
+      <a class="btn btn-outline" href="./admin-home.html">Back</a>
+    </div>
+  </header>
+
+  <section class="portal-card">
+    <div class="toolbar">
+      <label style="min-width:240px;">
+        <span style="display:block; font-size:12px; font-weight:800; color:var(--muted); margin-bottom:6px;">Teacher</span>
+        <select id="teacherSel" class="select"></select>
+      </label>
+
+      <label style="min-width:220px;">
+        <span style="display:block; font-size:12px; font-weight:800; color:var(--muted); margin-bottom:6px;">Month</span>
+        <input id="monthPick" class="input" type="month" />
+      </label>
+
+      <button id="loadBtn" class="btn btn-primary" type="button">Load</button>
+      <span id="msg" class="msg" data-type="info" style="display:none;"></span>
+    </div>
+
+    <div class="summary-grid" id="summary" style="display:none;">
+      <div class="summary-card"><strong id="sPresent">0</strong><span>Present</span></div>
+      <div class="summary-card"><strong id="sAbsent">0</strong><span>Absent</span></div>
+      <div class="summary-card"><strong id="sLate">0</strong><span>Late</span></div>
+      <div class="summary-card"><strong id="sLeave">0</strong><span>Leave</span></div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:12px;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Notes</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="4" class="muted">Select teacher + month, then Load.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+  // ---------- Admin Guard ----------
+  async function requireAdmin() {
+    const { data: { user } } = await window.sb.auth.getUser();
+    if (!user) { window.location.href = "./login.html"; return null; }
+
+    const { data: profile, error } = await window.sb
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (error || !profile || profile.role !== "admin") {
+      alert("Admins only.");
+      window.location.href = "./admin-home.html";
+      return null;
+    }
+    return user;
+  }
+
+  const teacherSel = document.getElementById("teacherSel");
+  const monthPick = document.getElementById("monthPick");
+  const loadBtn = document.getElementById("loadBtn");
+  const tbody = document.getElementById("tbody");
+  const msg = document.getElementById("msg");
+
+  const summary = document.getElementById("summary");
+  const sPresent = document.getElementById("sPresent");
+  const sAbsent  = document.getElementById("sAbsent");
+  const sLate    = document.getElementById("sLate");
+  const sLeave   = document.getElementById("sLeave");
+
+  function showMsg(text, type="info"){
+    msg.style.display = "inline-flex";
+    msg.dataset.type = type;
+    msg.textContent = text;
+    setTimeout(() => { msg.style.display = "none"; }, 3500);
+  }
+
+  function escapeHtml(s=""){
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[c]));
+  }
+
+  function pill(status){
+    const s = status || "";
+    return `<span class="pill ${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span>`;
+  }
+
+  function monthRange(monthStr){
+    // monthStr = "2026-02"
+    const [y, m] = monthStr.split("-").map(Number);
+    const start = new Date(Date.UTC(y, m-1, 1));
+    const end = new Date(Date.UTC(y, m, 1)); // next month
+    const startISO = start.toISOString().slice(0,10);
+    const endISO = end.toISOString().slice(0,10);
+    return { startISO, endISO };
+  }
+
+  async function loadTeachers(){
+    const { data, error } = await window.sb
+      .from("profiles")
+      .select("id, full_name")
+      .eq("role", "teacher")
+      .order("full_name", { ascending: true });
+
+    if (error) throw error;
+
+    const rows = data || [];
+    teacherSel.innerHTML = rows.map(t => `<option value="${t.id}">${escapeHtml(t.full_name || "")}</option>`).join("");
+  }
+
+  async function loadHistory(){
+    const teacherId = teacherSel.value;
+    const monthStr = monthPick.value;
+    if (!teacherId || !monthStr) {
+      alert("Select teacher and month.");
+      return;
+    }
+
+    tbody.innerHTML = `<tr><td colspan="4" class="muted">Loading…</td></tr>`;
+
+    try {
+      const { startISO, endISO } = monthRange(monthStr);
+
+      const { data, error } = await window.sb
+        .from("teacher_attendance")
+        .select("date, status, notes, updated_at")
+        .eq("teacher_id", teacherId)
+        .gte("date", startISO)
+        .lt("date", endISO)
+        .order("date", { ascending: true });
+
+      if (error) throw error;
+
+      const rows = data || [];
+
+      // Summary counts
+      const counts = { present:0, absent:0, late:0, leave:0 };
+      rows.forEach(r => { if (counts[r.status] !== undefined) counts[r.status]++; });
+
+      sPresent.textContent = counts.present;
+      sAbsent.textContent = counts.absent;
+      sLate.textContent = counts.late;
+      sLeave.textContent = counts.leave;
+      summary.style.display = "grid";
+
+      if (!rows.length){
+        tbody.innerHTML = `<tr><td colspan="4" class="muted">No attendance records found for this month.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map(r => {
+        const d = r.date ? new Date(r.date).toLocaleDateString() : "—";
+        const st = pill(r.status);
+        const notes = escapeHtml(r.notes || "");
+        const up = r.updated_at ? new Date(r.updated_at).toLocaleString() : "—";
+
+        return `
+          <tr>
+            <td><strong>${d}</strong></td>
+            <td>${st}</td>
+            <td>${notes}</td>
+            <td class="muted">${up}</td>
+          </tr>
+        `;
+      }).join("");
+
+      showMsg("Loaded attendance.", "success");
+    } catch (e) {
+      console.error(e);
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">Error: ${escapeHtml(e.message)}</td></tr>`;
+      showMsg("Failed to load.", "error");
+    }
+  }
+
+  loadBtn.addEventListener("click", loadHistory);
+
+  (async function init(){
+    await requireAdmin();
+
+    // Default month = current month
+    const now = new Date();
+    const m = String(now.getMonth()+1).padStart(2,"0");
+    monthPick.value = `${now.getFullYear()}-${m}`;
+
+    try {
+      await loadTeachers();
+    } catch (e) {
+      console.error(e);
+      teacherSel.innerHTML = `<option value="">No teachers found</option>`;
+    }
+  })();
+</script>
+</body>
+</html>

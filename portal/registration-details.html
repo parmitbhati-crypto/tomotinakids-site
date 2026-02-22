@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registration Details • Admin</title>
+
+  <link rel="stylesheet" href="../assets/css/portal.css" />
+
+  <script src="../assets/js/env.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabaseClient.js"></script>
+
+  <style>
+    /* Print-only formatting */
+    @media print {
+      header, .portal-actions, .no-print { display: none !important; }
+      body { background: #fff !important; }
+      .portal-card { box-shadow: none !important; border: none !important; }
+    }
+    .detail-grid{
+      display:grid;
+      grid-template-columns: 1fr 280px;
+      gap: 16px;
+      align-items:start;
+    }
+    .photo-card{
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 16px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .photo-card img{
+      width:100%;
+      height: 280px;
+      object-fit: cover;
+      display:block;
+      background:#f3f4f6;
+    }
+    .kv{
+      display:grid;
+      gap:10px;
+    }
+    .kv .row{
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 14px;
+      padding: 12px;
+      background:#fff;
+    }
+    .kv .row strong{ display:block; }
+    .muted{ opacity: .75; }
+    .field span{ display:block; margin-bottom: 6px; font-weight: 600; }
+    .field input, .field textarea, .field select{
+      width:100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.14);
+      background:#fff;
+      font: inherit;
+    }
+    .form-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .form-grid-full{ grid-column: 1 / -1; }
+    @media (max-width: 900px){
+      .detail-grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="portal-shell">
+    <header class="portal-header">
+      <div>
+        <h1 class="portal-title">Registration Details</h1>
+        <p class="portal-subtitle">View, print, or edit student registration information.</p>
+      </div>
+
+      <div class="portal-actions no-print">
+        <a class="btn btn-outline" href="./registrations.html">Back</a>
+        <button class="btn btn-outline" id="printBtn" type="button">Print</button>
+        <button class="btn btn-primary" id="editBtn" type="button">Edit</button>
+        <button class="btn btn-primary" id="saveBtn" type="button" style="display:none;">Save</button>
+        <button class="btn btn-outline" id="cancelBtn" type="button" style="display:none;">Cancel</button>
+      </div>
+    </header>
+
+    <section class="portal-card">
+      <div id="loading" class="muted">Loading…</div>
+
+      <div id="content" style="display:none;">
+        <div class="detail-grid">
+          <div>
+            <h2 id="studentTitle" style="margin:0 0 10px;"></h2>
+
+            <div class="kv" id="readView">
+              <div class="row">
+                <strong>Parent</strong>
+                <span id="rvParent"></span>
+              </div>
+              <div class="row">
+                <strong>Phone</strong>
+                <span id="rvPhone"></span>
+              </div>
+              <div class="row">
+                <strong>Address</strong>
+                <span id="rvAddress"></span>
+              </div>
+              <div class="row">
+                <strong>Registration Date</strong>
+                <span id="rvRegDate"></span>
+              </div>
+              <div class="row">
+                <strong>Status</strong>
+                <span id="rvActive"></span>
+              </div>
+
+              <div class="row">
+                <strong>Full Registration Form</strong>
+                <pre id="rvFormJson" style="white-space:pre-wrap; margin:10px 0 0;"></pre>
+              </div>
+            </div>
+
+            <!-- Edit mode -->
+            <div id="editView" style="display:none;">
+              <h3 style="margin: 4px 0 10px;">Edit Details</h3>
+
+              <div class="form-grid">
+                <label class="field">
+                  <span>Student Full Name</span>
+                  <input id="evStudentName" />
+                </label>
+
+                <label class="field">
+                  <span>Registration Date</span>
+                  <input id="evRegDate" type="date" />
+                </label>
+
+                <label class="field">
+                  <span>Parent Name</span>
+                  <input id="evParentName" />
+                </label>
+
+                <label class="field">
+                  <span>Parent Phone</span>
+                  <input id="evParentPhone" />
+                </label>
+
+                <label class="field form-grid-full">
+                  <span>Address</span>
+                  <input id="evAddress" />
+                </label>
+
+                <label class="field">
+                  <span>Active</span>
+                  <select id="evActive">
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                  </select>
+                </label>
+
+                <label class="field form-grid-full">
+                  <span>Registration Form Data (JSON)</span>
+                  <textarea id="evFormJson" rows="10"></textarea>
+                  <small class="muted">This stores the full form snapshot. Keep it valid JSON.</small>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <aside>
+            <div class="photo-card">
+              <img id="photoImg" alt="Student photo" />
+            </div>
+
+            <div class="kv" style="margin-top:12px;">
+              <div class="row">
+                <strong>Photo URL</strong>
+                <span class="muted" id="photoUrlText"></span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ---------- Admin Guard ----------
+    async function requireAdmin() {
+      const { data: { user } } = await window.sb.auth.getUser();
+      if (!user) { window.location.href = "./login.html"; return null; }
+
+      const { data: profile, error } = await window.sb
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (error || !profile || profile.role !== "admin") {
+        alert("Admins only.");
+        window.location.href = "./admin-home.html";
+        return null;
+      }
+      return user;
+    }
+
+    function qp(name){
+      const u = new URL(window.location.href);
+      return u.searchParams.get(name);
+    }
+
+    const studentId = qp("student_id");
+
+    const loading = document.getElementById("loading");
+    const content = document.getElementById("content");
+
+    const studentTitle = document.getElementById("studentTitle");
+    const rvParent = document.getElementById("rvParent");
+    const rvPhone = document.getElementById("rvPhone");
+    const rvAddress = document.getElementById("rvAddress");
+    const rvRegDate = document.getElementById("rvRegDate");
+    const rvActive = document.getElementById("rvActive");
+    const rvFormJson = document.getElementById("rvFormJson");
+
+    const photoImg = document.getElementById("photoImg");
+    const photoUrlText = document.getElementById("photoUrlText");
+
+    // Edit fields
+    const readView = document.getElementById("readView");
+    const editView = document.getElementById("editView");
+    const editBtn = document.getElementById("editBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const printBtn = document.getElementById("printBtn");
+
+    const evStudentName = document.getElementById("evStudentName");
+    const evParentName = document.getElementById("evParentName");
+    const evParentPhone = document.getElementById("evParentPhone");
+    const evAddress = document.getElementById("evAddress");
+    const evRegDate = document.getElementById("evRegDate");
+    const evActive = document.getElementById("evActive");
+    const evFormJson = document.getElementById("evFormJson");
+
+    let studentRow = null;
+    let regRow = null;
+
+    printBtn.addEventListener("click", () => window.print());
+
+    function setMode(mode){
+      const isEdit = mode === "edit";
+      readView.style.display = isEdit ? "none" : "block";
+      editView.style.display = isEdit ? "block" : "none";
+      editBtn.style.display = isEdit ? "none" : "inline-flex";
+      saveBtn.style.display = isEdit ? "inline-flex" : "none";
+      cancelBtn.style.display = isEdit ? "inline-flex" : "none";
+    }
+
+    cancelBtn.addEventListener("click", () => {
+      // restore values from loaded data
+      fillEditFields();
+      setMode("read");
+    });
+
+    editBtn.addEventListener("click", () => {
+      fillEditFields();
+      setMode("edit");
+    });
+
+    function safeStringify(obj){
+      try { return JSON.stringify(obj, null, 2); }
+      catch { return "{}"; }
+    }
+
+    function fillReadView(){
+      studentTitle.textContent = studentRow?.full_name || "Student";
+
+      rvParent.textContent = studentRow?.parent_name || "—";
+      rvPhone.textContent = studentRow?.parent_phone || "—";
+      rvAddress.textContent = studentRow?.address || "—";
+      rvRegDate.textContent = studentRow?.registration_date
+        ? new Date(studentRow.registration_date).toLocaleDateString()
+        : "—";
+      rvActive.textContent = studentRow?.is_active ? "Active" : "Inactive";
+
+      rvFormJson.textContent = safeStringify(regRow?.form_data || {});
+
+      const photoUrl = studentRow?.photo_url || regRow?.form_data?.photo_url || "";
+      photoUrlText.textContent = photoUrl || "—";
+
+      if (photoUrl) {
+        photoImg.src = photoUrl;
+      } else {
+        // fallback placeholder
+        photoImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-size='28' fill='%239ca3af' text-anchor='middle' dominant-baseline='middle'%3ENo Photo%3C/text%3E%3C/svg%3E";
+      }
+    }
+
+    function fillEditFields(){
+      evStudentName.value = studentRow?.full_name || "";
+      evParentName.value = studentRow?.parent_name || "";
+      evParentPhone.value = studentRow?.parent_phone || "";
+      evAddress.value = studentRow?.address || "";
+      evRegDate.value = studentRow?.registration_date || "";
+      evActive.value = String(!!studentRow?.is_active);
+      evFormJson.value = safeStringify(regRow?.form_data || {});
+    }
+
+    saveBtn.addEventListener("click", async () => {
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Saving…";
+
+      try {
+        // Validate JSON
+        let parsed = {};
+        try {
+          parsed = JSON.parse(evFormJson.value || "{}");
+        } catch (e) {
+          alert("Registration JSON is invalid. Please fix it.");
+          return;
+        }
+
+        // Update students (core fields)
+        const { error: uErr } = await window.sb
+          .from("students")
+          .update({
+            full_name: evStudentName.value.trim(),
+            parent_name: evParentName.value.trim(),
+            parent_phone: evParentPhone.value.trim(),
+            address: evAddress.value.trim(),
+            registration_date: evRegDate.value || null,
+            is_active: evActive.value === "true"
+          })
+          .eq("id", studentId);
+
+        if (uErr) throw uErr;
+
+        // Upsert registration snapshot (keep latest row if exists; else create new)
+        if (regRow?.id) {
+          const { error: rErr } = await window.sb
+            .from("student_registrations")
+            .update({ form_data: parsed })
+            .eq("id", regRow.id);
+          if (rErr) throw rErr;
+        } else {
+          const user = await requireAdmin();
+          const { error: rInsErr } = await window.sb
+            .from("student_registrations")
+            .insert([{
+              student_id: studentId,
+              form_data: parsed,
+              created_by: user?.id || null
+            }]);
+          if (rInsErr) throw rInsErr;
+        }
+
+        await loadData();
+        setMode("read");
+        alert("Saved.");
+
+      } catch (err) {
+        console.error(err);
+        alert("Error: " + (err?.message || "Something went wrong"));
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Save";
+      }
+    });
+
+    async function loadData(){
+      loading.style.display = "block";
+      content.style.display = "none";
+
+      // Load student
+      const { data: sData, error: sErr } = await window.sb
+        .from("students")
+        .select("id, full_name, parent_name, parent_phone, address, registration_date, is_active, photo_url")
+        .eq("id", studentId)
+        .single();
+
+      if (sErr) throw sErr;
+      studentRow = sData;
+
+      // Load latest registration snapshot
+      const { data: rData, error: rErr } = await window.sb
+        .from("student_registrations")
+        .select("id, student_id, form_data, created_at")
+        .eq("student_id", studentId)
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      if (rErr) throw rErr;
+      regRow = (rData && rData.length) ? rData[0] : null;
+
+      fillReadView();
+
+      loading.style.display = "none";
+      content.style.display = "block";
+    }
+
+    (async function init(){
+      await requireAdmin();
+      if (!studentId) {
+        alert("Missing student_id");
+        window.location.href = "./registrations.html";
+        return;
+      }
+      try {
+        await loadData();
+        setMode("read");
+      } catch (err) {
+        console.error(err);
+        alert("Error: " + (err?.message || "Unable to load details"));
+        window.location.href = "./registrations.html";
+      }
+    })();
+  </script>
+</body>
+</html>
