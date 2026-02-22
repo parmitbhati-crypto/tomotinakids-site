@@ -3,8 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Schedule a Visit | Tomotina Kids</title>
-  <meta name="description" content="Schedule a visit to Tomotina Kids. Choose a date and time that works for you." />
+  <title>Visit | Tomotina Kids</title>
+  <meta name="description" content="Visit Tomotina Kids - tour our space and discuss your child’s needs." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
   <style>
     /* Make Calendly fit nicely */
@@ -77,25 +80,71 @@
 
   <main id="main">
     <section class="page-hero">
-      <div class="container">
-        <div class="breadcrumb">Home / Schedule a Visit</div>
-        <h1>Enquire Now</h1>
-        <p>
-          Choose a date and time that works for you. You’ll receive confirmation and we’ll be notified automatically.
-        </p>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div class="cal-wrap">
-          <div class="calendly-inline-widget"
-               data-url="https://calendly.com/tomotinaofficial/30min" style="min-width:320px;height:820px;">
+  <div class="container">
+    <div class="page-hero-card reveal">
+      <div class="page-hero-grid">
+        <div>
+          <div class="breadcrumb">Home / Visit</div>
+          <span class="page-hero-kicker">Visit</span>
+          <h1 class="page-hero-title">Visit Tomotina Kids.</h1>
+          <p class="page-hero-sub">
+            If you’d like to tour our space or discuss your child’s needs in person, simply reach out.
+            We’ll suggest a suitable time and guide you through next steps.
+          </p>
+          <div class="page-hero-actions">
+            <a class="btn btn-primary" href="contact.html">Enquiry Form</a>
+            <a class="btn btn-outline" href="https://wa.me/+917009470084?text=Hello%20Tomotina%20Kids%2C%20I%20would%20like%20to%20visit%20and%20discuss%20my%20child%E2%80%99s%20needs." target="_blank" rel="noopener">WhatsApp</a>
           </div>
         </div>
+        <div class="page-hero-media" aria-hidden="true">
+          <img src="assets/images/hero.png" alt="Visit our learning space" />
+        </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </div>
+</section>
+
+    <section class="section">
+  <div class="container">
+    <div class="section-title">
+      <div>
+        <div class="section-kicker">What to expect</div>
+        <h2>A calm, parent-friendly visit.</h2>
+        <p>We keep the process simple and respectful of your time.</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="num">1</div>
+        <h3>Share your goals</h3>
+        <p>Tell us what support you’re looking for—program guidance, assessment, or therapy support.</p>
+      </div>
+      <div class="step reveal">
+        <div class="num">2</div>
+        <h3>Tour + discussion</h3>
+        <p>We’ll walk you through our environment, routines, and how we support learning.</p>
+      </div>
+      <div class="step reveal">
+        <div class="num">3</div>
+        <h3>Next steps</h3>
+        <p>If needed, we’ll recommend an assessment and a structured plan with clear goals.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;" class="cta-wrap">
+      <div>
+        <h3>Ready to visit?</h3>
+        <p>Call, WhatsApp, or send an enquiry and we’ll coordinate a suitable time.</p>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn btn-primary" href="contact.html">Enquire Now</a>
+        <a class="btn btn-outline" href="tel:+917009470084">Call</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
 
   <footer>
     <div class="container">
@@ -124,7 +173,6 @@
   </footer>
 
   <script src="assets/js/main.js"></script>
-  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
   <div class="mobile-contact-bar" aria-label="Quick contact">
