@@ -10,6 +10,7 @@
   <script src="../assets/js/env.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabaseClient.js"></script>
+  <script src="../assets/js/auth.js"></script>
 </head>
 
 <body>
@@ -27,98 +28,172 @@
 
     <section class="portal-card">
       <form id="regForm" class="form">
-        <div class="form-section">
-          <h2 class="section-title">Student</h2>
 
+        <!-- I. Basic Contact Information -->
+        <div class="form-section">
+          <h2 class="section-title">I. Basic Contact Information</h2>
           <div class="form-grid">
             <label class="field">
-              <span>Student Full Name <b>*</b></span>
-              <input id="studentName" required placeholder="e.g., Devyansh Kumar" />
+              <span>Parent’s Name <b>*</b></span>
+              <input id="parentName" required />
             </label>
 
             <label class="field">
-              <span>Date of Birth</span>
+              <span>Phone Number <b>*</b></span>
+              <input id="parentPhone" required />
+            </label>
+
+            <label class="field">
+              <span>Contact Email Address</span>
+              <input id="parentEmail" type="email" />
+            </label>
+
+            <label class="field form-grid-full">
+              <span>Address <b>*</b></span>
+              <input id="address" required />
+            </label>
+          </div>
+        </div>
+
+        <!-- II. Child’s Profile -->
+        <div class="form-section">
+          <h2 class="section-title">II. Child’s Profile</h2>
+          <div class="form-grid">
+            <label class="field">
+              <span>Child’s Name <b>*</b></span>
+              <input id="studentName" required />
+            </label>
+
+            <label class="field">
+              <span>Age</span>
+              <input id="age" placeholder="e.g., 3" />
+            </label>
+
+            <label class="field">
+              <span>Date of Birth (DOB)</span>
               <input id="dob" type="date" />
             </label>
 
             <label class="field">
-              <span>Gender</span>
-              <select id="gender">
-                <option value="">—</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </label>
-
-            <label class="field">
-              <span>School / Grade</span>
-              <input id="schoolGrade" placeholder="e.g., Pre-K / KG / Grade 1" />
-            </label>
-          </div>
-        </div>
-
-        <div class="form-section">
-          <h2 class="section-title">Parent / Guardian</h2>
-
-          <div class="form-grid">
-            <label class="field">
-              <span>Parent/Guardian Name <b>*</b></span>
-              <input id="parentName" required placeholder="e.g., Rahul Sharma" />
-            </label>
-
-            <label class="field">
-              <span>Phone <b>*</b></span>
-              <input id="parentPhone" required placeholder="+91..." />
-            </label>
-
-            <label class="field">
-              <span>Email</span>
-              <input id="parentEmail" type="email" placeholder="you@email.com" />
-            </label>
-
-            <label class="field">
-              <span>Alternative Phone</span>
-              <input id="altPhone" placeholder="+91..." />
-            </label>
-          </div>
-        </div>
-
-        <div class="form-section">
-          <h2 class="section-title">Address</h2>
-
-          <div class="form-grid">
-            <label class="field form-grid-full">
-              <span>Full Address <b>*</b></span>
-              <input id="address" required placeholder="House/Street, Area, City, State, PIN" />
-            </label>
-          </div>
-        </div>
-
-        <div class="form-section">
-          <h2 class="section-title">Program & Notes</h2>
-
-          <div class="form-grid">
-            <label class="field">
-              <span>Preferred Program</span>
-              <input id="preferredProgram" placeholder="e.g., Speech, ABA, Special Education..." />
-            </label>
-
-            <label class="field">
-              <span>Preferred Days/Time</span>
-              <input id="preferredSchedule" placeholder="e.g., Mon/Wed 5–6pm" />
+              <span>Grade</span>
+              <input id="grade" placeholder="e.g., Pre-K / KG / Grade 1" />
             </label>
 
             <label class="field form-grid-full">
-              <span>Medical / Behaviour Notes</span>
-              <textarea id="notes" rows="4" placeholder="Anything important the teachers should know…"></textarea>
+              <span>School Name</span>
+              <input id="schoolName" />
             </label>
           </div>
         </div>
 
+        <!-- III. Family & Living Situation -->
+        <div class="form-section">
+          <h2 class="section-title">III. Family & Living Situation</h2>
+          <div class="form-grid">
+            <label class="field form-grid-full">
+              <span>Siblings living in the home (Names/Ages)</span>
+              <textarea id="siblingsHome" rows="2"></textarea>
+            </label>
+
+            <label class="field form-grid-full">
+              <span>Siblings living outside the home</span>
+              <textarea id="siblingsOutside" rows="2"></textarea>
+            </label>
+
+            <label class="field form-grid-full">
+              <span>Primary Language Spoken at Home</span>
+              <input id="primaryLanguage" />
+            </label>
+          </div>
+        </div>
+
+        <!-- IV. Medical & Health Background -->
+        <div class="form-section">
+          <h2 class="section-title">IV. Medical & Health Background</h2>
+          <div class="form-grid">
+            <label class="field form-grid-full">
+              <span>Special Diet / Allergies</span>
+              <textarea id="allergies" rows="2"></textarea>
+            </label>
+
+            <label class="field form-grid-full">
+              <span>Current Medications</span>
+              <textarea id="medications" rows="2"></textarea>
+            </label>
+
+            <label class="field form-grid-full">
+              <span>Primary Care Physician/Pediatrician</span>
+              <input id="physician" />
+            </label>
+
+            <label class="field form-grid-full">
+              <span>Known diagnoses (Medical/Behavioral)?</span>
+              <textarea id="diagnoses" rows="3"></textarea>
+            </label>
+          </div>
+        </div>
+
+        <!-- V. Emergency Contact -->
+        <div class="form-section">
+          <h2 class="section-title">V. Emergency Contact (Other than Parent)</h2>
+          <div class="form-grid">
+            <label class="field">
+              <span>Name</span>
+              <input id="emergencyName" />
+            </label>
+
+            <label class="field">
+              <span>Relationship</span>
+              <input id="emergencyRelationship" />
+            </label>
+
+            <label class="field">
+              <span>Phone</span>
+              <input id="emergencyPhone" />
+            </label>
+          </div>
+        </div>
+
+        <!-- VI. Developmental Milestones / Concerns -->
+        <div class="form-section">
+          <h2 class="section-title">VI. Developmental Milestones / Concerns</h2>
+          <div class="form-grid">
+            <label class="field form-grid-full">
+              <span>Concerns (speech, motor skills, social interaction)</span>
+              <textarea id="devConcerns" rows="3"></textarea>
+            </label>
+
+            <label class="field form-grid-full">
+              <span>Strengths & Interests</span>
+              <textarea id="strengths" rows="2"></textarea>
+            </label>
+
+            <label class="field form-grid-full">
+              <span>What does the child enjoy or excel at?</span>
+              <textarea id="enjoys" rows="2"></textarea>
+            </label>
+
+            <label class="field form-grid-full">
+              <span>Goals for Seeking Services</span>
+              <textarea id="goals" rows="3"></textarea>
+            </label>
+          </div>
+        </div>
+
+        <!-- VII. Referral Source -->
+        <div class="form-section">
+          <h2 class="section-title">VII. Referral Source</h2>
+          <div class="form-grid">
+            <label class="field form-grid-full">
+              <span>How did you hear about us?</span>
+              <input id="referralSource" />
+            </label>
+          </div>
+        </div>
+
+        <!-- Student Photo -->
         <div class="form-section">
           <h2 class="section-title">Student Photo (Mandatory)</h2>
-
           <div class="form-grid">
             <label class="field form-grid-full">
               <span>Upload Photo <b>*</b></span>
@@ -141,18 +216,13 @@
   </main>
 
   <script>
-    // ---------- Admin Guard ----------
-    async function requireAdmin() {
-      const { data: { user } } = await window.sb.auth.getUser();
-      if (!user) { window.location.href = "./login.html"; return null; }
+    // Uses the same guard pattern as rest of portal (auth.js)
+    async function requireAdminOrExit() {
+      const user = await requireAuth();
+      if (!user) return null;
 
-      const { data: profile, error } = await window.sb
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-
-      if (error || !profile || profile.role !== "admin") {
+      const profile = await getMyProfile();
+      if (profile?.role !== "admin") {
         alert("Admins only.");
         window.location.href = "./admin-home.html";
         return null;
@@ -160,7 +230,6 @@
       return user;
     }
 
-    // ---------- Helpers ----------
     function slugify(name){
       return (name || "student")
         .toLowerCase()
@@ -174,8 +243,7 @@
       return parts.length > 1 ? parts.pop().toLowerCase() : "jpg";
     }
 
-    // ---------- Page ----------
-    const BUCKET = "student-photos"; // change if your bucket name differs
+    const BUCKET = "student-photos"; // change if your bucket differs
 
     const form = document.getElementById("regForm");
     const submitBtn = document.getElementById("submitBtn");
@@ -188,57 +256,79 @@
     photoInput.addEventListener("change", () => {
       const f = photoInput.files?.[0];
       if (!f) { previewWrap.style.display = "none"; return; }
-      const url = URL.createObjectURL(f);
-      previewImg.src = url;
+      previewImg.src = URL.createObjectURL(f);
       previewWrap.style.display = "block";
     });
 
     (async function init(){
-      await requireAdmin();
+      await requireAdminOrExit();
     })();
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       statusMsg.textContent = "";
 
-      const user = await requireAdmin();
+      const user = await requireAdminOrExit();
       if (!user) return;
 
       submitBtn.disabled = true;
       submitBtn.textContent = "Saving…";
 
       try {
-        // Gather fields
-        const studentName = document.getElementById("studentName").value.trim();
+        // Basic contact
         const parentName = document.getElementById("parentName").value.trim();
         const parentPhone = document.getElementById("parentPhone").value.trim();
+        const parentEmail = document.getElementById("parentEmail").value.trim() || null;
         const address = document.getElementById("address").value.trim();
 
+        // Child
+        const studentName = document.getElementById("studentName").value.trim();
+        const age = document.getElementById("age").value.trim() || null;
         const dob = document.getElementById("dob").value || null;
-        const gender = document.getElementById("gender").value || null;
-        const schoolGrade = document.getElementById("schoolGrade").value.trim() || null;
+        const grade = document.getElementById("grade").value.trim() || null;
+        const schoolName = document.getElementById("schoolName").value.trim() || null;
 
-        const parentEmail = document.getElementById("parentEmail").value.trim() || null;
-        const altPhone = document.getElementById("altPhone").value.trim() || null;
+        // Family
+        const siblingsHome = document.getElementById("siblingsHome").value.trim() || null;
+        const siblingsOutside = document.getElementById("siblingsOutside").value.trim() || null;
+        const primaryLanguage = document.getElementById("primaryLanguage").value.trim() || null;
 
-        const preferredProgram = document.getElementById("preferredProgram").value.trim() || null;
-        const preferredSchedule = document.getElementById("preferredSchedule").value.trim() || null;
-        const notes = document.getElementById("notes").value.trim() || null;
+        // Medical
+        const allergies = document.getElementById("allergies").value.trim() || null;
+        const medications = document.getElementById("medications").value.trim() || null;
+        const physician = document.getElementById("physician").value.trim() || null;
+        const diagnoses = document.getElementById("diagnoses").value.trim() || null;
+
+        // Emergency
+        const emergencyName = document.getElementById("emergencyName").value.trim() || null;
+        const emergencyRelationship = document.getElementById("emergencyRelationship").value.trim() || null;
+        const emergencyPhone = document.getElementById("emergencyPhone").value.trim() || null;
+
+        // Developmental
+        const devConcerns = document.getElementById("devConcerns").value.trim() || null;
+        const strengths = document.getElementById("strengths").value.trim() || null;
+        const enjoys = document.getElementById("enjoys").value.trim() || null;
+        const goals = document.getElementById("goals").value.trim() || null;
+
+        // Referral
+        const referralSource = document.getElementById("referralSource").value.trim() || null;
 
         const file = photoInput.files?.[0];
-        if (!file) {
-          alert("Student photo is required.");
-          return;
-        }
+        if (!file) { alert("Student photo is required."); return; }
 
-        // 1) Create student row first (so we get student_id)
+        // 1) Insert into students (core data for scheduling)
         const { data: studentInsert, error: sErr } = await window.sb
           .from("students")
           .insert([{
             full_name: studentName,
             parent_name: parentName,
             parent_phone: parentPhone,
+            parent_email: parentEmail,
             address: address,
+            dob: dob,
+            age: age,
+            grade: grade,
+            school_name: schoolName,
             is_active: true,
             registration_date: new Date().toISOString().slice(0,10)
           }])
@@ -249,36 +339,34 @@
 
         const studentId = studentInsert.id;
 
-        // 2) Upload photo to Storage
+        // 2) Upload photo
         const ext = getFileExt(file);
         const path = `${studentId}/${slugify(studentName)}-${Date.now()}.${ext}`;
 
-        const { error: upErr } = await window.sb
-          .storage
-          .from(BUCKET)
-          .upload(path, file, { upsert: true });
-
+        const { error: upErr } = await window.sb.storage.from(BUCKET).upload(path, file, { upsert: true });
         if (upErr) throw upErr;
 
-        // 3) Get public URL & save into students.photo_url
+        // 3) Save photo_url
         const { data: pub } = window.sb.storage.from(BUCKET).getPublicUrl(path);
         const photoUrl = pub?.publicUrl || null;
 
         if (photoUrl) {
-          const { error: pErr } = await window.sb
-            .from("students")
+          const { error: pErr } = await window.sb.from("students")
             .update({ photo_url: photoUrl })
             .eq("id", studentId);
           if (pErr) throw pErr;
         }
 
-        // 4) Insert full registration snapshot in student_registrations
+        // 4) Save the full registration snapshot JSON
         const formData = {
-          student: { full_name: studentName, dob, gender, school_grade: schoolGrade },
-          parent: { name: parentName, phone: parentPhone, email: parentEmail, alt_phone: altPhone },
-          address: { full_address: address },
-          preferences: { preferred_program: preferredProgram, preferred_schedule: preferredSchedule },
-          notes,
+          basic_contact: { parent_name: parentName, address, email: parentEmail, phone: parentPhone },
+          child_profile: { child_name: studentName, age, dob, grade, school_name: schoolName },
+          family_living: { siblings_home: siblingsHome, siblings_outside: siblingsOutside, primary_language: primaryLanguage },
+          medical_health: { allergies, medications, physician, diagnoses },
+          emergency_contact: { name: emergencyName, relationship: emergencyRelationship, phone: emergencyPhone },
+          developmental: { concerns: devConcerns, strengths, enjoys, goals },
+          referral: { source: referralSource },
+          office_use: { date_of_intake: new Date().toISOString().slice(0,10), staff_member: null },
           photo_url: photoUrl
         };
 
@@ -293,7 +381,6 @@
         if (rErr) throw rErr;
 
         statusMsg.textContent = "✅ Registration created successfully.";
-        // Redirect to details page
         window.location.href = `./registration-details.html?student_id=${studentId}`;
 
       } catch (err) {

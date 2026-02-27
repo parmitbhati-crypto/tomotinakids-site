@@ -69,29 +69,50 @@ async function requireAdmin() {
    DROPDOWNS
 ================================ */
 async function loadDropdowns() {
-  const { data: teachers } = await sb
+  // Teachers
+  const { data: teachers, error: tErr } = await sb
     .from("profiles")
     .select("id, full_name")
     .eq("role", "teacher")
     .order("full_name");
 
+  if (tErr) {
+    setMsg("Teacher list failed: " + tErr.message, "error");
+    qs("teacherSelect").innerHTML = `<option value="">—</option>`;
+    return;
+  }
+
   qs("teacherSelect").innerHTML = teachers.map(t =>
     `<option value="${t.id}">${t.full_name}</option>`
   ).join("");
 
-  const { data: students } = await sb
+  // Students
+  const { data: students, error: sErr } = await sb
     .from("students")
     .select("id, full_name")
     .order("full_name");
+
+  if (sErr) {
+    setMsg("Student list failed: " + sErr.message, "error");
+    qs("studentSelect").innerHTML = `<option value="">—</option>`;
+    return;
+  }
 
   qs("studentSelect").innerHTML = students.map(s =>
     `<option value="${s.id}">${s.full_name}</option>`
   ).join("");
 
-  const { data: programs } = await sb
+  // Programs
+  const { data: programs, error: pErr } = await sb
     .from("programs")
     .select("id, name")
     .order("name");
+
+  if (pErr) {
+    setMsg("Programs failed: " + pErr.message, "error");
+    qs("programSelect").innerHTML = ``;
+    return;
+  }
 
   qs("programSelect").innerHTML = programs.map(p =>
     `<option value="${p.id}">${p.name}</option>`
