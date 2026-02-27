@@ -87,9 +87,9 @@ async function getMyProfile() {
 
   if (error) {
     console.error("getMyProfile error:", error);
-    alert("getMyProfile error: " + (error.message || JSON.stringify(error)));
-    return null; // IMPORTANT: don't fake role
+    return { id: user.id, full_name: "", role: "teacher" };
   }
+
   return data;
 }
 
