@@ -17,13 +17,19 @@
       header, .portal-actions, .no-print { display: none !important; }
       body { background: #fff !important; }
       .portal-card { box-shadow: none !important; border: none !important; }
+      .section-card { break-inside: avoid; }
     }
+
     .detail-grid{
       display:grid;
       grid-template-columns: 1fr 280px;
       gap: 16px;
       align-items:start;
     }
+    @media (max-width: 900px){
+      .detail-grid{ grid-template-columns: 1fr; }
+    }
+
     .photo-card{
       border: 1px solid rgba(0,0,0,0.10);
       border-radius: 16px;
@@ -37,18 +43,46 @@
       display:block;
       background:#f3f4f6;
     }
+
+    .section-card{
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 16px;
+      padding: 14px;
+      background:#fff;
+      margin: 0 0 12px;
+    }
+    .section-title{
+      margin: 0 0 10px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
     .kv{
       display:grid;
-      gap:10px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
     .kv .row{
       border: 1px solid rgba(0,0,0,0.10);
       border-radius: 14px;
-      padding: 12px;
+      padding: 10px 12px;
       background:#fff;
     }
-    .kv .row strong{ display:block; }
+    .kv .row strong{
+      display:block;
+      font-size: 12px;
+      opacity: .8;
+      margin-bottom: 4px;
+    }
+    .kv .row span{
+      display:block;
+      font-weight: 600;
+      word-break: break-word;
+    }
+    .kv .row.full{ grid-column: 1 / -1; }
+
     .muted{ opacity: .75; }
+
     .field span{ display:block; margin-bottom: 6px; font-weight: 600; }
     .field input, .field textarea, .field select{
       width:100%;
@@ -64,8 +98,17 @@
       gap: 12px;
     }
     .form-grid-full{ grid-column: 1 / -1; }
-    @media (max-width: 900px){
-      .detail-grid{ grid-template-columns: 1fr; }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,0.14);
+      background:#fff;
+      font-weight:700;
+      font-size: 12px;
     }
   </style>
 </head>
@@ -81,7 +124,7 @@
       <div class="portal-actions no-print">
         <a class="btn btn-outline" href="./registrations.html">Back</a>
         <button class="btn btn-outline" id="printBtn" type="button">Print</button>
-        <button class="btn btn-primary" id="editBtn" type="button">Edit</button>
+        <button class="btn btn-primary" id="editBtn" type="button">Edit JSON</button>
         <button class="btn btn-primary" id="saveBtn" type="button" style="display:none;">Save</button>
         <button class="btn btn-outline" id="cancelBtn" type="button" style="display:none;">Cancel</button>
       </div>
@@ -92,38 +135,203 @@
 
       <div id="content" style="display:none;">
         <div class="detail-grid">
+
+          <!-- LEFT -->
           <div>
-            <h2 id="studentTitle" style="margin:0 0 10px;"></h2>
-
-            <div class="kv" id="readView">
-              <div class="row">
-                <strong>Parent</strong>
-                <span id="rvParent"></span>
-              </div>
-              <div class="row">
-                <strong>Phone</strong>
-                <span id="rvPhone"></span>
-              </div>
-              <div class="row">
-                <strong>Address</strong>
-                <span id="rvAddress"></span>
-              </div>
-              <div class="row">
-                <strong>Registration Date</strong>
-                <span id="rvRegDate"></span>
-              </div>
-              <div class="row">
-                <strong>Status</strong>
-                <span id="rvActive"></span>
-              </div>
-
-              <div class="row">
-                <strong>Full Registration Form</strong>
-                <pre id="rvFormJson" style="white-space:pre-wrap; margin:10px 0 0;"></pre>
-              </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;">
+              <h2 id="studentTitle" style="margin:0;"></h2>
+              <span class="pill" id="activePill"></span>
             </div>
 
-            <!-- Edit mode -->
+            <!-- READ VIEW -->
+            <div id="readView">
+
+              <div class="section-card">
+                <div class="section-title">Core Details</div>
+                <div class="kv">
+                  <div class="row">
+                    <strong>Parent</strong>
+                    <span id="rvParent">—</span>
+                  </div>
+                  <div class="row">
+                    <strong>Phone</strong>
+                    <span id="rvPhone">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Address</strong>
+                    <span id="rvAddress">—</span>
+                  </div>
+                  <div class="row">
+                    <strong>Registration Date</strong>
+                    <span id="rvRegDate">—</span>
+                  </div>
+                  <div class="row">
+                    <strong>Active</strong>
+                    <span id="rvActive">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card" id="secBasic">
+                <div class="section-title">I. Basic Contact Information</div>
+                <div class="kv">
+                  <div class="row">
+                    <strong>Parent’s Name</strong>
+                    <span id="fParentName">—</span>
+                  </div>
+                  <div class="row">
+                    <strong>Phone</strong>
+                    <span id="fParentPhone">—</span>
+                  </div>
+                  <div class="row">
+                    <strong>Email</strong>
+                    <span id="fParentEmail">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Address</strong>
+                    <span id="fAddress">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card" id="secChild">
+                <div class="section-title">II. Child’s Profile</div>
+                <div class="kv">
+                  <div class="row">
+                    <strong>Child’s Name</strong>
+                    <span id="fChildName">—</span>
+                  </div>
+                  <div class="row">
+                    <strong>Age</strong>
+                    <span id="fAge">—</span>
+                  </div>
+                  <div class="row">
+                    <strong>DOB</strong>
+                    <span id="fDob">—</span>
+                  </div>
+                  <div class="row">
+                    <strong>Grade</strong>
+                    <span id="fGrade">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>School Name</strong>
+                    <span id="fSchool">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card" id="secFamily">
+                <div class="section-title">III. Family & Living Situation</div>
+                <div class="kv">
+                  <div class="row full">
+                    <strong>Siblings living in the home</strong>
+                    <span id="fSiblingsHome">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Siblings living outside the home</strong>
+                    <span id="fSiblingsOutside">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Primary Language</strong>
+                    <span id="fLanguage">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card" id="secMedical">
+                <div class="section-title">IV. Medical & Health Background</div>
+                <div class="kv">
+                  <div class="row full">
+                    <strong>Special Diet / Allergies</strong>
+                    <span id="fAllergies">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Current Medications</strong>
+                    <span id="fMeds">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Physician/Pediatrician</strong>
+                    <span id="fPhysician">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Known diagnoses</strong>
+                    <span id="fDiagnoses">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card" id="secEmergency">
+                <div class="section-title">V. Emergency Contact</div>
+                <div class="kv">
+                  <div class="row">
+                    <strong>Name</strong>
+                    <span id="fEName">—</span>
+                  </div>
+                  <div class="row">
+                    <strong>Relationship</strong>
+                    <span id="fERel">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Phone</strong>
+                    <span id="fEPhone">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card" id="secDev">
+                <div class="section-title">VI. Developmental Milestones / Concerns</div>
+                <div class="kv">
+                  <div class="row full">
+                    <strong>Concerns</strong>
+                    <span id="fConcerns">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Strengths & Interests</strong>
+                    <span id="fStrengths">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Enjoys / Excels at</strong>
+                    <span id="fEnjoys">—</span>
+                  </div>
+                  <div class="row full">
+                    <strong>Goals</strong>
+                    <span id="fGoals">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card" id="secReferral">
+                <div class="section-title">VII. Referral Source</div>
+                <div class="kv">
+                  <div class="row full">
+                    <strong>How did you hear about us?</strong>
+                    <span id="fReferral">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card" id="secOffice">
+                <div class="section-title">Office Use</div>
+                <div class="kv">
+                  <div class="row">
+                    <strong>Date of Intake</strong>
+                    <span id="fIntakeDate">—</span>
+                  </div>
+                  <div class="row">
+                    <strong>Staff Member</strong>
+                    <span id="fStaff">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-title">Raw Form JSON (for reference)</div>
+                <pre id="rvFormJson" style="white-space:pre-wrap; margin:0;"></pre>
+              </div>
+
+            </div>
+
+            <!-- EDIT (JSON) -->
             <div id="editView" style="display:none;">
               <h3 style="margin: 4px 0 10px;">Edit Details</h3>
 
@@ -163,23 +371,23 @@
 
                 <label class="field form-grid-full">
                   <span>Registration Form Data (JSON)</span>
-                  <textarea id="evFormJson" rows="10"></textarea>
+                  <textarea id="evFormJson" rows="16"></textarea>
                   <small class="muted">This stores the full form snapshot. Keep it valid JSON.</small>
                 </label>
               </div>
             </div>
+
           </div>
 
+          <!-- RIGHT -->
           <aside>
             <div class="photo-card">
               <img id="photoImg" alt="Student photo" />
             </div>
 
-            <div class="kv" style="margin-top:12px;">
-              <div class="row">
-                <strong>Photo URL</strong>
-                <span class="muted" id="photoUrlText"></span>
-              </div>
+            <div class="section-card" style="margin-top:12px;">
+              <div class="section-title">Photo URL</div>
+              <div class="muted" id="photoUrlText">—</div>
             </div>
           </aside>
         </div>
@@ -212,12 +420,32 @@
       return u.searchParams.get(name);
     }
 
+    function safeStringify(obj){
+      try { return JSON.stringify(obj, null, 2); }
+      catch { return "{}"; }
+    }
+
+    function fmt(val){
+      if (val === null || val === undefined) return "—";
+      const s = String(val).trim();
+      return s ? s : "—";
+    }
+
+    function fmtDate(val){
+      if (!val) return "—";
+      try { return new Date(val).toLocaleDateString(); }
+      catch { return fmt(val); }
+    }
+
     const studentId = qp("student_id");
 
     const loading = document.getElementById("loading");
     const content = document.getElementById("content");
 
     const studentTitle = document.getElementById("studentTitle");
+    const activePill = document.getElementById("activePill");
+
+    // Core view
     const rvParent = document.getElementById("rvParent");
     const rvPhone = document.getElementById("rvPhone");
     const rvAddress = document.getElementById("rvAddress");
@@ -225,10 +453,46 @@
     const rvActive = document.getElementById("rvActive");
     const rvFormJson = document.getElementById("rvFormJson");
 
+    // Photo
     const photoImg = document.getElementById("photoImg");
     const photoUrlText = document.getElementById("photoUrlText");
 
-    // Edit fields
+    // Read fields (from form_data)
+    const fParentName = document.getElementById("fParentName");
+    const fParentPhone = document.getElementById("fParentPhone");
+    const fParentEmail = document.getElementById("fParentEmail");
+    const fAddress = document.getElementById("fAddress");
+
+    const fChildName = document.getElementById("fChildName");
+    const fAge = document.getElementById("fAge");
+    const fDob = document.getElementById("fDob");
+    const fGrade = document.getElementById("fGrade");
+    const fSchool = document.getElementById("fSchool");
+
+    const fSiblingsHome = document.getElementById("fSiblingsHome");
+    const fSiblingsOutside = document.getElementById("fSiblingsOutside");
+    const fLanguage = document.getElementById("fLanguage");
+
+    const fAllergies = document.getElementById("fAllergies");
+    const fMeds = document.getElementById("fMeds");
+    const fPhysician = document.getElementById("fPhysician");
+    const fDiagnoses = document.getElementById("fDiagnoses");
+
+    const fEName = document.getElementById("fEName");
+    const fERel = document.getElementById("fERel");
+    const fEPhone = document.getElementById("fEPhone");
+
+    const fConcerns = document.getElementById("fConcerns");
+    const fStrengths = document.getElementById("fStrengths");
+    const fEnjoys = document.getElementById("fEnjoys");
+    const fGoals = document.getElementById("fGoals");
+
+    const fReferral = document.getElementById("fReferral");
+
+    const fIntakeDate = document.getElementById("fIntakeDate");
+    const fStaff = document.getElementById("fStaff");
+
+    // Edit controls
     const readView = document.getElementById("readView");
     const editView = document.getElementById("editView");
     const editBtn = document.getElementById("editBtn");
@@ -259,7 +523,6 @@
     }
 
     cancelBtn.addEventListener("click", () => {
-      // restore values from loaded data
       fillEditFields();
       setMode("read");
     });
@@ -269,35 +532,6 @@
       setMode("edit");
     });
 
-    function safeStringify(obj){
-      try { return JSON.stringify(obj, null, 2); }
-      catch { return "{}"; }
-    }
-
-    function fillReadView(){
-      studentTitle.textContent = studentRow?.full_name || "Student";
-
-      rvParent.textContent = studentRow?.parent_name || "—";
-      rvPhone.textContent = studentRow?.parent_phone || "—";
-      rvAddress.textContent = studentRow?.address || "—";
-      rvRegDate.textContent = studentRow?.registration_date
-        ? new Date(studentRow.registration_date).toLocaleDateString()
-        : "—";
-      rvActive.textContent = studentRow?.is_active ? "Active" : "Inactive";
-
-      rvFormJson.textContent = safeStringify(regRow?.form_data || {});
-
-      const photoUrl = studentRow?.photo_url || regRow?.form_data?.photo_url || "";
-      photoUrlText.textContent = photoUrl || "—";
-
-      if (photoUrl) {
-        photoImg.src = photoUrl;
-      } else {
-        // fallback placeholder
-        photoImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-size='28' fill='%239ca3af' text-anchor='middle' dominant-baseline='middle'%3ENo Photo%3C/text%3E%3C/svg%3E";
-      }
-    }
-
     function fillEditFields(){
       evStudentName.value = studentRow?.full_name || "";
       evParentName.value = studentRow?.parent_name || "";
@@ -306,6 +540,77 @@
       evRegDate.value = studentRow?.registration_date || "";
       evActive.value = String(!!studentRow?.is_active);
       evFormJson.value = safeStringify(regRow?.form_data || {});
+    }
+
+    function fillReadView(){
+      studentTitle.textContent = studentRow?.full_name || "Student";
+
+      const isActive = !!studentRow?.is_active;
+      activePill.textContent = isActive ? "Active" : "Inactive";
+
+      rvParent.textContent = fmt(studentRow?.parent_name);
+      rvPhone.textContent = fmt(studentRow?.parent_phone);
+      rvAddress.textContent = fmt(studentRow?.address);
+      rvRegDate.textContent = studentRow?.registration_date ? fmtDate(studentRow.registration_date) : "—";
+      rvActive.textContent = isActive ? "Active" : "Inactive";
+
+      const form = regRow?.form_data || {};
+
+      // From JSON (new form structure)
+      const basic = form.basic_contact || {};
+      const child = form.child_profile || {};
+      const family = form.family_living || {};
+      const med = form.medical_health || {};
+      const em = form.emergency_contact || {};
+      const dev = form.developmental || {};
+      const ref = form.referral || {};
+      const office = form.office_use || {};
+
+      fParentName.textContent = fmt(basic.parent_name || studentRow?.parent_name);
+      fParentPhone.textContent = fmt(basic.phone || studentRow?.parent_phone);
+      fParentEmail.textContent = fmt(basic.email);
+      fAddress.textContent = fmt(basic.address || studentRow?.address);
+
+      fChildName.textContent = fmt(child.child_name || studentRow?.full_name);
+      fAge.textContent = fmt(child.age);
+      fDob.textContent = child.dob ? fmtDate(child.dob) : "—";
+      fGrade.textContent = fmt(child.grade);
+      fSchool.textContent = fmt(child.school_name);
+
+      fSiblingsHome.textContent = fmt(family.siblings_home);
+      fSiblingsOutside.textContent = fmt(family.siblings_outside);
+      fLanguage.textContent = fmt(family.primary_language);
+
+      fAllergies.textContent = fmt(med.allergies);
+      fMeds.textContent = fmt(med.medications);
+      fPhysician.textContent = fmt(med.physician);
+      fDiagnoses.textContent = fmt(med.diagnoses);
+
+      fEName.textContent = fmt(em.name);
+      fERel.textContent = fmt(em.relationship);
+      fEPhone.textContent = fmt(em.phone);
+
+      fConcerns.textContent = fmt(dev.concerns);
+      fStrengths.textContent = fmt(dev.strengths);
+      fEnjoys.textContent = fmt(dev.enjoys);
+      fGoals.textContent = fmt(dev.goals);
+
+      fReferral.textContent = fmt(ref.source);
+
+      fIntakeDate.textContent = office.date_of_intake ? fmtDate(office.date_of_intake) : "—";
+      fStaff.textContent = fmt(office.staff_member);
+
+      rvFormJson.textContent = safeStringify(form);
+
+      // Photo
+      const photoUrl = studentRow?.photo_url || form?.photo_url || "";
+      photoUrlText.textContent = photoUrl || "—";
+
+      if (photoUrl) {
+        photoImg.src = photoUrl;
+      } else {
+        photoImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-size='28' fill='%239ca3af' text-anchor='middle' dominant-baseline='middle'%3ENo Photo%3C/text%3E%3C/svg%3E";
+      }
     }
 
     saveBtn.addEventListener("click", async () => {
@@ -337,7 +642,7 @@
 
         if (uErr) throw uErr;
 
-        // Upsert registration snapshot (keep latest row if exists; else create new)
+        // Upsert registration snapshot
         if (regRow?.id) {
           const { error: rErr } = await window.sb
             .from("student_registrations")
@@ -373,7 +678,6 @@
       loading.style.display = "block";
       content.style.display = "none";
 
-      // Load student
       const { data: sData, error: sErr } = await window.sb
         .from("students")
         .select("id, full_name, parent_name, parent_phone, address, registration_date, is_active, photo_url")
@@ -383,7 +687,6 @@
       if (sErr) throw sErr;
       studentRow = sData;
 
-      // Load latest registration snapshot
       const { data: rData, error: rErr } = await window.sb
         .from("student_registrations")
         .select("id, student_id, form_data, created_at")
