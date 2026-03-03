@@ -1,73 +1,88 @@
 // assets/js/auth.js
+// Tomotina Portal Auth + Role Routing (stable, no "sess is not defined")
+// Debug logs included (toggle AUTH_DEBUG)
 
+const AUTH_DEBUG = true;
+
+function authLog(...args) {
+  if (AUTH_DEBUG) console.log("[AUTH]", ...args);
+}
+function authErr(...args) {
+  console.error("[AUTH]", ...args);
+}
+
+/**
+ * Require user to be logged in and enforce role-based routing.
+ * Returns the authenticated user (session.user) OR null (and may redirect).
+ */
 async function requireAuth() {
   const path = window.location.pathname.replace(/\/+$/, "");
-  const isLoginPage = path === "/portal/login.html";
+  const isLoginPage =
+    path === "/portal/login.html" || path === "/portal/login" || path === "/portal/login/";
 
-  if (!window.sb) return null;
-
-  const { data: { session } } = await window.sb.auth.getSession();
-  console.log("AUTH DEBUG session:", sess?.session);
-console.log("AUTH DEBUG access_token?", !!sess?.session?.access_token);
-const user = session?.user || null;
-
-  // ─────────────────────────────
-  // NOT LOGGED IN
-  // ─────────────────────────────
-  if (error || !user) {
-    if (!isLoginPage) {
-      window.location.href = "/portal/login.html";
-    }
+  if (!window.sb) {
+    authErr("window.sb missing. Check env.js + supabaseClient.js load order.");
     return null;
   }
 
-  // ─────────────────────────────
-  // FETCH PROFILE (ROLE)
-  // ─────────────────────────────
+  // ✅ Always define sess here (fixes "sess is not defined")
+  const { data: sess, error: sessErr } = await window.sb.auth.getSession();
+  const session = sess?.session || null;
+  const user = session?.user || null;
+
+  authLog("path:", path, "isLoginPage:", isLoginPage);
+  authLog("session?", !!session, "user?", !!user);
+
+  // Not logged in
+  if (sessErr || !user) {
+    authErr("No session/user", sessErr || "(no error)");
+    if (!isLoginPage) window.location.href = "/portal/login.html";
+    return null;
+  }
+
+  // Fetch profile (role)
   const { data: profile, error: profileError } = await window.sb
     .from("profiles")
     .select("id, full_name, role")
     .eq("id", user.id)
-    .single();
-console.log("AUTH DEBUG profile:", profile);
-console.log("AUTH DEBUG profileError:", profileError);
+    .maybeSingle();
+
   if (profileError || !profile) {
-    console.error("Profile fetch failed", profileError);
+    authErr("Profile fetch failed", profileError);
+    // Don't redirect blindly; just stop page logic.
     return null;
   }
 
   const role = profile.role;
 
-  // ─────────────────────────────
-  // PAGE GROUPS
-  // ─────────────────────────────
-  const teacherPages = [
-    "/portal/day.html",
-    "/portal/week.html",
-    "/portal/calendar.html"
-  ];
+  // Page groups
+  const teacherPages = ["/portal/day.html", "/portal/week.html", "/portal/calendar.html"];
 
   const adminPages = [
     "/portal/admin-home.html",
+    "/portal/admin.html",
+    "/portal/admin-session-edit.html",
     "/portal/session-history.html",
-    "/portal/registrations.html"
+    "/portal/registrations.html",
+    "/portal/teacher-attendance.html",
+    "/portal/teacher-attendance-history.html"
   ];
 
   const isTeacherPage = teacherPages.includes(path);
   const isAdminPage = adminPages.includes(path);
 
-  // ─────────────────────────────
-  // ROLE RULES (NON-INTRUSIVE)
-  // ─────────────────────────────
+  authLog("role:", role, "isTeacherPage:", isTeacherPage, "isAdminPage:", isAdminPage);
 
   // Teachers cannot access admin pages
   if (role === "teacher" && isAdminPage) {
+    authLog("Teacher attempted admin page. Redirecting to day.html");
     window.location.href = "/portal/day.html";
     return null;
   }
 
   // Admins should not stay on login page
   if (role === "admin" && isLoginPage) {
+    authLog("Admin on login page. Redirecting to admin-home.html");
     window.location.href = "/portal/admin-home.html";
     return null;
   }
@@ -75,9 +90,9 @@ console.log("AUTH DEBUG profileError:", profileError);
   return user;
 }
 
-// ─────────────────────────────
-// PROFILE HELPERS
-// ─────────────────────────────
+/* ===============================
+   PROFILE HELPERS
+================================ */
 
 async function getMyProfile() {
   const user = await requireAuth();
@@ -87,14 +102,14 @@ async function getMyProfile() {
     .from("profiles")
     .select("id, full_name, role")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   if (error) {
-    console.error("getMyProfile error:", error);
+    authErr("getMyProfile error:", error);
     alert("getMyProfile error: " + (error.message || JSON.stringify(error)));
-    return null; // IMPORTANT: don't fake role
+    return null;
   }
-  return data;
+  return data || null;
 }
 
 async function loadMyPrograms() {
@@ -107,27 +122,33 @@ async function loadMyPrograms() {
     .eq("teacher_id", user.id);
 
   if (error) {
-    console.error("loadMyPrograms error:", error);
+    authErr("loadMyPrograms error:", error);
     return [];
   }
 
   return (data || [])
-    .map(x => x.programs?.name)
+    .map((x) => x.programs?.name)
     .filter(Boolean);
 }
 
-// ─────────────────────────────
-// LOGOUT
-// ─────────────────────────────
+/* ===============================
+   LOGOUT
+================================ */
 
 async function logout() {
-  await window.sb.auth.signOut();
-  window.location.href = "/portal/login.html";
+  try {
+    authLog("Signing out...");
+    await window.sb.auth.signOut();
+  } catch (e) {
+    authErr("signOut failed", e);
+  } finally {
+    window.location.href = "/portal/login.html";
+  }
 }
 
-// ─────────────────────────────
-// ADMIN NAV VISIBILITY
-// ─────────────────────────────
+/* ===============================
+   ADMIN NAV VISIBILITY
+================================ */
 
 async function showAdminNavIfAdmin() {
   const el = document.getElementById("adminNav");
@@ -137,9 +158,9 @@ async function showAdminNavIfAdmin() {
   el.style.display = profile?.role === "admin" ? "" : "none";
 }
 
-// ─────────────────────────────
-// UTILITIES
-// ─────────────────────────────
+/* ===============================
+   UTILITIES
+================================ */
 
 function fmtDate(d) {
   return d.toLocaleDateString(undefined, {
@@ -174,3 +195,15 @@ function toTimeLabel(dt) {
     minute: "2-digit"
   });
 }
+
+/* ===============================
+   GLOBAL ERROR TRAPS (debugging)
+================================ */
+
+window.addEventListener("unhandledrejection", (e) => {
+  authErr("UNHANDLED PROMISE:", e.reason);
+});
+
+window.addEventListener("error", (e) => {
+  authErr("GLOBAL ERROR:", e.message, e.filename, e.lineno);
+});
