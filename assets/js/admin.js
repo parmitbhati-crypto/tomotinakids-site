@@ -1,331 +1,217 @@
-// assets/js/admin.js
-console.log("ADMIN.JS LOADED ✅");
+// assets/js/auth.js
+// Central auth + role routing helpers for Tomotina Portal
+// Includes lightweight debug logs to quickly identify root-cause issues.
 
-window.addEventListener("error", (e) => {
-  console.error("GLOBAL ERROR:", e.message, e.filename, e.lineno);
-});
-window.addEventListener("unhandledrejection", (e) => {
-  console.error("UNHANDLED PROMISE:", e.reason);
-});
+const AUTH_DEBUG = true; // flip to false to silence logs
 
-function qs(id) { return document.getElementById(id); }
-
-/* ===============================
-   GLOBAL STATE
-================================ */
-let isSavingSession = false;
-
-/* ===============================
-   UI HELPERS
-================================ */
-function setMsg(text, type = "info") {
-  const el = qs("msg");
-  if (!el) return;
-  el.className = "msg";
-  el.dataset.type = type;
-  el.textContent = text || "";
+function authLog(...args) {
+  if (AUTH_DEBUG) console.log("[AUTH]", ...args);
+}
+function authErr(...args) {
+  console.error("[AUTH]", ...args);
 }
 
-function todayYmd() {
-  const d = new Date();
-  const pad = n => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
+/**
+ * Require user to be logged in and enforce role-based routing.
+ * Returns the authenticated user (session user) OR null (and may redirect).
+ */
+async function requireAuth() {
+  const path = window.location.pathname.replace(/\/+$/, "");
+  const isLoginPage =
+    path === "/portal/login.html" || path === "/portal/login" || path === "/portal/login/";
 
-// Store local datetime as UTC ISO
-function toLocalDateTimeISO(dateStr, timeStr) {
-  return new Date(`${dateStr}T${timeStr}:00`).toISOString();
-}
+  if (!window.sb) {
+    authErr("Supabase client missing (window.sb). Check env.js + supabaseClient.js load order.");
+    return null;
+  }
 
-function selectedMultiValues(selectEl) {
-  return Array.from(selectEl.options)
-    .filter(o => o.selected)
-    .map(o => o.value);
-}
+  // --- 1) Get session (prevents "sess is not defined" + avoids timing issues) ---
+  const { data: sess, error: sessErr } = await window.sb.auth.getSession();
+  const session = sess?.session || null;
+  const user = session?.user || null;
 
-function fmtTime(d) {
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-}
+  authLog("path:", path, "isLoginPage:", isLoginPage);
+  authLog("session?", !!session, "user?", !!user);
 
-function statusClass(status) {
-  const s = String(status || "").toLowerCase();
-  if (s.includes("complete")) return "completed";
-  if (s.includes("cancel")) return "cancelled";
-  return "scheduled";
-}
+  // --- 2) If not logged in, redirect to login (unless already there) ---
+  if (sessErr || !user) {
+    authErr("No session/user", sessErr || "(no error)");
+    if (!isLoginPage) {
+      window.location.href = "/portal/login.html";
+    }
+    return null;
+  }
 
-/* ===============================
-   AUTH
-================================ */
-async function requireAdmin() {
-  const user = await requireAuth();
-  if (!user) return null;
+  // --- 3) Fetch profile (role) ---
+  const { data: profile, error: profileError } = await window.sb
+    .from("profiles")
+    .select("id, full_name, role")
+    .eq("id", user.id)
+    .maybeSingle();
 
-  const profile = await getMyProfile();
-  qs("who").textContent = profile?.full_name || "Admin";
-  qs("roleBadge").textContent = "Role: " + (profile?.role || "—");
+  authLog("profile fetched:", profile);
 
-  if (profile?.role !== "admin") {
-    alert("Access denied: Admins only.");
+  if (profileError || !profile) {
+    authErr("Profile fetch failed", profileError);
+    // Keep it non-blocking but safe: redirect to login to re-auth if desired
+    // (or just return null to stop page logic)
+    return null;
+  }
+
+  const role = profile.role;
+
+  // --- 4) Page groups (your current routing rules) ---
+  const teacherPages = ["/portal/day.html", "/portal/week.html", "/portal/calendar.html"];
+
+  const adminPages = [
+    "/portal/admin-home.html",
+    "/portal/admin.html",
+    "/portal/admin-session-edit.html",
+    "/portal/session-history.html",
+    "/portal/registrations.html",
+    "/portal/teacher-attendance.html",
+    "/portal/teacher-attendance-history.html"
+  ];
+
+  const isTeacherPage = teacherPages.includes(path);
+  const isAdminPage = adminPages.includes(path);
+
+  authLog("role:", role, "isTeacherPage:", isTeacherPage, "isAdminPage:", isAdminPage);
+
+  // --- 5) Role rules ---
+  // Teachers cannot access admin pages
+  if (role === "teacher" && isAdminPage) {
+    authLog("Teacher attempted admin page. Redirecting to day.html");
     window.location.href = "/portal/day.html";
     return null;
   }
-  return { user, profile };
+
+  // Admins should not stay on login page
+  if (role === "admin" && isLoginPage) {
+    authLog("Admin on login page. Redirecting to admin-home.html");
+    window.location.href = "/portal/admin-home.html";
+    return null;
+  }
+
+  return user;
 }
 
 /* ===============================
-   DROPDOWNS
+   PROFILE HELPERS
 ================================ */
-async function loadDropdowns() {
-  console.log("loadDropdowns() called ✅");
-  // Teachers
-  const { data: teachers, error: tErr } = await window.sb
-    .from("profiles")
-    .select("id, full_name")
-    .eq("role", "teacher")
-    .order("full_name");
 
-  if (tErr) {
-    setMsg("Teacher list failed: " + tErr.message, "error");
-    qs("teacherSelect").innerHTML = `<option value="">—</option>`;
-    return;
-  }
-
-qs("teacherSelect").innerHTML =
-  `<option value="">— Select teacher —</option>` +
-  teachers.map(t => `<option value="${t.id}">${t.full_name}</option>`).join("");
-
-  // Students
-  const { data: students, error: sErr } = await window.sb
-    .from("students")
-    .select("id, full_name")
-    .order("full_name");
-
-  if (sErr) {
-    setMsg("Student list failed: " + sErr.message, "error");
-    qs("studentSelect").innerHTML = `<option value="">—</option>`;
-    return;
-  }
-
-qs("studentSelect").innerHTML =
-  `<option value="">— Select student —</option>` +
-  students.map(s => `<option value="${s.id}">${s.full_name}</option>`).join("");
-  // Programs
-  const { data: programs, error: pErr } = await window.sb
-    .from("programs")
-    .select("id, name")
-    .order("name");
-
-  if (pErr) {
-    setMsg("Programs failed: " + pErr.message, "error");
-    qs("programSelect").innerHTML = ``;
-    return;
-  }
-
-  qs("programSelect").innerHTML = programs.map(p =>
-    `<option value="${p.id}">${p.name}</option>`
-  ).join("");
-}
-
-/* ===============================
-   SESSION LIST
-================================ */
-function renderSkeletonList(count = 4) {
-  return `<div class="list">
-    ${Array.from({ length: count }).map(() => `<div class="skeleton"></div>`).join("")}
-  </div>`;
-}
-
-async function loadSessionsForTeacherDate() {
-  const teacherId = qs("teacherSelect").value;
-  const dateStr = qs("dateInput").value;
-  const listEl = qs("sessionsList");
-
-  if (!teacherId || !dateStr) {
-    listEl.textContent = "—";
-    return;
-  }
-
-  listEl.innerHTML = renderSkeletonList(4);
-
-  const from = new Date(`${dateStr}T00:00:00`);
-  const to = new Date(from);
-  to.setDate(to.getDate() + 1);
+async function getMyProfile() {
+  const user = await requireAuth();
+  if (!user) return null;
 
   const { data, error } = await window.sb
-    .from("sessions")
-    .select(`
-      id, starts_at, ends_at, location, status,
-      students(full_name),
-      session_programs(programs(name)),
-      session_updates(attendance, progress_score, remarks, updated_at)
-    `)
-    .eq("teacher_id", teacherId)
-    .gte("starts_at", from.toISOString())
-    .lt("starts_at", to.toISOString())
-    .order("starts_at");
+    .from("profiles")
+    .select("id, full_name, role")
+    .eq("id", user.id)
+    .maybeSingle();
 
   if (error) {
-    listEl.innerHTML = `<div class="msg" data-type="error">${error.message}</div>`;
-    return;
+    authErr("getMyProfile error:", error);
+    alert("getMyProfile error: " + (error.message || JSON.stringify(error)));
+    return null;
   }
 
-  if (!data.length) {
-    listEl.innerHTML = `<div class="msg" data-type="info">No sessions.</div>`;
-    return;
+  if (!data) {
+    authErr("getMyProfile returned null row for user:", user.id);
+    return null;
   }
 
-  listEl.innerHTML = `<div class="list">${
-    data.map(s => {
-      const st = new Date(s.starts_at);
-      const en = new Date(s.ends_at);
-      const student = s.students?.full_name || "Student";
+  return data;
+}
 
-      const programs = (s.session_programs || [])
-        .map(x => x.programs?.name)
-        .filter(Boolean)
-        .join(", ") || "—";
+async function loadMyPrograms() {
+  const user = await requireAuth();
+  if (!user) return [];
 
-      const latestUpdate = Array.isArray(s.session_updates)
-        ? s.session_updates.sort(
-            (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
-          )[0]
-        : null;
+  const { data, error } = await window.sb
+    .from("teacher_programs")
+    .select("programs(name)")
+    .eq("teacher_id", user.id);
 
-      const updText = latestUpdate
-        ? `${latestUpdate.attendance?.toUpperCase() || ""}${
-            latestUpdate.progress_score != null ? ` • ${latestUpdate.progress_score}%` : ""
-          }${latestUpdate.remarks ? ` • ${latestUpdate.remarks}` : ""}`
-        : "No update yet";
+  if (error) {
+    authErr("loadMyPrograms error:", error);
+    return [];
+  }
 
-      return `
-        <a class="list-item"
-           href="/portal/admin-session-edit.html?session=${encodeURIComponent(s.id)}">
-          <div class="li-main">
-            <div class="li-title">${student}</div>
-            <div class="li-sub">${fmtTime(st)}–${fmtTime(en)} • ${s.location || "—"}</div>
-            <div class="li-meta">
-              <span class="badge">Programs: ${programs}</span>
-              <span class="status-pill ${statusClass(s.status)}">
-                ${(s.status || "scheduled").toUpperCase()}
-              </span>
-              <span class="badge">${updText}</span>
-            </div>
-          </div>
-        </a>
-      `;
-    }).join("")
-  }</div>`;
+  return (data || [])
+    .map((x) => x.programs?.name)
+    .filter(Boolean);
 }
 
 /* ===============================
-   SAVE SESSION (PHASE 3: CONFLICT CHECK)
+   LOGOUT
 ================================ */
-async function saveSession() {
-  if (isSavingSession) return;
-  isSavingSession = true;
 
-  const btn = qs("btnSave");
-  btn.disabled = true;
-  btn.textContent = "Saving…";
-
+async function logout() {
   try {
-    const teacherId = qs("teacherSelect").value;
-    const studentId = qs("studentSelect").value;
-    const dateStr = qs("dateInput").value;
-    const startTime = qs("startTime").value;
-    const endTime = qs("endTime").value;
-    const location = qs("locationInput").value.trim() || null;
-    const programIds = selectedMultiValues(qs("programSelect"));
-
-    if (!teacherId || !studentId || !dateStr || !startTime || !endTime) {
-      throw new Error("Please fill all required fields.");
-    }
-
-    const startsAt = toLocalDateTimeISO(dateStr, startTime);
-    const endsAt = toLocalDateTimeISO(dateStr, endTime);
-
-    if (new Date(endsAt) <= new Date(startsAt)) {
-      throw new Error("End time must be after start time.");
-    }
-
-    /* 🔒 CONFLICT CHECK (Phase 3) */
-    const { data: conflicts } = await window.sb
-      .from("sessions")
-      .select("id")
-      .eq("teacher_id", teacherId)
-      .lt("starts_at", endsAt)
-      .gt("ends_at", startsAt);
-
-    if (conflicts.length) {
-      throw new Error("This teacher already has a session in that time slot.");
-    }
-
-    /* INSERT SESSION */
-    const { data: inserted, error } = await window.sb
-      .from("sessions")
-      .insert([{
-        teacher_id: teacherId,
-        student_id: studentId,
-        starts_at: startsAt,
-        ends_at: endsAt,
-        location,
-        status: "scheduled"
-      }])
-      .select("id")
-      .single();
-
-    if (error) throw error;
-
-    if (programIds.length) {
-      await window.sb.from("session_programs").insert(
-        programIds.map(pid => ({
-          session_id: inserted.id,
-          program_id: pid
-        }))
-      );
-    }
-
-    setMsg("Saved ✅", "success");
-    clearForm();
-    await loadSessionsForTeacherDate();
-
+    authLog("Signing out...");
+    await window.sb.auth.signOut();
   } catch (e) {
-    setMsg(e.message || "Save failed", "error");
+    authErr("signOut failed", e);
   } finally {
-    isSavingSession = false;
-    btn.disabled = false;
-    btn.textContent = "Save schedule";
+    window.location.href = "/portal/login.html";
   }
 }
 
-function clearForm() {
-  qs("startTime").value = "";
-  qs("endTime").value = "";
-  qs("locationInput").value = "";
-  Array.from(qs("programSelect").options).forEach(o => o.selected = false);
-  setMsg("", "info");
+/* ===============================
+   ADMIN NAV VISIBILITY
+================================ */
+
+async function showAdminNavIfAdmin() {
+  const el = document.getElementById("adminNav");
+  if (!el) return;
+
+  const profile = await getMyProfile();
+  el.style.display = profile?.role === "admin" ? "" : "none";
 }
 
 /* ===============================
-   INIT
+   UTILITIES
 ================================ */
-(async function init() {
-  const ok = await requireAdmin();
-  if (!ok) return;
 
-  //qs("btnLogout").onclick = logout;
+function fmtDate(d) {
+  return d.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+}
 
-  qs("dateInput").value = todayYmd();
-  qs("startTime").value = "10:00";
-  qs("endTime").value = "10:30";
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
 
-  await loadDropdowns();
-  await loadSessionsForTeacherDate();
+function ymdLocal(d) {
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
 
-  qs("btnSave").onclick = saveSession;
-  qs("btnClear").onclick = clearForm;
+function startOfLocalDay(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+}
 
-  qs("teacherSelect").addEventListener("change", loadSessionsForTeacherDate);
-  qs("dateInput").addEventListener("change", loadSessionsForTeacherDate);
-})();
+function addDays(d, n) {
+  const x = new Date(d);
+  x.setDate(x.getDate() + n);
+  return x;
+}
+
+function toTimeLabel(dt) {
+  return dt.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+// Optional: catch unexpected promise errors globally (helps future debugging)
+window.addEventListener("unhandledrejection", (e) => {
+  authErr("UNHANDLED PROMISE:", e.reason);
+});
+window.addEventListener("error", (e) => {
+  authErr("GLOBAL ERROR:", e.message, e.filename, e.lineno);
+});
