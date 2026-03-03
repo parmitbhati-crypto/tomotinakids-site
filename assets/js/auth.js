@@ -6,7 +6,8 @@ async function requireAuth() {
 
   if (!window.sb) return null;
 
-  const { data: { user }, error } = await window.sb.auth.getUser();
+  const { data: { session } } = await window.sb.auth.getSession();
+const user = session?.user || null;
 
   // ─────────────────────────────
   // NOT LOGGED IN
