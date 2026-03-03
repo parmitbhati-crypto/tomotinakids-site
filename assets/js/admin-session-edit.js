@@ -42,7 +42,7 @@ async function requireAdminEdit() {
    Load Programs
 ========================= */
 async function loadPrograms() {
-  const { data, error } = await sb
+  const { data, error } = await window.sb
     .from("programs")
     .select("id, name")
     .order("name");
@@ -65,7 +65,7 @@ async function loadSession() {
     return;
   }
 
-  const { data, error } = await sb
+  const { data, error } = await window.sb
     .from("sessions")
     .select(`
       id,
@@ -148,7 +148,7 @@ async function saveChanges(reschedule = false) {
     }
 
     /* Update session */
-    const { error: upErr } = await sb
+    const { error: upErr } = await window.sb
       .from("sessions")
       .update({
         starts_at: startsAt,
@@ -161,10 +161,10 @@ async function saveChanges(reschedule = false) {
     if (upErr) throw upErr;
 
     /* Reset programs */
-    await sb.from("session_programs").delete().eq("session_id", sessionId);
+    await window.sb.from("session_programs").delete().eq("session_id", sessionId);
 
     if (programs.length) {
-      await sb.from("session_programs").insert(
+      await window.sb.from("session_programs").insert(
         programs.map(pid => ({
           session_id: sessionId,
           program_id: pid
@@ -191,7 +191,7 @@ async function cancelSession() {
 
   if (!confirm("Are you sure you want to cancel this session?")) return;
 
-  const { error } = await sb
+  const { error } = await window.sb
     .from("sessions")
     .update({ status: "cancelled" })
     .eq("id", sessionId);

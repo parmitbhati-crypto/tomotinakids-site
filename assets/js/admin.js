@@ -70,7 +70,7 @@ async function requireAdmin() {
 ================================ */
 async function loadDropdowns() {
   // Teachers
-  const { data: teachers, error: tErr } = await sb
+  const { data: teachers, error: tErr } = await window.sb
     .from("profiles")
     .select("id, full_name")
     .eq("role", "teacher")
@@ -87,7 +87,7 @@ async function loadDropdowns() {
   ).join("");
 
   // Students
-  const { data: students, error: sErr } = await sb
+  const { data: students, error: sErr } = await window.sb
     .from("students")
     .select("id, full_name")
     .order("full_name");
@@ -103,7 +103,7 @@ async function loadDropdowns() {
   ).join("");
 
   // Programs
-  const { data: programs, error: pErr } = await sb
+  const { data: programs, error: pErr } = await window.sb
     .from("programs")
     .select("id, name")
     .order("name");
@@ -144,7 +144,7 @@ async function loadSessionsForTeacherDate() {
   const to = new Date(from);
   to.setDate(to.getDate() + 1);
 
-  const { data, error } = await sb
+  const { data, error } = await window.sb
     .from("sessions")
     .select(`
       id, starts_at, ends_at, location, status,
@@ -242,7 +242,7 @@ async function saveSession() {
     }
 
     /* 🔒 CONFLICT CHECK (Phase 3) */
-    const { data: conflicts } = await sb
+    const { data: conflicts } = await window.sb
       .from("sessions")
       .select("id")
       .eq("teacher_id", teacherId)
@@ -254,7 +254,7 @@ async function saveSession() {
     }
 
     /* INSERT SESSION */
-    const { data: inserted, error } = await sb
+    const { data: inserted, error } = await window.sb
       .from("sessions")
       .insert([{
         teacher_id: teacherId,
@@ -270,7 +270,7 @@ async function saveSession() {
     if (error) throw error;
 
     if (programIds.length) {
-      await sb.from("session_programs").insert(
+      await window.sb.from("session_programs").insert(
         programIds.map(pid => ({
           session_id: inserted.id,
           program_id: pid
