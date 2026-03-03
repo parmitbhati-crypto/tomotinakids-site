@@ -1,6 +1,13 @@
 // assets/js/admin.js
 console.log("ADMIN.JS LOADED ✅");
 
+window.addEventListener("error", (e) => {
+  console.error("GLOBAL ERROR:", e.message, e.filename, e.lineno);
+});
+window.addEventListener("unhandledrejection", (e) => {
+  console.error("UNHANDLED PROMISE:", e.reason);
+});
+
 function qs(id) { return document.getElementById(id); }
 
 /* ===============================
