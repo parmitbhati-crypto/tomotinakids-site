@@ -1,4 +1,5 @@
 // assets/js/admin.js
+console.log("ADMIN.JS LOADED ✅");
 
 function qs(id) { return document.getElementById(id); }
 
@@ -69,6 +70,7 @@ async function requireAdmin() {
    DROPDOWNS
 ================================ */
 async function loadDropdowns() {
+  console.log("loadDropdowns() called ✅");
   // Teachers
   const { data: teachers, error: tErr } = await window.sb
     .from("profiles")
