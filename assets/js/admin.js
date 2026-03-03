@@ -82,9 +82,9 @@ async function loadDropdowns() {
     return;
   }
 
-  qs("teacherSelect").innerHTML = teachers.map(t =>
-    `<option value="${t.id}">${t.full_name}</option>`
-  ).join("");
+qs("teacherSelect").innerHTML =
+  `<option value="">— Select teacher —</option>` +
+  teachers.map(t => `<option value="${t.id}">${t.full_name}</option>`).join("");
 
   // Students
   const { data: students, error: sErr } = await window.sb
@@ -98,10 +98,9 @@ async function loadDropdowns() {
     return;
   }
 
-  qs("studentSelect").innerHTML = students.map(s =>
-    `<option value="${s.id}">${s.full_name}</option>`
-  ).join("");
-
+qs("studentSelect").innerHTML =
+  `<option value="">— Select student —</option>` +
+  students.map(s => `<option value="${s.id}">${s.full_name}</option>`).join("");
   // Programs
   const { data: programs, error: pErr } = await window.sb
     .from("programs")
