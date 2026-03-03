@@ -62,13 +62,20 @@ async function doLogin() {
     setMsg(error?.message || "Login failed.");
     return;
   }
+  const { data: sess } = await window.sb.auth.getSession();
+console.log("LOGIN DEBUG session:", sess?.session);
+console.log("LOGIN DEBUG access_token?", !!sess?.session?.access_token);
+console.log("LOGIN DEBUG user id:", data.user.id);
 
   // 🔑 FETCH ROLE AFTER LOGIN
   const { data: profile, error: profileError } = await window.sb
     .from("profiles")
     .select("role")
     .eq("id", data.user.id)
-    .single();
+    .maybeSingle();
+
+    console.log("LOGIN DEBUG profile:", profile);
+console.log("LOGIN DEBUG profileError:", profileError);
 
   if (profileError || !profile?.role) {
     setMsg("Login successful, but role not found.");

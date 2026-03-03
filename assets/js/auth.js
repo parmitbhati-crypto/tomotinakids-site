@@ -7,6 +7,8 @@ async function requireAuth() {
   if (!window.sb) return null;
 
   const { data: { session } } = await window.sb.auth.getSession();
+  console.log("AUTH DEBUG session:", sess?.session);
+console.log("AUTH DEBUG access_token?", !!sess?.session?.access_token);
 const user = session?.user || null;
 
   // ─────────────────────────────
@@ -27,7 +29,8 @@ const user = session?.user || null;
     .select("id, full_name, role")
     .eq("id", user.id)
     .single();
-
+console.log("AUTH DEBUG profile:", profile);
+console.log("AUTH DEBUG profileError:", profileError);
   if (profileError || !profile) {
     console.error("Profile fetch failed", profileError);
     return null;
