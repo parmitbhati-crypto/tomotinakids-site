@@ -331,49 +331,209 @@
 
             </div>
 
-            <!-- EDIT (JSON) -->
+            <!-- EDIT -->
             <div id="editView" style="display:none;">
               <h3 style="margin: 4px 0 10px;">Edit Details</h3>
 
-              <div class="form-grid">
-                <label class="field">
-                  <span>Student Full Name</span>
-                  <input id="evStudentName" />
-                </label>
+              <div class="section-card">
+                <div class="section-title">Core Details</div>
+                <div class="form-grid">
+                  <label class="field">
+                    <span>Student Full Name</span>
+                    <input id="evStudentName" />
+                  </label>
 
-                <label class="field">
-                  <span>Registration Date</span>
-                  <input id="evRegDate" type="date" />
-                </label>
+                  <label class="field">
+                    <span>Registration Date</span>
+                    <input id="evRegDate" type="date" />
+                  </label>
 
-                <label class="field">
-                  <span>Parent Name</span>
-                  <input id="evParentName" />
-                </label>
+                  <label class="field">
+                    <span>Parent Name</span>
+                    <input id="evParentName" />
+                  </label>
 
-                <label class="field">
-                  <span>Parent Phone</span>
-                  <input id="evParentPhone" />
-                </label>
+                  <label class="field">
+                    <span>Parent Phone</span>
+                    <input id="evParentPhone" />
+                  </label>
 
-                <label class="field form-grid-full">
-                  <span>Address</span>
-                  <input id="evAddress" />
-                </label>
+                  <label class="field form-grid-full">
+                    <span>Address</span>
+                    <input id="evAddress" />
+                  </label>
 
-                <label class="field">
-                  <span>Active</span>
-                  <select id="evActive">
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                  </select>
-                </label>
+                  <label class="field">
+                    <span>Active</span>
+                    <select id="evActive">
+                      <option value="true">Active</option>
+                      <option value="false">Inactive</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
 
-                <label class="field form-grid-full">
-                  <span>Registration Form Data (JSON)</span>
-                  <textarea id="evFormJson" rows="16"></textarea>
-                  <small class="muted">This stores the full form snapshot. Keep it valid JSON.</small>
-                </label>
+              <div class="section-card">
+                <div class="section-title">I. Basic Contact Information</div>
+                <div class="form-grid">
+                  <label class="field">
+                    <span>Parent’s Name</span>
+                    <input id="evBasicParentName" />
+                  </label>
+                  <label class="field">
+                    <span>Phone</span>
+                    <input id="evBasicParentPhone" />
+                  </label>
+                  <label class="field">
+                    <span>Email</span>
+                    <input id="evBasicParentEmail" type="email" />
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>Address</span>
+                    <input id="evBasicAddress" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-title">II. Child’s Profile</div>
+                <div class="form-grid">
+                  <label class="field">
+                    <span>Child’s Name</span>
+                    <input id="evChildName" />
+                  </label>
+                  <label class="field">
+                    <span>Age</span>
+                    <input id="evAge" />
+                  </label>
+                  <label class="field">
+                    <span>DOB</span>
+                    <input id="evDob" type="date" />
+                  </label>
+                  <label class="field">
+                    <span>Grade</span>
+                    <input id="evGrade" />
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>School Name</span>
+                    <input id="evSchool" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-title">III. Family & Living Situation</div>
+                <div class="form-grid">
+                  <label class="field form-grid-full">
+                    <span>Siblings living in the home</span>
+                    <textarea id="evSiblingsHome" rows="2"></textarea>
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>Siblings living outside the home</span>
+                    <textarea id="evSiblingsOutside" rows="2"></textarea>
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>Primary Language</span>
+                    <input id="evLanguage" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-title">IV. Medical & Health Background</div>
+                <div class="form-grid">
+                  <label class="field form-grid-full">
+                    <span>Special Diet / Allergies</span>
+                    <textarea id="evAllergies" rows="2"></textarea>
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>Current Medications</span>
+                    <textarea id="evMeds" rows="2"></textarea>
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>Physician/Pediatrician</span>
+                    <input id="evPhysician" />
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>Known diagnoses</span>
+                    <textarea id="evDiagnoses" rows="3"></textarea>
+                  </label>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-title">V. Emergency Contact</div>
+                <div class="form-grid">
+                  <label class="field">
+                    <span>Name</span>
+                    <input id="evEName" />
+                  </label>
+                  <label class="field">
+                    <span>Relationship</span>
+                    <input id="evERel" />
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>Phone</span>
+                    <input id="evEPhone" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-title">VI. Developmental Milestones / Concerns</div>
+                <div class="form-grid">
+                  <label class="field form-grid-full">
+                    <span>Concerns</span>
+                    <textarea id="evConcerns" rows="3"></textarea>
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>Strengths & Interests</span>
+                    <textarea id="evStrengths" rows="2"></textarea>
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>Enjoys / Excels at</span>
+                    <textarea id="evEnjoys" rows="2"></textarea>
+                  </label>
+                  <label class="field form-grid-full">
+                    <span>Goals</span>
+                    <textarea id="evGoals" rows="3"></textarea>
+                  </label>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-title">VII. Referral Source</div>
+                <div class="form-grid">
+                  <label class="field form-grid-full">
+                    <span>How did you hear about us?</span>
+                    <input id="evReferral" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-title">Office Use</div>
+                <div class="form-grid">
+                  <label class="field">
+                    <span>Date of Intake</span>
+                    <input id="evIntakeDate" type="date" />
+                  </label>
+                  <label class="field">
+                    <span>Staff Member</span>
+                    <input id="evStaff" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-title">Advanced JSON</div>
+                <div class="form-grid">
+                  <label class="field form-grid-full">
+                    <span>Registration Form Data (JSON)</span>
+                    <textarea id="evFormJson" rows="16"></textarea>
+                    <small class="muted">Optional advanced editing. Structured fields above will also be saved into this JSON.</small>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -435,6 +595,76 @@
       if (!val) return "—";
       try { return new Date(val).toLocaleDateString(); }
       catch { return fmt(val); }
+    }
+
+    function toDateInputValue(val){
+      if (!val) return "";
+      if (/^\d{4}-\d{2}-\d{2}$/.test(String(val))) return String(val);
+      try {
+        const d = new Date(val);
+        if (Number.isNaN(d.getTime())) return "";
+        return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0,10);
+      } catch {
+        return "";
+      }
+    }
+
+    function normalizeFormData(form){
+      const src = form && typeof form === "object" ? form : {};
+      const basic = src.basic_contact || {};
+      const child = src.child_profile || {};
+      const family = src.family_living || {};
+      const med = src.medical_health || {};
+      const em = src.emergency_contact || {};
+      const dev = src.developmental || {};
+      const ref = src.referral || {};
+      const office = src.office_use || {};
+
+      return {
+        basic_contact: {
+          parent_name: basic.parent_name ?? src.parent_name ?? "",
+          address: basic.address ?? src.address ?? "",
+          email: basic.email ?? src.parent_email ?? "",
+          phone: basic.phone ?? src.parent_phone ?? ""
+        },
+        child_profile: {
+          child_name: child.child_name ?? src.student_name ?? src.child_name ?? "",
+          age: child.age ?? src.age ?? "",
+          dob: child.dob ?? src.dob ?? "",
+          grade: child.grade ?? src.grade ?? "",
+          school_name: child.school_name ?? src.school_name ?? ""
+        },
+        family_living: {
+          siblings_home: family.siblings_home ?? src.siblings_home ?? "",
+          siblings_outside: family.siblings_outside ?? src.siblings_outside ?? "",
+          primary_language: family.primary_language ?? src.primary_language ?? ""
+        },
+        medical_health: {
+          allergies: med.allergies ?? src.allergies ?? "",
+          medications: med.medications ?? src.medications ?? "",
+          physician: med.physician ?? src.physician ?? "",
+          diagnoses: med.diagnoses ?? src.diagnoses ?? ""
+        },
+        emergency_contact: {
+          name: em.name ?? src.emergency_name ?? "",
+          relationship: em.relationship ?? src.emergency_relationship ?? "",
+          phone: em.phone ?? src.emergency_phone ?? ""
+        },
+        developmental: {
+          concerns: dev.concerns ?? src.concerns ?? "",
+          strengths: dev.strengths ?? src.strengths ?? "",
+          enjoys: dev.enjoys ?? src.enjoys ?? "",
+          goals: dev.goals ?? src.goals ?? ""
+        },
+        referral: {
+          source: ref.source ?? src.referral_source ?? ""
+        },
+        office_use: {
+          date_of_intake: office.date_of_intake ?? src.date_of_intake ?? "",
+          staff_member: office.staff_member ?? src.staff_member ?? ""
+        },
+        photo_url: src.photo_url || ""
+      };
     }
 
     const studentId = qp("student_id");
@@ -506,6 +736,32 @@
     const evAddress = document.getElementById("evAddress");
     const evRegDate = document.getElementById("evRegDate");
     const evActive = document.getElementById("evActive");
+    const evBasicParentName = document.getElementById("evBasicParentName");
+    const evBasicParentPhone = document.getElementById("evBasicParentPhone");
+    const evBasicParentEmail = document.getElementById("evBasicParentEmail");
+    const evBasicAddress = document.getElementById("evBasicAddress");
+    const evChildName = document.getElementById("evChildName");
+    const evAge = document.getElementById("evAge");
+    const evDob = document.getElementById("evDob");
+    const evGrade = document.getElementById("evGrade");
+    const evSchool = document.getElementById("evSchool");
+    const evSiblingsHome = document.getElementById("evSiblingsHome");
+    const evSiblingsOutside = document.getElementById("evSiblingsOutside");
+    const evLanguage = document.getElementById("evLanguage");
+    const evAllergies = document.getElementById("evAllergies");
+    const evMeds = document.getElementById("evMeds");
+    const evPhysician = document.getElementById("evPhysician");
+    const evDiagnoses = document.getElementById("evDiagnoses");
+    const evEName = document.getElementById("evEName");
+    const evERel = document.getElementById("evERel");
+    const evEPhone = document.getElementById("evEPhone");
+    const evConcerns = document.getElementById("evConcerns");
+    const evStrengths = document.getElementById("evStrengths");
+    const evEnjoys = document.getElementById("evEnjoys");
+    const evGoals = document.getElementById("evGoals");
+    const evReferral = document.getElementById("evReferral");
+    const evIntakeDate = document.getElementById("evIntakeDate");
+    const evStaff = document.getElementById("evStaff");
     const evFormJson = document.getElementById("evFormJson");
 
     let studentRow = null;
@@ -533,13 +789,49 @@
     });
 
     function fillEditFields(){
-      evStudentName.value = studentRow?.full_name || "";
-      evParentName.value = studentRow?.parent_name || "";
-      evParentPhone.value = studentRow?.parent_phone || "";
-      evAddress.value = studentRow?.address || "";
-      evRegDate.value = studentRow?.registration_date || "";
+      const form = normalizeFormData(regRow?.form_data || {});
+
+      evStudentName.value = studentRow?.full_name || form.child_profile.child_name || "";
+      evParentName.value = studentRow?.parent_name || form.basic_contact.parent_name || "";
+      evParentPhone.value = studentRow?.parent_phone || form.basic_contact.phone || "";
+      evAddress.value = studentRow?.address || form.basic_contact.address || "";
+      evRegDate.value = toDateInputValue(studentRow?.registration_date);
       evActive.value = String(!!studentRow?.is_active);
-      evFormJson.value = safeStringify(regRow?.form_data || {});
+
+      evBasicParentName.value = form.basic_contact.parent_name || "";
+      evBasicParentPhone.value = form.basic_contact.phone || "";
+      evBasicParentEmail.value = form.basic_contact.email || "";
+      evBasicAddress.value = form.basic_contact.address || "";
+
+      evChildName.value = form.child_profile.child_name || studentRow?.full_name || "";
+      evAge.value = form.child_profile.age || "";
+      evDob.value = toDateInputValue(form.child_profile.dob);
+      evGrade.value = form.child_profile.grade || "";
+      evSchool.value = form.child_profile.school_name || "";
+
+      evSiblingsHome.value = form.family_living.siblings_home || "";
+      evSiblingsOutside.value = form.family_living.siblings_outside || "";
+      evLanguage.value = form.family_living.primary_language || "";
+
+      evAllergies.value = form.medical_health.allergies || "";
+      evMeds.value = form.medical_health.medications || "";
+      evPhysician.value = form.medical_health.physician || "";
+      evDiagnoses.value = form.medical_health.diagnoses || "";
+
+      evEName.value = form.emergency_contact.name || "";
+      evERel.value = form.emergency_contact.relationship || "";
+      evEPhone.value = form.emergency_contact.phone || "";
+
+      evConcerns.value = form.developmental.concerns || "";
+      evStrengths.value = form.developmental.strengths || "";
+      evEnjoys.value = form.developmental.enjoys || "";
+      evGoals.value = form.developmental.goals || "";
+
+      evReferral.value = form.referral.source || "";
+      evIntakeDate.value = toDateInputValue(form.office_use.date_of_intake);
+      evStaff.value = form.office_use.staff_member || "";
+
+      evFormJson.value = safeStringify(form);
     }
 
     function fillReadView(){
@@ -554,9 +846,8 @@
       rvRegDate.textContent = studentRow?.registration_date ? fmtDate(studentRow.registration_date) : "—";
       rvActive.textContent = isActive ? "Active" : "Inactive";
 
-      const form = regRow?.form_data || {};
+      const form = normalizeFormData(regRow?.form_data || {});
 
-      // From JSON (new form structure)
       const basic = form.basic_contact || {};
       const child = form.child_profile || {};
       const family = form.family_living || {};
@@ -618,7 +909,6 @@
       saveBtn.textContent = "Saving…";
 
       try {
-        // Validate JSON
         let parsed = {};
         try {
           parsed = JSON.parse(evFormJson.value || "{}");
@@ -627,14 +917,48 @@
           return;
         }
 
-        // Update students (core fields)
+        const normalized = normalizeFormData(parsed);
+        normalized.basic_contact.parent_name = evBasicParentName.value.trim() || evParentName.value.trim() || "";
+        normalized.basic_contact.phone = evBasicParentPhone.value.trim() || evParentPhone.value.trim() || "";
+        normalized.basic_contact.email = evBasicParentEmail.value.trim() || "";
+        normalized.basic_contact.address = evBasicAddress.value.trim() || evAddress.value.trim() || "";
+
+        normalized.child_profile.child_name = evChildName.value.trim() || evStudentName.value.trim() || "";
+        normalized.child_profile.age = evAge.value.trim() || "";
+        normalized.child_profile.dob = evDob.value || "";
+        normalized.child_profile.grade = evGrade.value.trim() || "";
+        normalized.child_profile.school_name = evSchool.value.trim() || "";
+
+        normalized.family_living.siblings_home = evSiblingsHome.value.trim() || "";
+        normalized.family_living.siblings_outside = evSiblingsOutside.value.trim() || "";
+        normalized.family_living.primary_language = evLanguage.value.trim() || "";
+
+        normalized.medical_health.allergies = evAllergies.value.trim() || "";
+        normalized.medical_health.medications = evMeds.value.trim() || "";
+        normalized.medical_health.physician = evPhysician.value.trim() || "";
+        normalized.medical_health.diagnoses = evDiagnoses.value.trim() || "";
+
+        normalized.emergency_contact.name = evEName.value.trim() || "";
+        normalized.emergency_contact.relationship = evERel.value.trim() || "";
+        normalized.emergency_contact.phone = evEPhone.value.trim() || "";
+
+        normalized.developmental.concerns = evConcerns.value.trim() || "";
+        normalized.developmental.strengths = evStrengths.value.trim() || "";
+        normalized.developmental.enjoys = evEnjoys.value.trim() || "";
+        normalized.developmental.goals = evGoals.value.trim() || "";
+
+        normalized.referral.source = evReferral.value.trim() || "";
+        normalized.office_use.date_of_intake = evIntakeDate.value || normalized.office_use.date_of_intake || "";
+        normalized.office_use.staff_member = evStaff.value.trim() || "";
+        normalized.photo_url = studentRow?.photo_url || normalized.photo_url || "";
+
         const { error: uErr } = await window.sb
           .from("students")
           .update({
-            full_name: evStudentName.value.trim(),
-            parent_name: evParentName.value.trim(),
-            parent_phone: evParentPhone.value.trim(),
-            address: evAddress.value.trim(),
+            full_name: evStudentName.value.trim() || normalized.child_profile.child_name || null,
+            parent_name: evParentName.value.trim() || normalized.basic_contact.parent_name || null,
+            parent_phone: evParentPhone.value.trim() || normalized.basic_contact.phone || null,
+            address: evAddress.value.trim() || normalized.basic_contact.address || null,
             registration_date: evRegDate.value || null,
             is_active: evActive.value === "true"
           })
@@ -642,11 +966,10 @@
 
         if (uErr) throw uErr;
 
-        // Upsert registration snapshot
         if (regRow?.id) {
           const { error: rErr } = await window.sb
             .from("student_registrations")
-            .update({ form_data: parsed })
+            .update({ form_data: normalized })
             .eq("id", regRow.id);
           if (rErr) throw rErr;
         } else {
@@ -655,7 +978,7 @@
             .from("student_registrations")
             .insert([{
               student_id: studentId,
-              form_data: parsed,
+              form_data: normalized,
               created_by: user?.id || null
             }]);
           if (rInsErr) throw rInsErr;

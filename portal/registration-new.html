@@ -274,6 +274,8 @@
       submitBtn.disabled = true;
       submitBtn.textContent = "Saving…";
 
+      let createdStudentId = null;
+
       try {
         // Basic contact
         const parentName = document.getElementById("parentName").value.trim();
@@ -316,19 +318,14 @@
         const file = photoInput.files?.[0];
         if (!file) { alert("Student photo is required."); return; }
 
-        // 1) Insert into students (core data for scheduling)
+        // 1) Insert into students (only core columns used by the portal)
         const { data: studentInsert, error: sErr } = await window.sb
           .from("students")
           .insert([{
             full_name: studentName,
             parent_name: parentName,
             parent_phone: parentPhone,
-            parent_email: parentEmail,
             address: address,
-            dob: dob,
-            age: age,
-            grade: grade,
-            school_name: schoolName,
             is_active: true,
             registration_date: new Date().toISOString().slice(0,10)
           }])
@@ -338,6 +335,7 @@
         if (sErr) throw sErr;
 
         const studentId = studentInsert.id;
+        createdStudentId = studentId;
 
         // 2) Upload photo
         const ext = getFileExt(file);
@@ -385,7 +383,17 @@
 
       } catch (err) {
         console.error(err);
-        alert("Error: " + (err?.message || "Something went wrong"));
+
+        if (createdStudentId) {
+          try {
+            await window.sb.from("student_registrations").delete().eq("student_id", createdStudentId);
+            await window.sb.from("students").delete().eq("id", createdStudentId);
+          } catch (cleanupErr) {
+            console.warn("Cleanup failed after registration create error", cleanupErr);
+          }
+        }
+
+        alert("Error while creating registration: " + (err?.message || "Something went wrong"));
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Create Registration";
