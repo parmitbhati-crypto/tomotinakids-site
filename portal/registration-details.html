@@ -12,7 +12,6 @@
   <script src="../assets/js/supabaseClient.js"></script>
 
   <style>
-    /* Print-only formatting */
     @media print {
       header, .portal-actions, .no-print { display: none !important; }
       body { background: #fff !important; }
@@ -51,6 +50,7 @@
       background:#fff;
       margin: 0 0 12px;
     }
+
     .section-title{
       margin: 0 0 10px;
       font-size: 15px;
@@ -62,28 +62,37 @@
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
+
     .kv .row{
       border: 1px solid rgba(0,0,0,0.10);
       border-radius: 14px;
       padding: 10px 12px;
       background:#fff;
     }
+
     .kv .row strong{
       display:block;
       font-size: 12px;
       opacity: .8;
       margin-bottom: 4px;
     }
+
     .kv .row span{
       display:block;
       font-weight: 600;
       word-break: break-word;
     }
+
     .kv .row.full{ grid-column: 1 / -1; }
 
     .muted{ opacity: .75; }
 
-    .field span{ display:block; margin-bottom: 6px; font-weight: 600; }
+    .field span{
+      display:block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
     .field input, .field textarea, .field select{
       width:100%;
       padding: 10px 12px;
@@ -92,11 +101,13 @@
       background:#fff;
       font: inherit;
     }
+
     .form-grid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
+
     .form-grid-full{ grid-column: 1 / -1; }
 
     .pill{
@@ -109,6 +120,21 @@
       background:#fff;
       font-weight:700;
       font-size: 12px;
+    }
+
+    .photo-upload-box{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .hint{
+      font-size:12px;
+      opacity:.72;
+    }
+
+    .linkish{
+      word-break: break-all;
     }
   </style>
 </head>
@@ -136,7 +162,6 @@
       <div id="content" style="display:none;">
         <div class="detail-grid">
 
-          <!-- LEFT -->
           <div>
             <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;">
               <h2 id="studentTitle" style="margin:0;"></h2>
@@ -172,7 +197,7 @@
                 </div>
               </div>
 
-              <div class="section-card" id="secBasic">
+              <div class="section-card">
                 <div class="section-title">I. Basic Contact Information</div>
                 <div class="kv">
                   <div class="row">
@@ -194,7 +219,7 @@
                 </div>
               </div>
 
-              <div class="section-card" id="secChild">
+              <div class="section-card">
                 <div class="section-title">II. Child’s Profile</div>
                 <div class="kv">
                   <div class="row">
@@ -220,7 +245,7 @@
                 </div>
               </div>
 
-              <div class="section-card" id="secFamily">
+              <div class="section-card">
                 <div class="section-title">III. Family & Living Situation</div>
                 <div class="kv">
                   <div class="row full">
@@ -238,7 +263,7 @@
                 </div>
               </div>
 
-              <div class="section-card" id="secMedical">
+              <div class="section-card">
                 <div class="section-title">IV. Medical & Health Background</div>
                 <div class="kv">
                   <div class="row full">
@@ -260,7 +285,7 @@
                 </div>
               </div>
 
-              <div class="section-card" id="secEmergency">
+              <div class="section-card">
                 <div class="section-title">V. Emergency Contact</div>
                 <div class="kv">
                   <div class="row">
@@ -278,7 +303,7 @@
                 </div>
               </div>
 
-              <div class="section-card" id="secDev">
+              <div class="section-card">
                 <div class="section-title">VI. Developmental Milestones / Concerns</div>
                 <div class="kv">
                   <div class="row full">
@@ -300,7 +325,7 @@
                 </div>
               </div>
 
-              <div class="section-card" id="secReferral">
+              <div class="section-card">
                 <div class="section-title">VII. Referral Source</div>
                 <div class="kv">
                   <div class="row full">
@@ -310,7 +335,7 @@
                 </div>
               </div>
 
-              <div class="section-card" id="secOffice">
+              <div class="section-card">
                 <div class="section-title">Office Use</div>
                 <div class="kv">
                   <div class="row">
@@ -324,14 +349,9 @@
                 </div>
               </div>
 
-              <div class="section-card">
-                <div class="section-title">Raw Form JSON (for reference)</div>
-                <pre id="rvFormJson" style="white-space:pre-wrap; margin:0;"></pre>
-              </div>
-
             </div>
 
-            <!-- EDIT -->
+            <!-- EDIT VIEW -->
             <div id="editView" style="display:none;">
               <h3 style="margin: 4px 0 10px;">Edit Details</h3>
 
@@ -364,7 +384,7 @@
                   </label>
 
                   <label class="field">
-                    <span>Active</span>
+                    <span>Status</span>
                     <select id="evActive">
                       <option value="true">Active</option>
                       <option value="false">Inactive</option>
@@ -524,19 +544,7 @@
                   </label>
                 </div>
               </div>
-
-              <div class="section-card">
-                <div class="section-title">Advanced JSON</div>
-                <div class="form-grid">
-                  <label class="field form-grid-full">
-                    <span>Registration Form Data (JSON)</span>
-                    <textarea id="evFormJson" rows="16"></textarea>
-                    <small class="muted">Optional advanced editing. Structured fields above will also be saved into this JSON.</small>
-                  </label>
-                </div>
-              </div>
             </div>
-
           </div>
 
           <!-- RIGHT -->
@@ -547,7 +555,15 @@
 
             <div class="section-card" style="margin-top:12px;">
               <div class="section-title">Photo URL</div>
-              <div class="muted" id="photoUrlText">—</div>
+              <div class="muted linkish" id="photoUrlText">—</div>
+            </div>
+
+            <div class="section-card no-print" id="photoEditCard" style="display:none;">
+              <div class="section-title">Change Photo</div>
+              <div class="photo-upload-box">
+                <input id="evPhotoFile" type="file" accept="image/*" />
+                <div class="hint">Upload a new student photo to replace the current one.</div>
+              </div>
             </div>
           </aside>
         </div>
@@ -556,10 +572,14 @@
   </main>
 
   <script>
-    // ---------- Admin Guard ----------
+    const BUCKET = "student-photos";
+
     async function requireAdmin() {
       const { data: { user } } = await window.sb.auth.getUser();
-      if (!user) { window.location.href = "./login.html"; return null; }
+      if (!user) {
+        window.location.href = "./login.html";
+        return null;
+      }
 
       const { data: profile, error } = await window.sb
         .from("profiles")
@@ -572,6 +592,7 @@
         window.location.href = "./admin-home.html";
         return null;
       }
+
       return user;
     }
 
@@ -580,21 +601,19 @@
       return u.searchParams.get(name);
     }
 
-    function safeStringify(obj){
-      try { return JSON.stringify(obj, null, 2); }
-      catch { return "{}"; }
-    }
-
     function fmt(val){
       if (val === null || val === undefined) return "—";
       const s = String(val).trim();
-      return s ? s : "—";
+      return s || "—";
     }
 
     function fmtDate(val){
       if (!val) return "—";
-      try { return new Date(val).toLocaleDateString(); }
-      catch { return fmt(val); }
+      try {
+        return new Date(val).toLocaleDateString();
+      } catch {
+        return fmt(val);
+      }
     }
 
     function toDateInputValue(val){
@@ -607,6 +626,19 @@
       } catch {
         return "";
       }
+    }
+
+    function slugify(name){
+      return (name || "student")
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    function getFileExt(file){
+      const parts = (file.name || "").split(".");
+      return parts.length > 1 ? parts.pop().toLowerCase() : "jpg";
     }
 
     function normalizeFormData(form){
@@ -675,19 +707,17 @@
     const studentTitle = document.getElementById("studentTitle");
     const activePill = document.getElementById("activePill");
 
-    // Core view
     const rvParent = document.getElementById("rvParent");
     const rvPhone = document.getElementById("rvPhone");
     const rvAddress = document.getElementById("rvAddress");
     const rvRegDate = document.getElementById("rvRegDate");
     const rvActive = document.getElementById("rvActive");
-    const rvFormJson = document.getElementById("rvFormJson");
 
-    // Photo
     const photoImg = document.getElementById("photoImg");
     const photoUrlText = document.getElementById("photoUrlText");
+    const photoEditCard = document.getElementById("photoEditCard");
+    const evPhotoFile = document.getElementById("evPhotoFile");
 
-    // Read fields (from form_data)
     const fParentName = document.getElementById("fParentName");
     const fParentPhone = document.getElementById("fParentPhone");
     const fParentEmail = document.getElementById("fParentEmail");
@@ -718,11 +748,9 @@
     const fGoals = document.getElementById("fGoals");
 
     const fReferral = document.getElementById("fReferral");
-
     const fIntakeDate = document.getElementById("fIntakeDate");
     const fStaff = document.getElementById("fStaff");
 
-    // Edit controls
     const readView = document.getElementById("readView");
     const editView = document.getElementById("editView");
     const editBtn = document.getElementById("editBtn");
@@ -736,33 +764,39 @@
     const evAddress = document.getElementById("evAddress");
     const evRegDate = document.getElementById("evRegDate");
     const evActive = document.getElementById("evActive");
+
     const evBasicParentName = document.getElementById("evBasicParentName");
     const evBasicParentPhone = document.getElementById("evBasicParentPhone");
     const evBasicParentEmail = document.getElementById("evBasicParentEmail");
     const evBasicAddress = document.getElementById("evBasicAddress");
+
     const evChildName = document.getElementById("evChildName");
     const evAge = document.getElementById("evAge");
     const evDob = document.getElementById("evDob");
     const evGrade = document.getElementById("evGrade");
     const evSchool = document.getElementById("evSchool");
+
     const evSiblingsHome = document.getElementById("evSiblingsHome");
     const evSiblingsOutside = document.getElementById("evSiblingsOutside");
     const evLanguage = document.getElementById("evLanguage");
+
     const evAllergies = document.getElementById("evAllergies");
     const evMeds = document.getElementById("evMeds");
     const evPhysician = document.getElementById("evPhysician");
     const evDiagnoses = document.getElementById("evDiagnoses");
+
     const evEName = document.getElementById("evEName");
     const evERel = document.getElementById("evERel");
     const evEPhone = document.getElementById("evEPhone");
+
     const evConcerns = document.getElementById("evConcerns");
     const evStrengths = document.getElementById("evStrengths");
     const evEnjoys = document.getElementById("evEnjoys");
     const evGoals = document.getElementById("evGoals");
+
     const evReferral = document.getElementById("evReferral");
     const evIntakeDate = document.getElementById("evIntakeDate");
     const evStaff = document.getElementById("evStaff");
-    const evFormJson = document.getElementById("evFormJson");
 
     let studentRow = null;
     let regRow = null;
@@ -776,17 +810,9 @@
       editBtn.style.display = isEdit ? "none" : "inline-flex";
       saveBtn.style.display = isEdit ? "inline-flex" : "none";
       cancelBtn.style.display = isEdit ? "inline-flex" : "none";
+      photoEditCard.style.display = isEdit ? "block" : "none";
+      if (!isEdit && evPhotoFile) evPhotoFile.value = "";
     }
-
-    cancelBtn.addEventListener("click", () => {
-      fillEditFields();
-      setMode("read");
-    });
-
-    editBtn.addEventListener("click", () => {
-      fillEditFields();
-      setMode("edit");
-    });
 
     function fillEditFields(){
       const form = normalizeFormData(regRow?.form_data || {});
@@ -830,14 +856,11 @@
       evReferral.value = form.referral.source || "";
       evIntakeDate.value = toDateInputValue(form.office_use.date_of_intake);
       evStaff.value = form.office_use.staff_member || "";
-
-      evFormJson.value = safeStringify(form);
     }
 
     function fillReadView(){
-      studentTitle.textContent = studentRow?.full_name || "Student";
-
       const isActive = !!studentRow?.is_active;
+      studentTitle.textContent = studentRow?.full_name || "Student";
       activePill.textContent = isActive ? "Active" : "Inactive";
 
       rvParent.textContent = fmt(studentRow?.parent_name);
@@ -848,53 +871,40 @@
 
       const form = normalizeFormData(regRow?.form_data || {});
 
-      const basic = form.basic_contact || {};
-      const child = form.child_profile || {};
-      const family = form.family_living || {};
-      const med = form.medical_health || {};
-      const em = form.emergency_contact || {};
-      const dev = form.developmental || {};
-      const ref = form.referral || {};
-      const office = form.office_use || {};
+      fParentName.textContent = fmt(form.basic_contact.parent_name || studentRow?.parent_name);
+      fParentPhone.textContent = fmt(form.basic_contact.phone || studentRow?.parent_phone);
+      fParentEmail.textContent = fmt(form.basic_contact.email);
+      fAddress.textContent = fmt(form.basic_contact.address || studentRow?.address);
 
-      fParentName.textContent = fmt(basic.parent_name || studentRow?.parent_name);
-      fParentPhone.textContent = fmt(basic.phone || studentRow?.parent_phone);
-      fParentEmail.textContent = fmt(basic.email);
-      fAddress.textContent = fmt(basic.address || studentRow?.address);
+      fChildName.textContent = fmt(form.child_profile.child_name || studentRow?.full_name);
+      fAge.textContent = fmt(form.child_profile.age);
+      fDob.textContent = form.child_profile.dob ? fmtDate(form.child_profile.dob) : "—";
+      fGrade.textContent = fmt(form.child_profile.grade);
+      fSchool.textContent = fmt(form.child_profile.school_name);
 
-      fChildName.textContent = fmt(child.child_name || studentRow?.full_name);
-      fAge.textContent = fmt(child.age);
-      fDob.textContent = child.dob ? fmtDate(child.dob) : "—";
-      fGrade.textContent = fmt(child.grade);
-      fSchool.textContent = fmt(child.school_name);
+      fSiblingsHome.textContent = fmt(form.family_living.siblings_home);
+      fSiblingsOutside.textContent = fmt(form.family_living.siblings_outside);
+      fLanguage.textContent = fmt(form.family_living.primary_language);
 
-      fSiblingsHome.textContent = fmt(family.siblings_home);
-      fSiblingsOutside.textContent = fmt(family.siblings_outside);
-      fLanguage.textContent = fmt(family.primary_language);
+      fAllergies.textContent = fmt(form.medical_health.allergies);
+      fMeds.textContent = fmt(form.medical_health.medications);
+      fPhysician.textContent = fmt(form.medical_health.physician);
+      fDiagnoses.textContent = fmt(form.medical_health.diagnoses);
 
-      fAllergies.textContent = fmt(med.allergies);
-      fMeds.textContent = fmt(med.medications);
-      fPhysician.textContent = fmt(med.physician);
-      fDiagnoses.textContent = fmt(med.diagnoses);
+      fEName.textContent = fmt(form.emergency_contact.name);
+      fERel.textContent = fmt(form.emergency_contact.relationship);
+      fEPhone.textContent = fmt(form.emergency_contact.phone);
 
-      fEName.textContent = fmt(em.name);
-      fERel.textContent = fmt(em.relationship);
-      fEPhone.textContent = fmt(em.phone);
+      fConcerns.textContent = fmt(form.developmental.concerns);
+      fStrengths.textContent = fmt(form.developmental.strengths);
+      fEnjoys.textContent = fmt(form.developmental.enjoys);
+      fGoals.textContent = fmt(form.developmental.goals);
 
-      fConcerns.textContent = fmt(dev.concerns);
-      fStrengths.textContent = fmt(dev.strengths);
-      fEnjoys.textContent = fmt(dev.enjoys);
-      fGoals.textContent = fmt(dev.goals);
+      fReferral.textContent = fmt(form.referral.source);
+      fIntakeDate.textContent = form.office_use.date_of_intake ? fmtDate(form.office_use.date_of_intake) : "—";
+      fStaff.textContent = fmt(form.office_use.staff_member);
 
-      fReferral.textContent = fmt(ref.source);
-
-      fIntakeDate.textContent = office.date_of_intake ? fmtDate(office.date_of_intake) : "—";
-      fStaff.textContent = fmt(office.staff_member);
-
-      rvFormJson.textContent = safeStringify(form);
-
-      // Photo
-      const photoUrl = studentRow?.photo_url || form?.photo_url || "";
+      const photoUrl = studentRow?.photo_url || form.photo_url || "";
       photoUrlText.textContent = photoUrl || "—";
 
       if (photoUrl) {
@@ -904,20 +914,37 @@
       }
     }
 
+    async function uploadReplacementPhoto(studentId, studentName){
+      const file = evPhotoFile?.files?.[0];
+      if (!file) return studentRow?.photo_url || "";
+
+      const ext = getFileExt(file);
+      const path = `${studentId}/${slugify(studentName)}-${Date.now()}.${ext}`;
+
+      const { error: upErr } = await window.sb.storage.from(BUCKET).upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+
+      const { data: pub } = window.sb.storage.from(BUCKET).getPublicUrl(path);
+      return pub?.publicUrl || "";
+    }
+
+    editBtn.addEventListener("click", () => {
+      fillEditFields();
+      setMode("edit");
+    });
+
+    cancelBtn.addEventListener("click", () => {
+      fillEditFields();
+      setMode("read");
+    });
+
     saveBtn.addEventListener("click", async () => {
       saveBtn.disabled = true;
       saveBtn.textContent = "Saving…";
 
       try {
-        let parsed = {};
-        try {
-          parsed = JSON.parse(evFormJson.value || "{}");
-        } catch (e) {
-          alert("Registration JSON is invalid. Please fix it.");
-          return;
-        }
+        const normalized = normalizeFormData(regRow?.form_data || {});
 
-        const normalized = normalizeFormData(parsed);
         normalized.basic_contact.parent_name = evBasicParentName.value.trim() || evParentName.value.trim() || "";
         normalized.basic_contact.phone = evBasicParentPhone.value.trim() || evParentPhone.value.trim() || "";
         normalized.basic_contact.email = evBasicParentEmail.value.trim() || "";
@@ -948,9 +975,14 @@
         normalized.developmental.goals = evGoals.value.trim() || "";
 
         normalized.referral.source = evReferral.value.trim() || "";
-        normalized.office_use.date_of_intake = evIntakeDate.value || normalized.office_use.date_of_intake || "";
+        normalized.office_use.date_of_intake = evIntakeDate.value || "";
         normalized.office_use.staff_member = evStaff.value.trim() || "";
-        normalized.photo_url = studentRow?.photo_url || normalized.photo_url || "";
+
+        let latestPhotoUrl = studentRow?.photo_url || normalized.photo_url || "";
+        if (evPhotoFile?.files?.[0]) {
+          latestPhotoUrl = await uploadReplacementPhoto(studentId, evStudentName.value.trim() || evChildName.value.trim() || "student");
+        }
+        normalized.photo_url = latestPhotoUrl || "";
 
         const { error: uErr } = await window.sb
           .from("students")
@@ -960,7 +992,8 @@
             parent_phone: evParentPhone.value.trim() || normalized.basic_contact.phone || null,
             address: evAddress.value.trim() || normalized.basic_contact.address || null,
             registration_date: evRegDate.value || null,
-            is_active: evActive.value === "true"
+            is_active: evActive.value === "true",
+            photo_url: latestPhotoUrl || null
           })
           .eq("id", studentId);
 
@@ -974,20 +1007,19 @@
           if (rErr) throw rErr;
         } else {
           const user = await requireAdmin();
-          const { error: rInsErr } = await window.sb
+          const { error: insErr } = await window.sb
             .from("student_registrations")
             .insert([{
               student_id: studentId,
               form_data: normalized,
               created_by: user?.id || null
             }]);
-          if (rInsErr) throw rInsErr;
+          if (insErr) throw insErr;
         }
 
         await loadData();
         setMode("read");
         alert("Saved.");
-
       } catch (err) {
         console.error(err);
         alert("Error: " + (err?.message || "Something went wrong"));
@@ -1028,11 +1060,13 @@
 
     (async function init(){
       await requireAdmin();
+
       if (!studentId) {
         alert("Missing student_id");
         window.location.href = "./registrations.html";
         return;
       }
+
       try {
         await loadData();
         setMode("read");
