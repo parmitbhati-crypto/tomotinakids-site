@@ -265,21 +265,84 @@
 
 })();
 
-
-// Enquiry form (UI-only for now; Supabase logging will be added later)
+// Enquiry form - real Supabase submit
 (() => {
   const form = document.querySelector('[data-enquiry-form]');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const success = form.querySelector('.form-success');
-    if (success) {
-      success.hidden = false;
-      success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } else {
-      alert('Thanks! We will get back to you shortly.');
+  const submitBtn = form.querySelector('[data-enquiry-submit]');
+  const statusEl = form.querySelector('[data-enquiry-status]');
+  let isSubmitting = false;
+
+  function setStatus(message, type = 'info') {
+    if (!statusEl) {
+      if (message) alert(message);
+      return;
     }
-    form.reset();
+
+    statusEl.hidden = !message;
+    statusEl.textContent = message || '';
+
+    statusEl.style.color =
+      type === 'error' ? '#b42318'
+      : type === 'success' ? '#027a48'
+      : 'inherit';
+
+    statusEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    const name = form.elements.name?.value.trim() || '';
+    const phone = form.elements.phone?.value.trim() || '';
+    const email = form.elements.email?.value.trim() || '';
+    const childAge = form.elements.child_age?.value.trim() || '';
+    const message = form.elements.message?.value.trim() || '';
+
+    if (!name || !phone || !message) {
+      setStatus('Please fill all required fields.', 'error');
+      return;
+    }
+
+    if (!window.sb) {
+      setStatus('Form is temporarily unavailable. Please try again shortly.', 'error');
+      return;
+    }
+
+    isSubmitting = true;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+    }
+    setStatus('');
+
+    try {
+      const { error } = await window.sb
+        .from('enquiries')
+        .insert([{
+          parent_name: name,
+          phone,
+          email: email || null,
+          child_age: childAge || null,
+          message,
+          status: 'new',
+          source: 'website_contact_form'
+        }]);
+
+      if (error) throw error;
+
+      form.reset();
+      setStatus('Thanks! Your enquiry has been submitted successfully.', 'success');
+    } catch (err) {
+      setStatus(err?.message || 'Something went wrong while sending your enquiry. Please try again.', 'error');
+    } finally {
+      isSubmitting = false;
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Enquiry';
+      }
+    }
   });
 })();
