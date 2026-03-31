@@ -34,10 +34,12 @@
         </div>
 
         <div class="toolbar">
-          <input id="q" class="input" placeholder="Search parent / phone / email / message..." />
+          <input id="q" class="input" placeholder="Search parent / child / phone / email / message..." />
           <select id="statusFilter" class="select">
             <option value="all">All statuses</option>
             <option value="new">New</option>
+            <option value="lead">Lead</option>
+            <option value="scheduled_appointment">Scheduled Appointment</option>
             <option value="contacted">Contacted</option>
             <option value="closed">Closed</option>
           </select>
@@ -52,16 +54,18 @@
               <tr>
                 <th>Date</th>
                 <th>Parent</th>
+                <th>Child</th>
                 <th>Phone</th>
                 <th>Email</th>
-                <th>Child</th>
                 <th>Child Age</th>
                 <th>Message</th>
                 <th>Status</th>
+                <th>Admin Note</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody id="tbody">
-              <tr><td colspan="8" class="muted">Loading…</td></tr>
+              <tr><td colspan="10" class="muted">Loading…</td></tr>
             </tbody>
           </table>
         </div>

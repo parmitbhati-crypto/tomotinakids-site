@@ -61,7 +61,7 @@ function render(rows) {
   if (!tbody) return;
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="8" class="muted">No enquiries found.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10" class="muted">No enquiries found.</td></tr>`;
     return;
   }
 
@@ -69,58 +69,88 @@ function render(rows) {
     const id = escapeHtml(r.id);
     const createdAt = escapeHtml(fmtDateTime(r.created_at));
     const parentName = escapeHtml(r.parent_name || "—");
+    const childName = escapeHtml(r.child_name || "—");
     const phone = escapeHtml(r.phone || "—");
     const email = escapeHtml(r.email || "—");
-    const childName = escapeHtml(r.child_name || "—");
     const childAge = escapeHtml(r.child_age || "—");
     const fullMessage = escapeHtml(r.message || "");
     const shortMessage = escapeHtml(truncateText(r.message, 90));
     const status = String(r.status || "new").toLowerCase();
+    const adminNote = escapeHtml(r.admin_note || "");
 
     return `
       <tr>
         <td>${createdAt}</td>
         <td>${parentName}</td>
+        <td>${childName}</td>
         <td>${phone}</td>
         <td>${email}</td>
-        <td>${childName}</td>
         <td>${childAge}</td>
         <td title="${fullMessage}">${shortMessage}</td>
         <td>
           <select class="select enquiry-status" data-id="${id}">
             <option value="new" ${status === "new" ? "selected" : ""}>New</option>
+            <option value="lead" ${status === "lead" ? "selected" : ""}>Lead</option>
+            <option value="scheduled_appointment" ${status === "scheduled_appointment" ? "selected" : ""}>Scheduled Appointment</option>
             <option value="contacted" ${status === "contacted" ? "selected" : ""}>Contacted</option>
             <option value="closed" ${status === "closed" ? "selected" : ""}>Closed</option>
           </select>
+        </td>
+        <td>
+          <input
+            type="text"
+            class="input enquiry-note"
+            data-id="${id}"
+            value="${adminNote}"
+            placeholder="Add short note"
+          />
+        </td>
+        <td>
+          <button class="btn enquiry-save" data-id="${id}" type="button">Save</button>
         </td>
       </tr>
     `;
   }).join("");
 
-  tbody.querySelectorAll(".enquiry-status").forEach((el) => {
-    el.addEventListener("change", async (e) => {
-      const enquiryId = e.target.getAttribute("data-id");
-      const nextStatus = e.target.value;
-      const prev = allRows.find(x => x.id === enquiryId)?.status || "new";
+  tbody.querySelectorAll(".enquiry-save").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const enquiryId = e.currentTarget.getAttribute("data-id");
+      const statusEl = tbody.querySelector(`.enquiry-status[data-id="${CSS.escape(enquiryId)}"]`);
+      const noteEl = tbody.querySelector(`.enquiry-note[data-id="${CSS.escape(enquiryId)}"]`);
 
-      e.target.disabled = true;
-      setMsg("Updating enquiry status…", "info");
+      const nextStatus = statusEl?.value || "new";
+      const adminNote = noteEl?.value.trim() || null;
+
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+      if (statusEl) statusEl.disabled = true;
+      if (noteEl) noteEl.disabled = true;
+
+      setMsg("Saving enquiry update...", "info");
 
       const { error } = await window.sb
         .from("enquiries")
-        .update({ status: nextStatus })
+        .update({
+          status: nextStatus,
+          admin_note: adminNote
+        })
         .eq("id", enquiryId);
 
       if (error) {
-        e.target.value = prev;
         setMsg(error.message || "Failed to update enquiry.", "error");
       } else {
         const idx = allRows.findIndex(x => x.id === enquiryId);
-        if (idx >= 0) allRows[idx].status = nextStatus;
+        if (idx >= 0) {
+          allRows[idx].status = nextStatus;
+          allRows[idx].admin_note = adminNote;
+        }
         setMsg("Enquiry updated successfully.", "success");
       }
 
-      e.target.disabled = false;
+      btn.disabled = false;
+      btn.textContent = "Save";
+      if (statusEl) statusEl.disabled = false;
+      if (noteEl) noteEl.disabled = false;
     });
   });
 }
@@ -138,11 +168,12 @@ function applyFilters() {
   if (q) {
     rows = rows.filter(r =>
       (r.parent_name || "").toLowerCase().includes(q) ||
+      (r.child_name || "").toLowerCase().includes(q) ||
       (r.phone || "").toLowerCase().includes(q) ||
       (r.email || "").toLowerCase().includes(q) ||
-      (r.child_name || "").toLowerCase().includes(q) ||
       (r.child_age || "").toLowerCase().includes(q) ||
-      (r.message || "").toLowerCase().includes(q)
+      (r.message || "").toLowerCase().includes(q) ||
+      (r.admin_note || "").toLowerCase().includes(q)
     );
   }
 
@@ -155,14 +186,14 @@ async function loadEnquiries() {
 
   const tbody = qs("tbody");
   if (tbody) {
-    tbody.innerHTML = `<tr><td colspan="8" class="muted">Loading…</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10" class="muted">Loading…</td></tr>`;
   }
   setMsg("");
 
   try {
     const { data, error } = await window.sb
       .from("enquiries")
-      .select("id, created_at, parent_name, phone, email, child_name, child_age, message, status, source")
+      .select("id, created_at, parent_name, child_name, phone, email, child_age, message, status, admin_note, source")
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -171,7 +202,7 @@ async function loadEnquiries() {
     applyFilters();
   } catch (e) {
     if (tbody) {
-      tbody.innerHTML = `<tr><td colspan="8" class="muted">Error loading enquiries.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="10" class="muted">Error loading enquiries.</td></tr>`;
     }
     setMsg(e.message || "Failed to load enquiries.", "error");
   } finally {
@@ -182,9 +213,6 @@ async function loadEnquiries() {
 (async function init() {
   const ok = await requireAdminEnquiries();
   if (!ok) return;
-
-  const who = qs("who");
-  if (who) who.textContent = ok.profile?.full_name || "Admin";
 
   const qInput = qs("q");
   const statusFilter = qs("statusFilter");
