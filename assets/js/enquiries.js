@@ -61,7 +61,7 @@ function render(rows) {
   if (!tbody) return;
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="7" class="muted">No enquiries found.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="muted">No enquiries found.</td></tr>`;
     return;
   }
 
@@ -71,6 +71,7 @@ function render(rows) {
     const parentName = escapeHtml(r.parent_name || "—");
     const phone = escapeHtml(r.phone || "—");
     const email = escapeHtml(r.email || "—");
+    const childName = escapeHtml(r.child_name || "—");
     const childAge = escapeHtml(r.child_age || "—");
     const fullMessage = escapeHtml(r.message || "");
     const shortMessage = escapeHtml(truncateText(r.message, 90));
@@ -82,6 +83,7 @@ function render(rows) {
         <td>${parentName}</td>
         <td>${phone}</td>
         <td>${email}</td>
+        <td>${childName}</td>
         <td>${childAge}</td>
         <td title="${fullMessage}">${shortMessage}</td>
         <td>
