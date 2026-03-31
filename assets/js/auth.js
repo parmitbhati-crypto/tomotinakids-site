@@ -65,7 +65,8 @@ async function requireAuth() {
     "/portal/session-history.html",
     "/portal/registrations.html",
     "/portal/teacher-attendance.html",
-    "/portal/teacher-attendance-history.html"
+    "/portal/teacher-attendance-history.html",
+    "/portal/enquiries.html"
   ];
 
   const isTeacherPage = teacherPages.includes(path);

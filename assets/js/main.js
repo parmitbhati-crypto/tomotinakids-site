@@ -298,10 +298,11 @@
     const name = form.elements.name?.value.trim() || '';
     const phone = form.elements.phone?.value.trim() || '';
     const email = form.elements.email?.value.trim() || '';
+    const childName = form.elements.child_name?.value.trim() || '';
     const childAge = form.elements.child_age?.value.trim() || '';
     const message = form.elements.message?.value.trim() || '';
 
-    if (!name || !phone || !message) {
+    if (!name || !phone || !childName || !message) {
       setStatus('Please fill all required fields.', 'error');
       return;
     }
@@ -325,6 +326,7 @@
           parent_name: name,
           phone,
           email: email || null,
+          child_name: childName || null,
           child_age: childAge || null,
           message,
           status: 'new',

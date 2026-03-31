@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enquiries • Admin</title>
+  <link rel="stylesheet" href="/assets/css/portal.css" />
+</head>
+<body>
+  <div class="container">
+
+    <div class="topbar">
+      <div class="brand">
+        <img src="/assets/images/logo.png" class="top-logo" />
+        <div class="brand-text">
+          <div class="brand-title">Tomotina Kids</div>
+          <div class="brand-sub">Admin • Enquiries</div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <a href="/portal/admin-home.html">Dashboard</a>
+        <a class="active" href="/portal/enquiries.html">Enquiries</a>
+        <a href="/portal/session-history.html">Session History</a>
+        <a href="/portal/registrations.html">Registrations</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 class="h2">Enquiries</h2>
+        <div class="muted" style="margin-bottom:12px;">
+          Website contact form submissions appear here.
+        </div>
+
+        <div class="toolbar">
+          <input id="q" class="input" placeholder="Search parent / phone / email / message..." />
+          <select id="statusFilter" class="select">
+            <option value="all">All statuses</option>
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="closed">Closed</option>
+          </select>
+          <button id="refreshBtn" class="btn" type="button">Refresh</button>
+        </div>
+
+        <div id="msg" class="muted" style="margin:10px 0 0;"></div>
+
+        <div class="table-wrap" style="margin-top:14px;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Parent</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Child Age</th>
+                <th>Message</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr><td colspan="7" class="muted">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <button id="btnLogout" class="btn danger" style="width:100%;">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/enquiries.js"></script>
+</body>
+</html>
