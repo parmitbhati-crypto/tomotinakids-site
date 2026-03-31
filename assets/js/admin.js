@@ -293,6 +293,7 @@ async function saveSession() {
       .from("sessions")
       .select("id")
       .eq("teacher_id", teacherId)
+      .neq("status", "cancelled")
       .lt("starts_at", endsAt)
       .gt("ends_at", startsAt);
 
