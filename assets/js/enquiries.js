@@ -140,6 +140,7 @@ function applyFilters() {
       (r.parent_name || "").toLowerCase().includes(q) ||
       (r.phone || "").toLowerCase().includes(q) ||
       (r.email || "").toLowerCase().includes(q) ||
+      (r.child_name || "").toLowerCase().includes(q) ||
       (r.child_age || "").toLowerCase().includes(q) ||
       (r.message || "").toLowerCase().includes(q)
     );
@@ -154,14 +155,14 @@ async function loadEnquiries() {
 
   const tbody = qs("tbody");
   if (tbody) {
-    tbody.innerHTML = `<tr><td colspan="7" class="muted">Loading…</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="muted">Loading…</td></tr>`;
   }
   setMsg("");
 
   try {
     const { data, error } = await window.sb
       .from("enquiries")
-      .select("id, created_at, parent_name, phone, email, child_age, message, status, source")
+      .select("id, created_at, parent_name, phone, email, child_name, child_age, message, status, source")
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -170,7 +171,7 @@ async function loadEnquiries() {
     applyFilters();
   } catch (e) {
     if (tbody) {
-      tbody.innerHTML = `<tr><td colspan="7" class="muted">Error loading enquiries.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" class="muted">Error loading enquiries.</td></tr>`;
     }
     setMsg(e.message || "Failed to load enquiries.", "error");
   } finally {
