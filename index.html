@@ -3,11 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tomotina Kids | Supportive Learning for Every Child</title>
-  <meta name="description" content="Tomotina Kids - a warm, supportive learning environment for children, including neurodiverse learners. Programs, admissions, and contact." />
+  <title>Tomotina Kids Development Centre | Autism Support, Therapy & Skill Development</title>
+  <meta
+    name="description"
+    content="Tomotina Kids Development Centre in Gurugram offers autism support, therapy, skill development, academic guidance, sports therapy, and parent collaboration in a calm, structured environment."
+  />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
@@ -16,9 +22,8 @@
   <header class="site-header">
     <div class="container">
       <nav class="navbar" aria-label="Primary">
-        <a class="brand" href="index.html">
+        <a class="brand" href="index.html" aria-label="Tomotina Kids home">
           <img src="assets/images/logo.png" alt="Tomotina Kids logo" />
-          
         </a>
 
         <div class="nav-links" role="navigation" aria-label="Main menu">
@@ -26,13 +31,20 @@
           <a href="about.html">About</a>
           <a href="programs.html">Programs</a>
           <a href="gallery.html">Gallery</a>
-          <a href="contact.html">Contact</a>
           <a href="team.html">Our Team</a>
+          <a href="contact.html">Contact</a>
         </div>
 
         <div class="nav-actions">
-          <a class="staff-link" href="/portal/login.html">Staff Portal</a>
-          <button class="hamburger" data-hamburger aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <a class="btn btn-primary nav-enquire" href="contact.html">Enquire Now</a>
+          <button
+            class="hamburger"
+            data-hamburger
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="mobileMenu"
+            type="button"
+          >
             <span></span><span></span><span></span>
           </button>
         </div>
@@ -44,8 +56,8 @@
           <a href="about.html">About</a>
           <a href="programs.html">Programs</a>
           <a href="gallery.html">Gallery</a>
+          <a href="team.html">Our Team</a>
           <a href="contact.html">Contact</a>
-          <a href="team.html">Team</a>
         </div>
         <div class="nav-actions">
           <a class="btn btn-primary" href="contact.html">Enquire Now</a>
@@ -55,49 +67,74 @@
   </header>
 
   <main id="main">
-    <section class="hero">
+    <!-- HERO -->
+    <section class="hero hero-home">
       <div class="container">
         <div class="hero-wrap">
-          <div class="hero-card">
-            <p class="kicker">Supportive learning, thoughtfully structured</p>
-            <h1>Where development is supported with care, structure and understanding.</h1>
-            <p>
-              Tomotina Kids supports early learning with structure, empathy, and individualized attention —
-              including children with autism and diverse learning needs.
+          <div class="hero-card hero-card-main">
+            <p class="kicker">Autism support • Therapy • Skill development</p>
+            <h1>Where every child’s abilities are nurtured with care, structure, and understanding.</h1>
+            <p class="hero-lead">
+              Tomotina Kids Development Centre supports children with autism and diverse developmental needs
+              through therapy, education, sports-based activities, and individualized guidance in a calm,
+              child-friendly environment.
             </p>
 
             <div class="hero-badges" aria-label="Highlights">
-              <span class="badge">Small groups</span>
-              <span class="badge secondary">Parent partnership</span>
-              <span class="badge accent">Gentle routines</span>
+              <span class="badge">Autism support</span>
+              <span class="badge secondary">Multidisciplinary team</span>
+              <span class="badge accent">Parent collaboration</span>
             </div>
 
             <div class="hero-actions">
-              <a class="btn btn-accent" href="contact.html">Enquire Now</a>
+              <a class="btn btn-accent" href="#home-enquiry">Request a Callback</a>
               <a class="btn btn-outline" href="programs.html">Explore Programs</a>
             </div>
 
-            <div class="mini-proof" aria-label="Quick proof">
-              <div class="mini-proof-item"><span class="mp-ico" aria-hidden="true">⭐</span><span><strong>Warm, calm environment</strong><br><span class="muted">Designed for focus & comfort</span></span></div>
-              <div class="mini-proof-item"><span class="mp-ico" aria-hidden="true">🧩</span><span><strong>Individual support</strong><br><span class="muted">For diverse learning needs</span></span></div>
+            <div class="mini-proof" aria-label="Quick trust points">
+              <div class="mini-proof-item">
+                <span class="mp-ico" aria-hidden="true">🧩</span>
+                <span>
+                  <strong>Individualized plans</strong><br />
+                  <span class="muted">Support based on each child’s strengths and needs</span>
+                </span>
+              </div>
+
+              <div class="mini-proof-item">
+                <span class="mp-ico" aria-hidden="true">🤝</span>
+                <span>
+                  <strong>Therapy + family support</strong><br />
+                  <span class="muted">Clear guidance for progress at the centre and at home</span>
+                </span>
+              </div>
             </div>
           </div>
 
-          <aside class="hero-side" aria-label="Learning moments">
+          <aside class="hero-side" aria-label="Tomotina centre and facilities">
             <div class="hero-carousel" data-carousel>
               <div class="slides" data-carousel-track>
-                <div class="slide"><img src="assets/images/programs/image1_program.png" alt="Learning through play" loading="eager"></div>
-                <div class="slide"><img src="assets/images/programs/image5_program.png" alt="Supportive teaching" loading="lazy"></div>
-                <div class="slide"><img src="assets/images/programs/image10_program.png" alt="Warm classroom" loading="lazy"></div>
+                <div class="slide">
+                  <img src="assets/images/home/hero-office.jpg" alt="Tomotina Kids consultation room with logo wall" loading="eager" />
+                </div>
+                <div class="slide">
+                  <img src="assets/images/home/hero-sensory-room.jpg" alt="Tomotina Kids calm sensory room" loading="lazy" />
+                </div>
+                <div class="slide">
+                  <img src="assets/images/home/hero-therapy-space.jpg" alt="Tomotina Kids therapy room and child-friendly setup" loading="lazy" />
+                </div>
               </div>
               <div class="dots" data-carousel-dots aria-label="Carousel navigation"></div>
             </div>
+
             <div class="side-content">
-              <h3>We focus on confidence + communication.</h3>
-              <p>Predictable routines, positive reinforcement, and a warm classroom culture.</p>
+              <h3>A professional centre parents can trust.</h3>
+              <p>
+                Structured spaces, supportive staff, and meaningful programs designed to build communication,
+                confidence, independence, and life skills.
+              </p>
               <div class="side-cta">
                 <a class="btn btn-primary" href="contact.html">Talk to us</a>
-                <a class="btn btn-ghost" href="gallery.html">See photos</a>
+                <a class="btn btn-ghost" href="gallery.html">View Gallery</a>
               </div>
             </div>
           </aside>
@@ -105,112 +142,257 @@
       </div>
     </section>
 
+    <!-- TRUST STRIP -->
     <section class="trust-strip" aria-label="Trust highlights">
       <div class="container">
         <div class="trust-grid">
           <div class="trust-item">
-            <div class="trust-ico" aria-hidden="true">🧩</div>
-            <div class="trust-text"><strong>Individual support</strong><span>for diverse learning needs</span></div>
+            <div class="trust-ico" aria-hidden="true">👩‍⚕️</div>
+            <div class="trust-text">
+              <strong>Multidisciplinary support</strong>
+              <span>Therapists, educators, and specialists working together</span>
+            </div>
           </div>
+
           <div class="trust-item">
-            <div class="trust-ico" aria-hidden="true">👩‍🏫</div>
-            <div class="trust-text"><strong>Skilled educators</strong><span>patient, caring guidance</span></div>
+            <div class="trust-ico" aria-hidden="true">📘</div>
+            <div class="trust-text">
+              <strong>Therapy + education</strong>
+              <span>Structured support under one roof</span>
+            </div>
           </div>
+
           <div class="trust-item">
-            <div class="trust-ico" aria-hidden="true">🕒</div>
-            <div class="trust-text"><strong>Structured routine</strong><span>predictable, gentle flow</span></div>
+            <div class="trust-ico" aria-hidden="true">🏡</div>
+            <div class="trust-text">
+              <strong>Child-friendly environment</strong>
+              <span>Calm, safe, and supportive spaces</span>
+            </div>
           </div>
+
           <div class="trust-item">
             <div class="trust-ico" aria-hidden="true">🤝</div>
-            <div class="trust-text"><strong>Parent partnership</strong><span>clear updates & collaboration</span></div>
+            <div class="trust-text">
+              <strong>Parent partnership</strong>
+              <span>Guidance and regular collaboration</span>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- ABOUT SNAPSHOT -->
     <section class="section">
       <div class="container">
         <div class="section-title">
           <div>
+            <p class="kicker">About Tomotina</p>
+            <h2>Support that sees the child, not just the diagnosis</h2>
+            <p>
+              We support children with autism, ADHD, learning difficulties, speech and language delays,
+              behavioural challenges, and sensory processing needs.
+            </p>
+          </div>
+        </div>
+
+        <div class="split-grid">
+          <div class="card split-copy">
+            <h3>Thoughtfully designed for meaningful progress</h3>
+            <p>
+              At Tomotina, every child is supported through individualized intervention, structured activities,
+              and a holistic developmental approach that nurtures communication, social, emotional, and life skills.
+            </p>
+            <ul class="list">
+              <li>Autism Spectrum Disorder support</li>
+              <li>Speech & language development</li>
+              <li>Occupational and behavioural support</li>
+              <li>Academic and school-readiness guidance</li>
+              <li>Sports therapy and daily living skills</li>
+            </ul>
+          </div>
+
+          <div class="img-premium section-photo">
+            <img src="assets/images/home/about-craft.jpg" alt="Children doing a guided creative activity at Tomotina Kids" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY CHOOSE US -->
+    <section class="section alt">
+      <div class="container">
+        <div class="section-title">
+          <div>
             <p class="kicker">Why families choose us</p>
-            <h2>A calm, supportive place where children grow</h2>
-            <p>Support that feels safe for children and reassuring for parents.</p>
+            <h2>A calm, structured place where children can grow with confidence</h2>
+            <p>Professional support with warmth, clarity, and individualized care.</p>
           </div>
         </div>
 
         <div class="feature-grid">
           <div class="feature-card card">
-            <div class="f-ico" aria-hidden="true">🌿</div>
-            <h3>Calm environment</h3>
-            <p>Low-stimulation spaces with clear structure and gentle transitions.</p>
-          </div>
-          <div class="feature-card card">
             <div class="f-ico" aria-hidden="true">🧠</div>
-            <h3>Skill-building approach</h3>
-            <p>Communication, routines, and confidence — in small, achievable steps.</p>
+            <h3>Individualized intervention</h3>
+            <p>Each child receives support tailored to strengths, challenges, and developmental goals.</p>
           </div>
+
           <div class="feature-card card">
-            <div class="f-ico" aria-hidden="true">🧩</div>
-            <h3>Individual support</h3>
-            <p>We adapt activities to each child’s pace, strengths, and learning style.</p>
+            <div class="f-ico" aria-hidden="true">🏫</div>
+            <h3>Therapy under one roof</h3>
+            <p>Integrated therapy, education, and structured skill-building in one centre.</p>
           </div>
+
           <div class="feature-card card">
-            <div class="f-ico" aria-hidden="true">🤝</div>
-            <h3>Parent partnership</h3>
-            <p>Regular updates and simple strategies you can carry into everyday life.</p>
+            <div class="f-ico" aria-hidden="true">🌱</div>
+            <h3>Life skills and independence</h3>
+            <p>Programs designed to strengthen communication, routines, confidence, and daily living skills.</p>
+          </div>
+
+          <div class="feature-card card">
+            <div class="f-ico" aria-hidden="true">💬</div>
+            <h3>Parent collaboration</h3>
+            <p>Clear updates and practical guidance to support progress beyond the centre.</p>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- PROGRAMS -->
     <section class="section">
       <div class="container">
         <div class="section-title">
           <div>
             <p class="kicker">Programs</p>
-            <h2>Programs snapshot</h2>
-            <p>Early years learning + supportive skill-building.</p>
+            <h2>Core programs at Tomotina Kids</h2>
+            <p>Therapy, education, movement, and skill-building designed for real progress.</p>
           </div>
-          <a class="btn btn-outline" href="programs.html">View all</a>
+          <a class="btn btn-outline" href="programs.html">View all programs</a>
         </div>
 
-        <div class="program-cards">
+        <div class="program-cards home-programs-grid">
           <article class="program-card card">
-            <div class="p-media"><img src="assets/images/programs/image2_program.png" alt="Early learning" loading="lazy"></div>
+            <div class="p-media">
+              <img src="assets/images/home/program-speech.jpg" alt="Child engaged in guided communication support" loading="lazy" />
+            </div>
             <div class="p-body">
-              <h3>Foundations (Play + Learning)</h3>
-              <p>Language, social skills, and early academics through guided play.</p>
-              <ul class="list">
-                <li>Circle time, stories, and music</li>
-                <li>Fine motor and sensory activities</li>
-                <li>Kindness and turn-taking</li>
-              </ul>
+              <h3>Speech & Language</h3>
+              <p>Improving communication, speech clarity, language development, and expression.</p>
             </div>
           </article>
 
           <article class="program-card card">
-            <div class="p-media"><img src="assets/images/programs/image6_program.png" alt="Individual support" loading="lazy"></div>
+            <div class="p-media">
+              <img src="assets/images/home/program-ot.jpg" alt="Occupational therapy and physical activity space" loading="lazy" />
+            </div>
             <div class="p-body">
-              <h3>Support Track (Individualized)</h3>
-              <p>Extra support for communication, behavior, and daily routines.</p>
-              <ul class="list">
-                <li>Predictable schedules</li>
-                <li>Visual supports when needed</li>
-                <li>Confidence-building steps</li>
-              </ul>
+              <h3>Occupational Therapy</h3>
+              <p>Enhancing sensory integration, motor skills, body awareness, and daily living abilities.</p>
+            </div>
+          </article>
+
+          <article class="program-card card">
+            <div class="p-media">
+              <img src="assets/images/home/program-skills.jpg" alt="Children in a group activity at Tomotina Kids" loading="lazy" />
+            </div>
+            <div class="p-body">
+              <h3>Skill Development</h3>
+              <p>Social skills, communication development, group participation, and independence.</p>
+            </div>
+          </article>
+
+          <article class="program-card card">
+            <div class="p-media">
+              <img src="assets/images/home/program-sports.jpg" alt="Therapist working with a child in sports therapy room" loading="lazy" />
+            </div>
+            <div class="p-body">
+              <h3>Sports Therapy</h3>
+              <p>Movement-based activities that support coordination, confidence, teamwork, and regulation.</p>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="section alt" aria-label="Testimonials">
+    <!-- FACILITIES -->
+    <section class="section">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <p class="kicker">Facilities</p>
+            <h2>Safe, engaging, and well-designed spaces</h2>
+            <p>Our centre is designed to feel professional, calming, and child-friendly from the first visit.</p>
+          </div>
+        </div>
+
+        <div class="grid-3 facilities-grid">
+          <article class="facility-card card">
+            <div class="img-premium facility-media">
+              <img src="assets/images/home/facility-sensory-room.jpg" alt="Calm sensory room with soft seating and activity area" loading="lazy" />
+            </div>
+            <h3>Sensory-friendly room</h3>
+            <p>A thoughtfully arranged space for regulation, play, comfort, and guided interaction.</p>
+          </article>
+
+          <article class="facility-card card">
+            <div class="img-premium facility-media">
+              <img src="assets/images/home/facility-ball-pit.jpg" alt="Therapy room with ball pit and child-friendly setup" loading="lazy" />
+            </div>
+            <h3>Therapy spaces</h3>
+            <p>Dedicated rooms for individualized sessions, communication work, and developmental support.</p>
+          </article>
+
+          <article class="facility-card card">
+            <div class="img-premium facility-media">
+              <img src="assets/images/home/facility-office.jpg" alt="Tomotina consultation office with logo wall" loading="lazy" />
+            </div>
+            <h3>Professional consultation area</h3>
+            <p>A welcoming place for parent conversations, assessments, and planning next steps.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- UPDATES / OFFERS -->
+    <section class="section alt">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <p class="kicker">Updates</p>
+            <h2>What’s happening at Tomotina</h2>
+            <p>Use this section for current offers, workshops, seasonal events, and centre updates.</p>
+          </div>
+        </div>
+
+        <div class="grid-3 updates-grid">
+          <article class="card update-card">
+            <span class="update-tag">New families</span>
+            <h3>Free initial consultation</h3>
+            <p>Offer a first conversation to understand your child’s needs and guide you toward the right program.</p>
+          </article>
+
+          <article class="card update-card">
+            <span class="update-tag update-tag-cyan">Parent workshop</span>
+            <h3>Autism guidance session</h3>
+            <p>Host a parent seminar on routines, communication, behaviour support, or school readiness.</p>
+          </article>
+
+          <article class="card update-card">
+            <span class="update-tag update-tag-warm">Seasonal event</span>
+            <h3>Holiday or activity day</h3>
+            <p>Share Easter, summer, festive, or centre celebration updates in a clean and professional format.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="section" aria-label="Testimonials">
       <div class="container">
         <div class="section-title">
           <div>
             <p class="kicker">Testimonials</p>
-            <h2>Words from parents</h2>
-            <p>Short, honest feedback — this can be updated anytime.</p>
+            <h2>What parents say</h2>
+            <p>Warm, reassuring feedback from families.</p>
           </div>
         </div>
 
@@ -220,7 +402,7 @@
               <div class="t-top">
                 <div class="avatar" aria-hidden="true">A</div>
                 <div>
-                  <figcaption><strong>Amit Agarwal</strong><span class="t-muted">Gurgaon</span></figcaption>
+                  <figcaption><strong>Anonymous</strong><span class="t-muted">Gurugram</span></figcaption>
                   <div class="stars" aria-label="5 stars">★★★★★</div>
                 </div>
               </div>
@@ -231,9 +413,9 @@
 
             <figure class="t-card card">
               <div class="t-top">
-                <div class="avatar" aria-hidden="true">S</div>
+                <div class="avatar" aria-hidden="true">A</div>
                 <div>
-                  <figcaption><strong>Ruchika Singh</strong><span class="t-muted">Gurgaon</span></figcaption>
+                  <figcaption><strong>Anonymous</strong><span class="t-muted">Gurugram</span></figcaption>
                   <div class="stars" aria-label="5 stars">★★★★★</div>
                 </div>
               </div>
@@ -244,9 +426,9 @@
 
             <figure class="t-card card">
               <div class="t-top">
-                <div class="avatar" aria-hidden="true">R</div>
+                <div class="avatar" aria-hidden="true">A</div>
                 <div>
-                  <figcaption><strong>Rajesh Kumar</strong><span class="t-muted">Gurgaon</span></figcaption>
+                  <figcaption><strong>Anonymous</strong><span class="t-muted">Gurugram</span></figcaption>
                   <div class="stars" aria-label="5 stars">★★★★★</div>
                 </div>
               </div>
@@ -257,9 +439,9 @@
 
             <figure class="t-card card">
               <div class="t-top">
-                <div class="avatar" aria-hidden="true">M</div>
+                <div class="avatar" aria-hidden="true">A</div>
                 <div>
-                  <figcaption><strong>Manju Mehta</strong><span class="t-muted">Gurgaon</span></figcaption>
+                  <figcaption><strong>Anonymous</strong><span class="t-muted">Gurugram</span></figcaption>
                   <div class="stars" aria-label="5 stars">★★★★★</div>
                 </div>
               </div>
@@ -278,45 +460,133 @@
       </div>
     </section>
 
+    <!-- HOME ENQUIRY FORM -->
+    <section class="section alt" id="home-enquiry">
+      <div class="container">
+        <div class="home-enquiry-wrap">
+          <div class="home-enquiry-copy">
+            <p class="kicker">Speak with us</p>
+            <h2>Have a question about your child’s needs?</h2>
+            <p>
+              Fill out this short form and our team will get back to you. This helps parents connect with the
+              centre directly from the home page without searching for the contact page first.
+            </p>
+
+            <div class="home-enquiry-points">
+              <div class="home-enquiry-point">✔ Calm and professional guidance</div>
+              <div class="home-enquiry-point">✔ Quick callback for parents</div>
+              <div class="home-enquiry-point">✔ Best next-step recommendation</div>
+            </div>
+          </div>
+
+          <div class="card enquiry-card">
+            <form class="enquiry-form" data-enquiry-form novalidate>
+              <div class="form-grid">
+                <label>
+                  <span>Parent Name *</span>
+                  <input type="text" name="name" required />
+                </label>
+
+                <label>
+                  <span>Phone *</span>
+                  <input type="tel" name="phone" required />
+                </label>
+
+                <label>
+                  <span>Email</span>
+                  <input type="email" name="email" />
+                </label>
+
+                <label>
+                  <span>Child Name *</span>
+                  <input type="text" name="child_name" required />
+                </label>
+
+                <label>
+                  <span>Child Age</span>
+                  <input type="text" name="child_age" />
+                </label>
+
+                <label>
+                  <span>Preferred contact</span>
+                  <input type="text" name="preferred_contact" placeholder="Call / WhatsApp / Email" />
+                </label>
+              </div>
+
+              <label>
+                <span>Message *</span>
+                <textarea name="message" rows="5" required placeholder="Tell us a little about your child and what support you are looking for."></textarea>
+              </label>
+
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit" data-enquiry-submit>Send Enquiry</button>
+                <p class="form-note">Or visit the <a href="contact.html">full contact page</a> for address and phone details.</p>
+                <div class="form-status" data-enquiry-status hidden></div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
     <section class="section" aria-label="FAQ">
       <div class="container">
         <div class="section-title">
           <div>
             <p class="kicker">FAQ</p>
-            <h2>Quick answers</h2>
-            <p>Simple, parent-friendly answers. We can refine wording anytime.</p>
+            <h2>Quick answers for parents</h2>
+            <p>Clear and reassuring answers for common first questions.</p>
           </div>
         </div>
 
         <div class="faq" data-faq>
-          <button class="faq-q" type="button" aria-expanded="false">What ages do you support?</button>
-          <div class="faq-a"><p>We support early learners and can guide you to the best fit based on your child’s needs. Please enquire for current age ranges and availability.</p></div>
+          <button class="faq-q" type="button" aria-expanded="false">Do you support children with autism?</button>
+          <div class="faq-a">
+            <p>
+              Yes. Tomotina supports children with autism and diverse developmental needs through individualized,
+              structured, and supportive programs.
+            </p>
+          </div>
 
-          <button class="faq-q" type="button" aria-expanded="false">Do you support children with autism or neurodiverse needs?</button>
-          <div class="faq-a"><p>Yes. We use calm routines, individualized support strategies, and collaboration with parents to build confidence and skills.</p></div>
+          <button class="faq-q" type="button" aria-expanded="false">What kind of services do you offer?</button>
+          <div class="faq-a">
+            <p>
+              We offer therapy support, skill development, academic guidance, school readiness, sports therapy,
+              and parent collaboration.
+            </p>
+          </div>
 
           <button class="faq-q" type="button" aria-expanded="false">How do we get started?</button>
-          <div class="faq-a"><p>Send an enquiry or call/WhatsApp us. We’ll understand your needs and guide you through the next steps.</p></div>
+          <div class="faq-a">
+            <p>
+              You can submit an enquiry form, call us, or WhatsApp us. We will understand your child’s needs
+              and guide you to the best next step.
+            </p>
+          </div>
 
-          <button class="faq-q" type="button" aria-expanded="false">Do you offer small groups?</button>
-          <div class="faq-a"><p>Yes. Small groups help children feel safe and supported, with closer attention from educators.</p></div>
-
-          <button class="faq-q" type="button" aria-expanded="false">How do parents stay updated?</button>
-          <div class="faq-a"><p>We prioritize parent partnership with regular updates and simple strategies you can use at home.</p></div>
+          <button class="faq-q" type="button" aria-expanded="false">Do parents receive updates and guidance?</button>
+          <div class="faq-a">
+            <p>
+              Yes. Parent collaboration is a key part of the Tomotina approach, and families receive support
+              and guidance alongside the child’s progress.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- FINAL CTA -->
     <section class="cta">
       <div class="container">
         <div class="cta-wrap">
           <div>
-            <h3>Ready to talk about your child’s needs?</h3>
-            <p>We’ll respond quickly and guide you on the best next step.</p>
+            <h3>Ready to take the first step?</h3>
+            <p>Let’s talk about the right support path for your child.</p>
           </div>
           <div class="cta-actions">
-            <a class="btn btn-primary" href="contact.html">Enquire Now</a>
-            <a class="btn btn-outline" href="team.html">Meet our team</a>
+            <a class="btn btn-primary" href="contact.html">Contact Us</a>
+            <a class="btn btn-outline" href="gallery.html">See the Centre</a>
           </div>
         </div>
       </div>
@@ -327,10 +597,10 @@
     <div class="container">
       <div class="footer-wrap">
         <div>
-          <h4>Tomotina Kids</h4>
+          <h4>Tomotina Kids Development Centre</h4>
           <p>
-            A supportive learning environment for every child — built on calm routines,
-            caring teaching, and parent partnership.
+            A nurturing and inclusive child development centre in Gurugram focused on autism support,
+            therapeutic guidance, skill-building, and family collaboration.
           </p>
         </div>
 
@@ -339,16 +609,16 @@
           <p><a href="about.html">About</a></p>
           <p><a href="programs.html">Programs</a></p>
           <p><a href="gallery.html">Gallery</a></p>
+          <p><a href="team.html">Our Team</a></p>
           <p><a href="contact.html">Contact</a></p>
-          <p><a href="team.html">Team</a></p>
           <p><a href="join-our-team.html">Careers</a></p>
         </div>
 
         <div>
           <h4>Contact</h4>
-          <p>📍 1080 Sector-40 Gurgaon, India</p>
-          <p>📞 +91-9643294715, +91-7009470084</p>
-          <p>✉️ info@tomotinakids.com</p>
+          <p>📍 House No: 1080, Sector 40, Gurugram, Haryana</p>
+          <p>📞 +91 9643294775, +91 7009470084</p>
+          <p>✉️ tomotinaofficial@gmail.com</p>
 
           <div class="footer-social" aria-label="Social links">
             <a class="icon-btn instagram" href="https://instagram.com/tomotina.kidstherapy" target="_blank" rel="noopener" aria-label="Instagram">
@@ -356,7 +626,8 @@
                 <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 4a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm5.5-.9a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z"/>
               </svg>
             </a>
-            <a class="icon-btn whatsapp" href="https://wa.me/+917009470084?text=Hello%20Tomotina%20Kids%2C%20I%20have%20an%20enquiry." target="_blank" rel="noopener" aria-label="WhatsApp">
+
+            <a class="icon-btn whatsapp" href="https://wa.me/917009470084?text=Hello%20Tomotina%20Kids%2C%20I%20have%20an%20enquiry." target="_blank" rel="noopener" aria-label="WhatsApp">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M20.5 11.9a8.5 8.5 0 0 1-12.5 7.5L3 20.9l1.6-4.7A8.5 8.5 0 1 1 20.5 11.9zm-8.4 7a7 7 0 1 0-5.9-3.3l.2.3-.9 2.7 2.8-.9.3.2a6.9 6.9 0 0 0 3.5 1zm3.9-4.1c-.2-.1-1.2-.6-1.4-.7-.2-.1-.3-.1-.5.1s-.5.7-.6.8c-.1.1-.2.2-.4.1a5.7 5.7 0 0 1-1.7-1.1 6.4 6.4 0 0 1-1.2-1.5c-.1-.2 0-.3.1-.4l.3-.4c.1-.1.1-.3.2-.4.1-.1 0-.3 0-.4 0-.1-.5-1.2-.7-1.6-.2-.4-.4-.4-.5-.4h-.4c-.1 0-.4.1-.6.3-.2.2-.8.8-.8 1.9 0 1.1.8 2.2 1 2.3.1.2 1.6 2.5 3.9 3.5.5.2 1 .4 1.3.5.6.2 1.1.1 1.5.1.5-.1 1.2-.5 1.4-1 .2-.5.2-.9.1-1 0-.1-.2-.2-.4-.3z"/>
               </svg>
@@ -366,27 +637,26 @@
       </div>
 
       <div class="footer-bottom">
-        © <span id="year"></span> Tomotina Kids. All rights reserved.
+        © <span id="year"></span> Tomotina Kids Development Centre. All rights reserved.
       </div>
     </div>
   </footer>
-
-  <script src="assets/js/main.js"></script>
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
 
   <div class="mobile-contact-bar" aria-label="Quick contact">
     <a class="mcb-btn" href="tel:+917009470084" aria-label="Call">
       <span class="mcb-ico">📞</span><span>Call</span>
     </a>
-    <a class="mcb-btn" href="https://wa.me/+917009470084?text=Hello%20Tomotina%20Kids%2C%20I%20have%20an%20enquiry." target="_blank" rel="noopener" aria-label="WhatsApp">
+    <a class="mcb-btn" href="https://wa.me/917009470084?text=Hello%20Tomotina%20Kids%2C%20I%20have%20an%20enquiry." target="_blank" rel="noopener" aria-label="WhatsApp">
       <span class="mcb-ico">💬</span><span>WhatsApp</span>
     </a>
-    <a class="mcb-btn mcb-primary" href="contact.html" aria-label="Enquiry form">
+    <a class="mcb-btn mcb-primary" href="#home-enquiry" aria-label="Enquiry form">
       <span class="mcb-ico">✉️</span><span>Enquiry</span>
     </a>
   </div>
 
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>

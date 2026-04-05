@@ -1,7 +1,6 @@
-// Tomotina Kids - basic site interactions
+// Tomotina Kids - site interactions
 
 (function () {
-  // Mark JS enabled (prevents reveal hiding content if JS fails)
   document.documentElement.classList.add('js');
 
   const hamburger = document.querySelector('[data-hamburger]');
@@ -13,8 +12,7 @@
       hamburger.setAttribute('aria-expanded', String(isOpen));
     });
 
-    // Close mobile menu when clicking a link
-    mobilePanel.querySelectorAll('a').forEach(a => {
+    mobilePanel.querySelectorAll('a').forEach((a) => {
       a.addEventListener('click', () => {
         mobilePanel.classList.remove('open');
         hamburger.setAttribute('aria-expanded', 'false');
@@ -22,14 +20,13 @@
     });
   }
 
-  // Active nav link based on current page
   const current = (window.location.pathname.split('/').pop() || 'index.html').split('?')[0];
-  document.querySelectorAll('.nav-links a').forEach(link => {
+  document.querySelectorAll('.nav-links a').forEach((link) => {
     const href = (link.getAttribute('href') || '').split('?')[0];
     if (href === current) link.classList.add('active');
   });
 
-  // Hero carousel (auto + dots)
+  // Hero carousel
   const carousel = document.querySelector('[data-carousel]');
   if (carousel) {
     const track = carousel.querySelector('[data-carousel-track]');
@@ -55,14 +52,9 @@
       if (!slides.length) return;
       idx = (next + slides.length) % slides.length;
       track.style.transform = `translateX(-${idx * 100}%)`;
-      dotsWrap?.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
-    };
-
-    const start = () => {
-      if (slides.length < 2) return;
-      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      stop();
-      timer = window.setInterval(() => goTo(idx + 1), 4200);
+      dotsWrap?.querySelectorAll('.dot').forEach((d, i) => {
+        d.classList.toggle('active', i === idx);
+      });
     };
 
     const stop = () => {
@@ -70,35 +62,44 @@
       timer = null;
     };
 
+    const start = () => {
+      if (slides.length < 2) return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      stop();
+      timer = window.setInterval(() => goTo(idx + 1), 4500);
+    };
+
     renderDots();
     goTo(0);
     start();
+
     carousel.addEventListener('mouseenter', stop);
     carousel.addEventListener('mouseleave', start);
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
   }
 
-  // Scroll reveal (subtle premium motion) — bulletproof fallback
-  const revealEls = Array.from(document.querySelectorAll('.card, .hero-card, .hero-side, .cta-wrap, .page-hero-card'));
-  revealEls.forEach(el => el.classList.add('reveal'));
+  // Reveal animation
+  const revealEls = Array.from(
+    document.querySelectorAll('.card, .hero-card, .hero-side, .cta-wrap, .trust-item, .img-premium')
+  );
+  revealEls.forEach((el) => el.classList.add('reveal'));
 
   if (!('IntersectionObserver' in window)) {
-    // Fallback: show everything (prevents blank/white sections)
-    revealEls.forEach(el => el.classList.add('in'));
+    revealEls.forEach((el) => el.classList.add('in'));
   } else {
     const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('in');
-          io.unobserve(e.target);
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
         }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
 
-    revealEls.forEach(el => io.observe(el));
+    revealEls.forEach((el) => io.observe(el));
   }
 
-  // Mobile contact bar: hide on scroll down, show on scroll up
+  // Mobile contact bar
   const mcb = document.querySelector('.mobile-contact-bar');
   if (mcb) {
     let lastY = window.scrollY;
@@ -113,7 +114,7 @@
     }, { passive: true });
   }
 
-  // Testimonials slider (home)
+  // Testimonials slider
   const tRoot = document.querySelector('[data-testimonials]');
   if (tRoot) {
     const track = tRoot.querySelector('[data-testimonials-track]');
@@ -124,17 +125,17 @@
     let tIdx = 0;
     let tTimer = null;
 
-    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReduced =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const goTo = (i) => {
       if (!cards.length) return;
       tIdx = (i + cards.length) % cards.length;
-
-      // More robust than hardcoding gap: use actual offsetLeft
       const left = cards[tIdx].offsetLeft;
       track.scrollTo({ left, behavior: prefersReduced ? 'auto' : 'smooth' });
-
-      dotsWrap?.querySelectorAll('.t-dot').forEach((d, di) => d.classList.toggle('active', di === tIdx));
+      dotsWrap?.querySelectorAll('.t-dot').forEach((d, di) => {
+        d.classList.toggle('active', di === tIdx);
+      });
     };
 
     const renderDots = () => {
@@ -150,20 +151,19 @@
       });
     };
 
-    const start = () => {
-      if (cards.length < 2 || prefersReduced) return;
-      stop();
-      tTimer = window.setInterval(() => goTo(tIdx + 1), 5200);
-    };
     const stop = () => {
       if (tTimer) window.clearInterval(tTimer);
       tTimer = null;
     };
 
+    const start = () => {
+      if (cards.length < 2 || prefersReduced) return;
+      stop();
+      tTimer = window.setInterval(() => goTo(tIdx + 1), 5200);
+    };
+
     prev?.addEventListener('click', () => goTo(tIdx - 1));
     next?.addEventListener('click', () => goTo(tIdx + 1));
-
-    // pause on hover (desktop)
     tRoot.addEventListener('mouseenter', stop);
     tRoot.addEventListener('mouseleave', start);
 
@@ -174,15 +174,15 @@
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
   }
 
-  // FAQ accordion
+  // FAQ
   const faq = document.querySelector('[data-faq]');
   if (faq) {
     const qs = Array.from(faq.querySelectorAll('.faq-q'));
     const as = Array.from(faq.querySelectorAll('.faq-a'));
 
     const closeAll = () => {
-      qs.forEach(q => q.setAttribute('aria-expanded', 'false'));
-      as.forEach(a => a.style.maxHeight = '0px');
+      qs.forEach((q) => q.setAttribute('aria-expanded', 'false'));
+      as.forEach((a) => (a.style.maxHeight = '0px'));
     };
 
     const openAt = (i) => {
@@ -193,7 +193,6 @@
       a.style.maxHeight = a.scrollHeight + 'px';
     };
 
-    // init closed
     closeAll();
 
     qs.forEach((q, i) => {
@@ -204,68 +203,14 @@
       });
     });
 
-    // keep height correct on resize if one is open
     window.addEventListener('resize', () => {
-      const openIndex = qs.findIndex(q => q.getAttribute('aria-expanded') === 'true');
+      const openIndex = qs.findIndex((q) => q.getAttribute('aria-expanded') === 'true');
       if (openIndex >= 0) openAt(openIndex);
     });
   }
-
-  // Gallery lightbox (simple, dependency-free)
-  const gallery = document.querySelector('[data-gallery]');
-  if (gallery) {
-    const imgs = Array.from(gallery.querySelectorAll('img[data-lightbox]'));
-    const lb = document.createElement('div');
-    lb.className = 'lightbox';
-    lb.innerHTML = `
-      <button class="close" type="button" aria-label="Close">×</button>
-      <figure>
-        <img alt="" />
-        <figcaption></figcaption>
-      </figure>
-    `;
-    document.body.appendChild(lb);
-
-    const lbImg = lb.querySelector('img');
-    const caption = lb.querySelector('figcaption');
-    const closeBtn = lb.querySelector('.close');
-
-    let prevOverflow = '';
-
-    const open = (src, alt) => {
-      prevOverflow = document.documentElement.style.overflow || '';
-      lbImg.src = src;
-      lbImg.alt = alt || '';
-      caption.textContent = alt || '';
-      lb.classList.add('open');
-      document.documentElement.style.overflow = 'hidden';
-    };
-
-    const close = () => {
-      lb.classList.remove('open');
-      document.documentElement.style.overflow = prevOverflow;
-      lbImg.src = '';
-    };
-
-    imgs.forEach(img => {
-      img.addEventListener('click', () => open(img.src, img.alt));
-      img.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          open(img.src, img.alt);
-        }
-      });
-      img.tabIndex = 0;
-    });
-
-    closeBtn.addEventListener('click', close);
-    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('open')) close(); });
-  }
-
 })();
 
-// Enquiry form - real Supabase submit
+// Enquiry form submit
 (() => {
   const form = document.querySelector('[data-enquiry-form]');
   if (!form) return;
@@ -275,20 +220,25 @@
   let isSubmitting = false;
 
   function setStatus(message, type = 'info') {
-    if (!statusEl) {
-      if (message) alert(message);
-      return;
-    }
+    if (!statusEl) return;
 
     statusEl.hidden = !message;
     statusEl.textContent = message || '';
 
-    statusEl.style.color =
-      type === 'error' ? '#b42318'
-      : type === 'success' ? '#027a48'
-      : 'inherit';
+    statusEl.style.borderColor =
+      type === 'error' ? 'rgba(180,35,24,.24)' :
+      type === 'success' ? 'rgba(2,122,72,.24)' :
+      'rgba(227,234,244,.95)';
 
-    statusEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    statusEl.style.background =
+      type === 'error' ? 'rgba(180,35,24,.06)' :
+      type === 'success' ? 'rgba(2,122,72,.08)' :
+      'rgba(255,255,255,.72)';
+
+    statusEl.style.color =
+      type === 'error' ? '#b42318' :
+      type === 'success' ? '#027a48' :
+      'inherit';
   }
 
   form.addEventListener('submit', async (e) => {
@@ -330,7 +280,7 @@
           child_age: childAge || null,
           message,
           status: 'new',
-          source: 'website_contact_form'
+          source: 'website_home_form'
         }]);
 
       if (error) throw error;
