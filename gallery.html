@@ -3,11 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gallery | Tomotina Kids</title>
-  <meta name="description" content="Admissions process for Tomotina Kids - steps, documents, and how to apply." />
+  <title>Gallery | Tomotina Kids Development Centre</title>
+  <meta
+    name="description"
+    content="Explore the Tomotina Kids Development Centre gallery — calm spaces, therapy rooms, activities, and moments of child development and engagement."
+  />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
@@ -16,9 +22,8 @@
   <header class="site-header">
     <div class="container">
       <nav class="navbar" aria-label="Primary">
-        <a class="brand" href="index.html">
+        <a class="brand" href="index.html" aria-label="Tomotina Kids home">
           <img src="assets/images/logo.png" alt="Tomotina Kids logo" />
-          
         </a>
 
         <div class="nav-links" aria-label="Main menu">
@@ -26,13 +31,20 @@
           <a href="about.html">About</a>
           <a href="programs.html">Programs</a>
           <a href="gallery.html">Gallery</a>
+          <a href="team.html">Our Team</a>
           <a href="contact.html">Contact</a>
-          <a href="team.html"> Our Team</a>
         </div>
 
         <div class="nav-actions">
-            <a class="staff-link" href="/portal/login.html">Staff Portal</a>
-            <button class="hamburger" data-hamburger aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <a class="btn btn-primary nav-enquire" href="contact.html">Enquire Now</a>
+          <button
+            class="hamburger"
+            data-hamburger
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="mobileMenu"
+            type="button"
+          >
             <span></span><span></span><span></span>
           </button>
         </div>
@@ -44,9 +56,8 @@
           <a href="about.html">About</a>
           <a href="programs.html">Programs</a>
           <a href="gallery.html">Gallery</a>
+          <a href="team.html">Our Team</a>
           <a href="contact.html">Contact</a>
-          <a href="team.html"> Our Team</a>
-
         </div>
         <div class="nav-actions">
           <a class="btn btn-primary" href="contact.html">Enquire Now</a>
@@ -57,99 +68,149 @@
 
   <main id="main">
     <section class="page-hero">
-  <div class="container">
-    <div class="page-hero-card">
-      <div class="page-hero-grid">
-        <div>
-          <div class="breadcrumb">Home / Gallery</div>
-          <span class="page-hero-kicker">Inside Tomotina</span>
-          <h1 class="page-hero-title">A warm space for learning and progress.</h1>
-          <p class="page-hero-sub">
-            A glimpse of our environment and the kind of activities children engage in.
-            (More private photos are available inside the Staff Portal.)
-          </p>
-          <div class="page-hero-actions">
-            <a class="btn btn-primary" href="contact.html">Enquire Now</a>
-            <a class="btn btn-outline" href="programs.html">View Programs</a>
+      <div class="container">
+        <div class="page-hero-card">
+          <div class="page-hero-grid">
+            <div>
+              <div class="breadcrumb">Home / Gallery</div>
+              <span class="page-hero-kicker">Inside Tomotina</span>
+              <h1 class="page-hero-title">A closer look at our environment, activities, and everyday moments.</h1>
+              <p class="page-hero-sub">
+                Explore the spaces where children learn, engage, build confidence, and receive support
+                in a calm, structured, and child-friendly setting.
+              </p>
+              <div class="page-hero-actions">
+                <a class="btn btn-primary" href="contact.html">Book a Visit</a>
+                <a class="btn btn-outline" href="programs.html">View Programs</a>
+              </div>
+            </div>
+
+            <div class="page-hero-media">
+              <img src="assets/images/home/hero-office.jpg" alt="Tomotina Kids centre interior" />
+            </div>
           </div>
         </div>
-        <div class="page-hero-media" aria-hidden="true">
-          <img src="assets/images/programs/image6_program.png" alt="Classroom activity" />
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-title">
+          <div>
+            <p class="kicker">Gallery highlights</p>
+            <h2>Moments of care, learning, movement, and progress</h2>
+            <p>Tap any image to view it larger.</p>
+          </div>
+        </div>
+
+        <div class="gallery-grid" data-gallery>
+          <img data-lightbox src="assets/images/home/hero-office.jpg" alt="Tomotina Kids consultation and reception room" />
+          <img data-lightbox src="assets/images/home/hero-sensory-room.jpg" alt="Calm sensory-friendly room at Tomotina Kids" />
+          <img data-lightbox src="assets/images/home/hero-therapy-space.jpg" alt="Therapy room with child-friendly setup" />
+
+          <img data-lightbox src="assets/images/home/about-craft.jpg" alt="Children engaged in a guided creative activity" />
+          <img data-lightbox src="assets/images/home/program-skills.jpg" alt="Children participating in a group activity session" />
+          <img data-lightbox src="assets/images/home/program-sports.jpg" alt="Therapist supporting a child in a sports activity room" />
+
+          <img data-lightbox src="assets/images/home/facility-sensory-room.jpg" alt="Soft seating and supportive therapy environment" />
+          <img data-lightbox src="assets/images/home/facility-ball-pit.jpg" alt="Therapy area with ball pit and activity setup" />
+          <img data-lightbox src="assets/images/home/facility-office.jpg" alt="Professional consultation space at Tomotina Kids" />
+
+          <img data-lightbox src="assets/images/gallery/group-circle.jpg" alt="Children sitting together during a group session" />
+          <img data-lightbox src="assets/images/gallery/cake-moment.jpg" alt="Celebration moment at Tomotina Kids" />
+          <img data-lightbox src="assets/images/gallery/activity-room.jpg" alt="Child development activity space inside the centre" />
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-  
-<section class="section">
-  <div class="container">
-    <div class="section-title">
-      <div>
-        <div class="section-kicker">Gallery</div>
-        <h2>Moments that feel calm, joyful, and structured.</h2>
-        <p>Tap an image to view it larger.</p>
+    <section class="section alt">
+      <div class="container">
+        <div class="split-grid">
+          <div class="card split-copy">
+            <p class="kicker">What parents should notice</p>
+            <h2>A space designed to feel calm, welcoming, and purposeful</h2>
+            <p>
+              The Tomotina environment is not just about activities — it is about creating the right setting
+              for communication, participation, regulation, and steady developmental progress.
+            </p>
+            <ul class="list">
+              <li>Child-friendly therapy and activity spaces</li>
+              <li>Calm visual environment with structured engagement</li>
+              <li>Supportive setup for movement, play, and sensory needs</li>
+              <li>Real moments of confidence-building and participation</li>
+            </ul>
+          </div>
+
+          <div class="img-premium section-photo">
+            <img src="assets/images/gallery/group-circle.jpg" alt="Structured group interaction session at Tomotina Kids" />
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="gallery-grid" data-gallery>
-      <img data-lightbox src="assets/images/programs/image1_program.png" alt="Assessment and learning support" />
-      <img data-lightbox src="assets/images/programs/image2_program.png" alt="Early intervention activities" />
-      <img data-lightbox src="assets/images/programs/image3_program.png" alt="Physiotherapy support session" />
-      <img data-lightbox src="assets/images/programs/image4_program.png" alt="Occupational therapy workspace" />
-      <img data-lightbox src="assets/images/programs/image5_program.png" alt="Speech and language support" />
-      <img data-lightbox src="assets/images/programs/image6_program.png" alt="Special education classroom learning" />
-      <img data-lightbox src="assets/images/programs/image8_program.png" alt="Parent partnership and guidance" />
-      <img data-lightbox src="assets/images/hero.png" alt="A warm, welcoming learning environment" />
-      <img data-lightbox src="assets/images/jointeam.jpg" alt="Supportive teaching team" />
-    </div>
-  </div>
-</section>
-
+    <section class="cta">
+      <div class="container">
+        <div class="cta-wrap">
+          <div>
+            <h3>Would you like to visit the centre in person?</h3>
+            <p>Get in touch and we’ll help you plan the right next step for your child.</p>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="btn btn-primary" href="contact.html">Contact Us</a>
+            <a class="btn btn-outline" href="about.html">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
     <div class="container">
       <div class="footer-wrap">
         <div>
-          <h4>Tomotina Kids</h4>
-          <p>A place that feel simple, respectful, and supportive.</p>
+          <h4>Tomotina Kids Development Centre</h4>
+          <p>
+            A nurturing, structured, and supportive child development centre for autism support,
+            therapy, and holistic growth.
+          </p>
         </div>
+
         <div>
           <h4>Quick Links</h4>
           <p><a href="about.html">About</a></p>
           <p><a href="programs.html">Programs</a></p>
           <p><a href="gallery.html">Gallery</a></p>
+          <p><a href="team.html">Our Team</a></p>
           <p><a href="contact.html">Contact</a></p>
-          <p> <a href="team.html">Team</a> </p>
-
         </div>
+
         <div>
           <h4>Contact</h4>
-                    <p>📍 1080 Sector-40 Gurgaon, India</p>
-          <p>📞 +91-9643294715, 
-             +91-7009470084</p>
-          <p>✉️ info@tomotinakids.com</p>
+          <p>📍 House No: 1080, Sector 40, Gurugram, Haryana</p>
+          <p>📞 +91 9643294775, +91 7009470084</p>
+          <p>✉️ tomotinaofficial@gmail.com</p>
         </div>
       </div>
-      <div class="footer-bottom">© <span id="year"></span> Tomotina Kids.</div>
+
+      <div class="footer-bottom">© <span id="year"></span> Tomotina Kids Development Centre.</div>
     </div>
   </footer>
 
   <script src="assets/js/main.js"></script>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 
   <div class="mobile-contact-bar" aria-label="Quick contact">
     <a class="mcb-btn" href="tel:+917009470084" aria-label="Call">
       <span class="mcb-ico">📞</span><span>Call</span>
     </a>
-    <a class="mcb-btn" href="https://wa.me/+917009470084?text=Hello%20Tomotina%20Kids%2C%20I%20have%20an%20enquiry." target="_blank" rel="noopener" aria-label="WhatsApp">
+    <a class="mcb-btn" href="https://wa.me/917009470084?text=Hello%20Tomotina%20Kids%2C%20I%20have%20an%20enquiry." target="_blank" rel="noopener" aria-label="WhatsApp">
       <span class="mcb-ico">💬</span><span>WhatsApp</span>
     </a>
     <a class="mcb-btn mcb-primary" href="contact.html" aria-label="Enquiry form">
       <span class="mcb-ico">✉️</span><span>Enquiry</span>
     </a>
   </div>
-
 </body>
 </html>
