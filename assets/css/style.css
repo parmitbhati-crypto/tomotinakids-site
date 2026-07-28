@@ -1436,3 +1436,53 @@ footer .icon-btn.whatsapp{ color: #25D366; }
   filter: saturate(.96) contrast(1.06) brightness(1.03);
 }
 .brand img{ box-shadow: none; filter: none; border: none; }
+
+/* Tomotina brand foundation: calm, warm and conversion-focused */
+:root{
+  --bg:#f7faf8; --text:#132a2a; --muted:#526766; --border:#dce8e4;
+  --primary:#0f766e; --primary-2:#149a91; --accent:#f4a340; --accent-2:#e97979;
+  --header-bg:rgba(255,255,255,.92); --ring:0 0 0 4px rgba(15,118,110,.2);
+  --radius:20px; --shadow:0 14px 40px rgba(21,61,57,.08);
+  --shadow-lg:0 28px 80px rgba(21,61,57,.14);
+}
+body{
+  background:
+    radial-gradient(900px 520px at 7% 3%,rgba(20,154,145,.10),transparent 64%),
+    radial-gradient(720px 460px at 96% 8%,rgba(244,163,64,.12),transparent 62%),
+    var(--bg);
+}
+body::before,body::after,html::before{display:none}
+header.site-header{border-bottom-color:rgba(15,118,110,.10);box-shadow:0 8px 30px rgba(21,61,57,.04)}
+.brand img{object-fit:contain;background:#fff}
+.btn-primary{background:linear-gradient(135deg,#0f766e,#149a91);box-shadow:0 12px 28px rgba(15,118,110,.22)}
+.btn-accent{background:linear-gradient(135deg,#f4a340,#f6b85f);color:#35200a;box-shadow:0 12px 28px rgba(244,163,64,.24)}
+.hero-home{padding-top:42px}
+.hero-wrap{align-items:stretch}
+.hero-card-main{background:rgba(255,255,255,.94);border-color:rgba(15,118,110,.12)}
+.hero-card-main h1{font-size:clamp(2.25rem,4.5vw,4.35rem);line-height:1.04;letter-spacing:-.055em;max-width:14ch}
+.hero-lead{max-width:62ch;font-size:1.05rem}
+.hero-side{background:linear-gradient(180deg,#fff,#eff9f6);border-color:rgba(15,118,110,.12)}
+.hero-carousel img{border:0;border-radius:0;box-shadow:none}
+.trust-strip{margin-top:20px}
+.trust-item,.card{border-color:rgba(15,118,110,.11);box-shadow:0 12px 36px rgba(21,61,57,.06)}
+.feature-card,.update-card{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.feature-card:hover,.update-card:hover{transform:translateY(-4px);border-color:rgba(15,118,110,.24);box-shadow:var(--shadow)}
+.section{padding-block:clamp(58px,8vw,96px)}
+.section-title h2{font-size:clamp(1.9rem,3.4vw,3rem);line-height:1.12;letter-spacing:-.04em}
+.kicker{color:#0f766e;font-weight:700}
+.kicker::before{background:linear-gradient(90deg,#0f766e,#f4a340)}
+input,textarea,select{min-height:48px;border-color:#cbded8}
+input:focus,textarea:focus,select:focus{border-color:#0f766e;box-shadow:var(--ring)}
+.reveal{opacity:1 !important;transform:none !important}
+@media(max-width:760px){
+  .hero-home{padding-top:22px}
+  .hero-card-main h1{font-size:clamp(2rem,11vw,3.15rem)}
+  .hero-actions .btn{width:100%;min-height:48px}
+  .brand{min-width:0}
+  .brand img{width:165px;height:48px}
+  .nav-enquire{white-space:nowrap;padding:9px 12px;font-size:12px}
+  .section{padding-block:54px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto !important;animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
