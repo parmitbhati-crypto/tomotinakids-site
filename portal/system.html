@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>System Health | Tomotina Kids</title>
+  <link rel="stylesheet" href="/assets/css/portal.css">
+</head>
+<body>
+  <main class="container">
+    <div class="grid">
+      <section class="card">
+        <div class="row">
+          <div>
+            <span class="portal-eyebrow">Reliability</span>
+            <h2 class="h2">System health</h2>
+            <p class="muted">Sanitized portal errors from the last 24 hours. No form values or stack traces are collected.</p>
+          </div>
+          <button class="btn right" id="refreshHealth" type="button">Refresh</button>
+        </div>
+        <div class="summary-grid portal-health-summary">
+          <div class="summary-card"><strong id="errorCount">—</strong><span>Errors in 24 hours</span></div>
+          <div class="summary-card"><strong id="lastError">—</strong><span>Most recent</span></div>
+          <div class="summary-card"><strong id="healthStatus">Checking</strong><span>Portal status</span></div>
+        </div>
+      </section>
+      <section class="card">
+        <h2 class="h2">Recent error events</h2>
+        <div id="systemMessage" class="msg" data-type="info" hidden></div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Time</th><th>Page</th><th>Type</th><th>Message</th></tr></thead>
+            <tbody id="systemErrors"><tr><td colspan="4" class="muted">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/system.js"></script>
+</body>
+</html>

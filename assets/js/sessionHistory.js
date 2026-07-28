@@ -1,10 +1,7 @@
 // assets/js/sessionHistory.js
 
 (async function () {
-  console.log("🚀 sessionHistory.js loaded");
-
   const user = await requireAuth();
-  console.log("👤 Auth user:", user);
   if (!user) return;
 
   await showAdminNavIfAdmin();
@@ -13,7 +10,7 @@
   const container = document.getElementById("historyContainer");
 
   if (!studentSelect || !container) {
-    console.error("❌ Missing DOM elements", { studentSelect, container });
+    window.portalReportError?.("application", "Session history page is missing required controls.");
     return;
   }
 
@@ -25,11 +22,10 @@
     .select("id, full_name")
     .order("full_name");
 
-  console.log("📚 Students:", students, "Error:", studentErr);
-
   if (studentErr) {
+    window.portalReportError?.("application", "Unable to load students for session history.");
     container.innerHTML =
-      `<div class="msg" data-type="error">${studentErr.message}</div>`;
+      `<div class="msg" data-type="error">Unable to load students. Please try again.</div>`;
     return;
   }
 
@@ -45,8 +41,6 @@
    * ----------------------------- */
   studentSelect.addEventListener("change", async () => {
     const studentId = studentSelect.value;
-    console.log("🎯 Selected studentId:", studentId);
-
     if (!studentId) {
       container.innerHTML =
         `<div class="msg" data-type="info">Select a student to view session history.</div>`;
@@ -79,12 +73,10 @@
       .eq("student_id", studentId)
       .order("starts_at", { ascending: false });
 
-    console.log("🗓 Sessions query result:", data);
-    console.log("❗ Sessions query error:", error);
-
     if (error) {
+      window.portalReportError?.("application", "Unable to load session history.");
       container.innerHTML =
-        `<div class="msg" data-type="error">${error.message}</div>`;
+        `<div class="msg" data-type="error">Unable to load session history. Please try again.</div>`;
       return;
     }
 
@@ -99,9 +91,7 @@
      * ----------------------------- */
     let html = `<div class="session-history">`;
 
-    data.forEach((s, index) => {
-      console.log(`📌 Session[${index}] raw:`, s);
-
+    data.forEach((s) => {
       const st = new Date(s.starts_at);
       const en = new Date(s.ends_at);
 
@@ -112,8 +102,6 @@
       } else if (s.session_updates && typeof s.session_updates === "object") {
         updates = [s.session_updates];
       }
-
-      console.log(`📝 Normalized updates for session ${s.id}:`, updates);
 
       const upd = updates.length
         ? updates

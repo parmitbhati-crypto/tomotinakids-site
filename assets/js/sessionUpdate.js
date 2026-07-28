@@ -58,8 +58,6 @@ let sessionCompleted = false;
      SESSION ID
   ========================= */
   const sessionId = getSessionIdFromUrl();
-  console.log("📌 Session ID from URL:", sessionId);
-
   const sessionInfoEl = byId("sessionInfo");
   if (!sessionId) {
     if (sessionInfoEl) {
@@ -234,7 +232,8 @@ let sessionCompleted = false;
       }, 1500);
 
     } catch (e) {
-      setInlineMsg(msg, e.message || "Save failed", "error");
+      window.portalReportError?.("application", "Unable to save a session update.");
+      setInlineMsg(msg, "Unable to save the session update. Please try again.", "error");
       btnSave.disabled = false;
       btnSave.textContent = "Save";
     } finally {

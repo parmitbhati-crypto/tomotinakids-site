@@ -156,15 +156,27 @@ function showDayDetails(dateObj, list) {
 
 document.getElementById("prevBtn").onclick = () => {
   viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
-  renderCalendar().catch(e => alert(e.message));
+  renderCalendar().catch(() => {
+    window.portalReportError?.("application", "Unable to load the previous calendar month.");
+    alert("Unable to load the calendar. Please try again.");
+  });
 };
 document.getElementById("nextBtn").onclick = () => {
   viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1);
-  renderCalendar().catch(e => alert(e.message));
+  renderCalendar().catch(() => {
+    window.portalReportError?.("application", "Unable to load the next calendar month.");
+    alert("Unable to load the calendar. Please try again.");
+  });
 };
 document.getElementById("todayBtn").onclick = () => {
   viewDate = new Date();
-  renderCalendar().catch(e => alert(e.message));
+  renderCalendar().catch(() => {
+    window.portalReportError?.("application", "Unable to load today's calendar.");
+    alert("Unable to load the calendar. Please try again.");
+  });
 };
 
-renderCalendar().catch(e => alert(e.message));
+renderCalendar().catch(() => {
+  window.portalReportError?.("application", "Unable to initialize the calendar.");
+  alert("Unable to load the calendar. Please refresh.");
+});

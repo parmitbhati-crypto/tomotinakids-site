@@ -344,9 +344,8 @@
         const { error: upErr } = await window.sb.storage.from(BUCKET).upload(path, file, { upsert: true });
         if (upErr) throw upErr;
 
-        // 3) Save photo_url
-        const { data: pub } = window.sb.storage.from(BUCKET).getPublicUrl(path);
-        const photoUrl = pub?.publicUrl || null;
+        // 3) Save only the private object path. Access uses short-lived signed URLs.
+        const photoUrl = path;
 
         if (photoUrl) {
           const { error: pErr } = await window.sb.from("students")
@@ -382,18 +381,18 @@
         window.location.href = `./registration-details.html?student_id=${studentId}`;
 
       } catch (err) {
-        console.error(err);
+        window.portalReportError?.("application", "Unable to create registration.");
 
         if (createdStudentId) {
           try {
             await window.sb.from("student_registrations").delete().eq("student_id", createdStudentId);
             await window.sb.from("students").delete().eq("id", createdStudentId);
           } catch (cleanupErr) {
-            console.warn("Cleanup failed after registration create error", cleanupErr);
+            window.portalReportError?.("application", "Registration cleanup was incomplete.");
           }
         }
 
-        alert("Error while creating registration: " + (err?.message || "Something went wrong"));
+        alert("Unable to create the registration. Please try again.");
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Create Registration";

@@ -1,14 +1,8 @@
 // assets/js/auth.js
-// Tomotina Portal Auth + Role Routing (stable, no "sess is not defined")
-// Debug logs included (toggle AUTH_DEBUG)
-
-const AUTH_DEBUG = false;
-
-function authLog(...args) {
-  if (AUTH_DEBUG) console.log("[AUTH]", ...args);
-}
-function authErr(...args) {
-  console.error("[AUTH]", ...args);
+// Tomotina Portal Auth + Role Routing
+function authLog() {}
+function authErr(message) {
+  window.portalReportError?.("application", message);
 }
 
 /**
@@ -58,6 +52,12 @@ async function requireAuth() {
 
   const role = profile.role;
 
+  if (!["admin", "teacher"].includes(role)) {
+    await window.sb.auth.signOut();
+    window.location.href = "/portal/login.html?status=pending";
+    return null;
+  }
+
   // Page groups
   const teacherPages = ["/portal/day.html", "/portal/week.html", "/portal/calendar.html"];
 
@@ -69,7 +69,8 @@ async function requireAuth() {
     "/portal/registrations.html",
     "/portal/teacher-attendance.html",
     "/portal/teacher-attendance-history.html",
-    "/portal/enquiries.html"
+    "/portal/enquiries.html",
+    "/portal/system.html"
   ];
 
   const isTeacherPage = teacherPages.includes(path);
@@ -110,7 +111,7 @@ async function getMyProfile() {
 
   if (error) {
     authErr("getMyProfile error:", error);
-    alert("getMyProfile error: " + (error.message || JSON.stringify(error)));
+    window.portalReportError?.("application", "Unable to load the current profile.");
     return null;
   }
   return data || null;
@@ -199,15 +200,3 @@ function toTimeLabel(dt) {
     minute: "2-digit"
   });
 }
-
-/* ===============================
-   GLOBAL ERROR TRAPS (debugging)
-================================ */
-
-window.addEventListener("unhandledrejection", (e) => {
-  authErr("UNHANDLED PROMISE:", e.reason);
-});
-
-window.addEventListener("error", (e) => {
-  authErr("GLOBAL ERROR:", e.message, e.filename, e.lineno);
-});

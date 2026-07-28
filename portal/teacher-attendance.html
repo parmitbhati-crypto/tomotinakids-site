@@ -198,8 +198,8 @@
       showMsg("✅ Attendance saved", "success");
       await loadExistingForDate(dateStr);
     } catch (e) {
-      console.error(e);
-      showMsg("❌ " + (e.message || "Failed to save"), "error");
+      window.portalReportError?.("application", "Unable to save teacher attendance.");
+      showMsg("Unable to save attendance. Please try again.", "error");
     } finally {
       saveBtn.disabled = false;
       saveBtn.textContent = "Save Attendance";
@@ -220,8 +220,8 @@
       await loadExistingForDate(datePick.value);
       render();
     } catch (e) {
-      console.error(e);
-      tbody.innerHTML = `<tr><td colspan="4" class="muted">Error: ${escapeHtml(e.message)}</td></tr>`;
+      window.portalReportError?.("application", "Unable to load teacher attendance.");
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">Unable to load attendance.</td></tr>`;
     }
   });
 
@@ -237,8 +237,8 @@
       await loadExistingForDate(today);
       render();
     } catch (e) {
-      console.error(e);
-      tbody.innerHTML = `<tr><td colspan="4" class="muted">Error: ${escapeHtml(e.message)}</td></tr>`;
+      window.portalReportError?.("application", "Unable to refresh teacher attendance.");
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">Unable to refresh attendance.</td></tr>`;
     }
   })();
 </script>

@@ -74,7 +74,7 @@
     // ---------- Auth Guard: Admin only ----------
     async function requireAdmin() {
       const { data: { user }, error: userErr } = await window.sb.auth.getUser();
-      if (userErr) console.warn(userErr);
+      if (userErr) window.portalReportError?.("application", "Unable to verify the current user.");
       if (!user) {
         window.location.href = "./login.html";
         return null;
@@ -149,7 +149,8 @@
             .eq("id", id);
 
           if (error) {
-            alert("Failed to update status: " + error.message);
+            window.portalReportError?.("application", "Unable to update registration status.");
+            alert("Unable to update status. Please try again.");
             e.target.checked = !is_active;
           } else {
             const idx = allRows.findIndex(x => x.id === id);
@@ -190,7 +191,8 @@
         .order("created_at", { ascending: false });
 
       if (error) {
-        tbody.innerHTML = `<tr><td colspan="6" class="muted">Error: ${escapeHtml(error.message)}</td></tr>`;
+        window.portalReportError?.("application", "Unable to load registrations.");
+        tbody.innerHTML = `<tr><td colspan="6" class="muted">Unable to load registrations. Please try again.</td></tr>`;
         return;
       }
 

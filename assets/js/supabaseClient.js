@@ -23,6 +23,11 @@
   );
 
   if (window.location.pathname.startsWith("/portal/") && !window.location.pathname.includes("/login")) {
+    const monitoringScript = document.createElement("script");
+    monitoringScript.src = "/assets/js/portal-monitoring.js";
+    monitoringScript.defer = true;
+    document.head.appendChild(monitoringScript);
+
     const shellScript = document.createElement("script");
     shellScript.src = "/assets/js/portal-shell.js";
     shellScript.defer = true;

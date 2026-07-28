@@ -137,7 +137,8 @@ function render(rows) {
         .eq("id", enquiryId);
 
       if (error) {
-        setMsg(error.message || "Failed to update enquiry.", "error");
+        window.portalReportError?.("application", "Unable to update an enquiry.");
+        setMsg("Unable to update the enquiry. Please try again.", "error");
       } else {
         const idx = allRows.findIndex(x => x.id === enquiryId);
         if (idx >= 0) {
@@ -204,7 +205,8 @@ async function loadEnquiries() {
     if (tbody) {
       tbody.innerHTML = `<tr><td colspan="10" class="muted">Error loading enquiries.</td></tr>`;
     }
-    setMsg(e.message || "Failed to load enquiries.", "error");
+    window.portalReportError?.("application", "Unable to load enquiries.");
+    setMsg("Unable to load enquiries. Please try again.", "error");
   } finally {
     isLoading = false;
   }
