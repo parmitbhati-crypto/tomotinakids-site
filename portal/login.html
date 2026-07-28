@@ -1,43 +1,45 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Teacher Login</title>
-  <link rel="stylesheet" href="/assets/css/portal.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Staff Sign In | Tomotina Kids</title>
+  <link rel="stylesheet" href="/assets/css/portal.css">
 </head>
-<body>
-  <div class="container">
-    <div class="grid">
-     <div class="card" style="max-width:820px; margin:60px auto 0 auto;">
-        <div>
-          <img src="/assets/images/tomotinaLogo.png" alt="Tomotina Kids" class="logo-header" />
-        </div>
-
-        <h1 class="h1">Teacher / Admin Login</h1>
-        <p class="muted" style="margin-top:0;">Sign in to view your sessions and update progress.</p>
-
-        <div class="fieldrow" style="margin-top:14px;">
-          <div>
-            <label>Email</label>
-            <input id="email" type="email" placeholder="teacher@email.com" autocomplete="email" />
-          </div>
-          <div>
-            <label>Password</label>
-            <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:14px;">
-          <button id="btnLogin" class="btn primary">Login</button>
-          <button id="btnReset" class="btn">Send reset link</button>
-          <div id="msg" class="muted right"></div>
-        </div>
+<body class="portal-login-page">
+  <main class="portal-login-layout">
+    <section class="portal-login-story">
+      <a href="/index.html"><img src="/assets/images/logo.png" alt="Tomotina Kids"></a>
+      <div>
+        <span class="portal-login-kicker">Secure staff workspace</span>
+        <h1>Care, planning, and progress—all in one calm workspace.</h1>
+        <p>Access schedules, session notes, registrations, enquiries, and attendance from any device.</p>
       </div>
-    </div>
-  </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+      <small>Authorized Tomotina Kids staff only.</small>
+    </section>
+    <section class="portal-login-panel">
+      <form class="portal-login-card" id="loginForm">
+        <div>
+          <span class="portal-eyebrow">Welcome back</span>
+          <h2>Sign in to the portal</h2>
+          <p>Use your staff email and password.</p>
+        </div>
+        <label>
+          Email address
+          <input id="email" type="email" placeholder="name@tomotina.com" autocomplete="email" required>
+        </label>
+        <label>
+          Password
+          <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+        </label>
+        <div id="msg" class="msg" data-type="info" hidden role="status" aria-live="polite"></div>
+        <button id="btnLogin" class="btn primary" type="submit">Sign in securely</button>
+        <button id="btnReset" class="btn" type="button">Send password reset link</button>
+        <p class="portal-login-help">Having trouble? Contact the centre administrator.</p>
+      </form>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script>
   <script src="/assets/js/env.js"></script>
   <script src="/assets/js/supabaseClient.js"></script>
   <script src="/assets/js/login.js"></script>

@@ -2,7 +2,7 @@
 // Tomotina Portal Auth + Role Routing (stable, no "sess is not defined")
 // Debug logs included (toggle AUTH_DEBUG)
 
-const AUTH_DEBUG = true;
+const AUTH_DEBUG = false;
 
 function authLog(...args) {
   if (AUTH_DEBUG) console.log("[AUTH]", ...args);
@@ -16,7 +16,10 @@ function authErr(...args) {
  * Returns the authenticated user (session.user) OR null (and may redirect).
  */
 async function requireAuth() {
-  const path = window.location.pathname.replace(/\/+$/, "");
+  const rawPath = window.location.pathname.replace(/\/+$/, "");
+  const path = rawPath.startsWith("/portal/") && !rawPath.split("/").pop().includes(".")
+    ? `${rawPath}.html`
+    : rawPath;
   const isLoginPage =
     path === "/portal/login.html" || path === "/portal/login" || path === "/portal/login/";
 

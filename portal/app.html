@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Opening Portal | Tomotina Kids</title>
+  <link rel="stylesheet" href="/assets/css/portal.css">
+</head>
+<body>
+  <main class="container">
+    <div class="portal-state" aria-live="polite">Opening your workspace…</div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script>
+    (async () => {
+      const { data } = await window.sb.auth.getUser();
+      if (!data?.user) {
+        window.location.replace('/portal/login.html');
+        return;
+      }
+      const { data: profile } = await window.sb.from('profiles').select('role').eq('id', data.user.id).maybeSingle();
+      window.location.replace(profile?.role === 'admin' ? '/portal/admin-home.html' : '/portal/day.html');
+    })();
+  </script>
+</body>
+</html>

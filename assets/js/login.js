@@ -4,9 +4,13 @@ function qs(id) {
   return document.getElementById(id);
 }
 
-function setMsg(text) {
+function setMsg(text, type = "info") {
   const el = qs("msg");
-  if (el) el.textContent = text || "";
+  if (el) {
+    el.textContent = text || "";
+    el.dataset.type = type;
+    el.hidden = !text;
+  }
 }
 
 async function ensureClientReady() {
@@ -49,7 +53,7 @@ async function doLogin() {
   const password = qs("password").value || "";
 
   if (!email || !password) {
-    setMsg("Enter email and password.");
+    setMsg("Enter your email and password.", "error");
     return;
   }
 
@@ -59,7 +63,7 @@ async function doLogin() {
   });
 
   if (error || !data?.user) {
-    setMsg(error?.message || "Login failed.");
+    setMsg("We could not sign you in. Check your details and try again.", "error");
     return;
   }
   const { data: sess } = await window.sb.auth.getSession();
@@ -78,7 +82,7 @@ console.log("LOGIN DEBUG user id:", data.user.id);
 console.log("LOGIN DEBUG profileError:", profileError);
 
   if (profileError || !profile?.role) {
-    setMsg("Login successful, but role not found.");
+    setMsg("Your account is signed in but has no portal role. Contact the administrator.", "error");
     return;
   }
 
@@ -96,7 +100,7 @@ async function sendReset() {
 
   const email = (qs("email").value || "").trim();
   if (!email) {
-    setMsg("Enter your email first.");
+    setMsg("Enter your email address first.", "error");
     return;
   }
 
@@ -107,11 +111,11 @@ async function sendReset() {
   });
 
   if (error) {
-    setMsg(error.message);
+    setMsg("We could not send the reset link. Please try again.", "error");
     return;
   }
 
-  setMsg("Reset link sent. Check your email.");
+  setMsg("Reset link sent. Check your email.", "success");
 }
 
 (async function init() {
@@ -123,9 +127,13 @@ async function sendReset() {
 
   const btnLogin = qs("btnLogin");
   const btnReset = qs("btnReset");
+  const form = qs("loginForm");
 
-  if (btnLogin) btnLogin.onclick = doLogin;
   if (btnReset) btnReset.onclick = sendReset;
+  if (form) form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    doLogin();
+  });
 
   // Enter key triggers login
   const pwd = qs("password");

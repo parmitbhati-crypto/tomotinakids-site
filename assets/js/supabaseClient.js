@@ -21,4 +21,11 @@
       }
     }
   );
+
+  if (window.location.pathname.startsWith("/portal/") && !window.location.pathname.includes("/login")) {
+    const shellScript = document.createElement("script");
+    shellScript.src = "/assets/js/portal-shell.js";
+    shellScript.defer = true;
+    document.head.appendChild(shellScript);
+  }
 })();
