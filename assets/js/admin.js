@@ -34,9 +34,8 @@ function toLocalDateTimeISO(dateStr, timeStr) {
 }
 
 function selectedMultiValues(selectEl) {
-  return Array.from(selectEl.options)
-    .filter(o => o.selected)
-    .map(o => o.value);
+  return Array.from(document.querySelectorAll("#programChoices input:checked"))
+    .map(input => input.value);
 }
 
 function fmtTime(d) {
@@ -150,6 +149,11 @@ async function loadDropdowns() {
   programEl.innerHTML = (programs || [])
     .map(p => `<option value="${p.id}">${p.name}</option>`)
     .join("");
+  qs("programChoices").innerHTML = (programs || []).map(p => `
+    <label class="choice-card">
+      <input type="checkbox" value="${p.id}">
+      <span>${p.name}</span>
+    </label>`).join("") || `<div class="portal-inline-empty">No programs are configured yet.</div>`;
 
   aLog("loadDropdowns() done");
 }
@@ -176,7 +180,7 @@ async function loadSessionsForTeacherDate() {
   }
 
   if (!teacherId || !dateStr) {
-    listEl.textContent = "—";
+    listEl.innerHTML = `<div class="portal-state portal-state-compact"><strong>Select a teacher and date</strong><span>Their scheduled sessions will appear here.</span></div>`;
     return;
   }
 
@@ -208,7 +212,7 @@ async function loadSessionsForTeacherDate() {
   }
 
   if (!data?.length) {
-    listEl.innerHTML = `<div class="msg" data-type="info">No sessions.</div>`;
+    listEl.innerHTML = `<div class="portal-state portal-state-compact"><strong>No sessions scheduled</strong><span>Complete the form above to create the first session for this teacher and date.</span></div>`;
     return;
   }
 
@@ -278,14 +282,16 @@ async function saveSession() {
     aLog("saveSession inputs", { teacherId, studentId, dateStr, startTime, endTime, programIds });
 
     if (!teacherId || !studentId || !dateStr || !startTime || !endTime) {
-      throw new Error("Please fill all required fields.");
+      setMsg("Select a teacher, student, date, start time, and end time.", "error");
+      return;
     }
 
     const startsAt = toLocalDateTimeISO(dateStr, startTime);
     const endsAt = toLocalDateTimeISO(dateStr, endTime);
 
     if (new Date(endsAt) <= new Date(startsAt)) {
-      throw new Error("End time must be after start time.");
+      setMsg("End time must be after start time.", "error");
+      return;
     }
 
     // Conflict check
@@ -348,6 +354,7 @@ function clearForm() {
   if (qs("locationInput")) qs("locationInput").value = "";
   const prog = qs("programSelect");
   if (prog) Array.from(prog.options).forEach(o => (o.selected = false));
+  document.querySelectorAll("#programChoices input").forEach(input => { input.checked = false; });
   setMsg("", "info");
 }
 

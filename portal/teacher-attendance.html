@@ -20,7 +20,6 @@
       <p class="portal-subtitle">Mark daily attendance. Re-saving the same day updates existing records.</p>
     </div>
     <div class="portal-actions">
-      <a class="btn btn-outline" href="./admin-home.html">Back</a>
       <a class="btn btn-outline" href="./teacher-attendance-history.html">History</a>
     </div>
   </header>
@@ -83,6 +82,8 @@
 
   let teachers = [];
   let existingMap = new Map(); // teacher_id -> {status, notes}
+  let attendanceDirty = false;
+  let loadedDate = "";
 
   function showMsg(text, type="info"){
     msg.style.display = "inline-flex";
@@ -99,7 +100,7 @@
 
   function render(){
     if (!teachers.length) {
-      tbody.innerHTML = `<tr><td colspan="4" class="muted">No teachers found in profiles.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4"><div class="portal-state portal-state-compact"><strong>No active teachers</strong><span>Invite or reactivate a teacher in Team Directory before recording attendance.</span><a class="btn" href="./team.html">Open Team Directory</a></div></td></tr>`;
       return;
     }
 
@@ -198,6 +199,7 @@
 
       showMsg("✅ Attendance saved", "success");
       await loadExistingForDate(dateStr);
+      attendanceDirty = false;
     } catch (e) {
       window.portalReportError?.("application", "Unable to save teacher attendance.");
       showMsg("Unable to save attendance. Please try again.", "error");
@@ -208,17 +210,32 @@
   }
 
   markAllPresentBtn.addEventListener("click", () => {
+    if (!window.confirm("Mark every listed teacher as Present? This changes the form only; review the list before saving.")) return;
     document.querySelectorAll(".statusSel").forEach(sel => sel.value = "present");
+    attendanceDirty = true;
     showMsg("Marked all as Present (not saved yet).", "info");
+  });
+
+  tbody.addEventListener("input", () => { attendanceDirty = true; });
+  window.addEventListener("beforeunload", (event) => {
+    if (!attendanceDirty) return;
+    event.preventDefault();
+    event.returnValue = "";
   });
 
   saveBtn.addEventListener("click", saveAttendance);
 
   datePick.addEventListener("change", async () => {
     if (!datePick.value) return;
+    if (attendanceDirty && !window.confirm("Discard unsaved attendance changes and load another date?")) {
+      datePick.value = loadedDate;
+      return;
+    }
     tbody.innerHTML = `<tr><td colspan="4" class="muted">Loading…</td></tr>`;
     try {
       await loadExistingForDate(datePick.value);
+      attendanceDirty = false;
+      loadedDate = datePick.value;
       render();
     } catch (e) {
       window.portalReportError?.("application", "Unable to load teacher attendance.");
@@ -232,6 +249,7 @@
     // default today
     const today = new Date().toISOString().slice(0,10);
     datePick.value = today;
+    loadedDate = today;
 
     try {
       await loadTeachers();

@@ -63,6 +63,12 @@
     const title = pageHeader?.querySelector('.portal-title')?.textContent.trim()
       || content.querySelector('.h1, .h2, h1, h2')?.textContent.trim()
       || document.title.split(/[|•]/)[0].trim();
+    const normalizedTitle = title.toLowerCase().replace(/\s+/g, ' ').trim();
+    content.querySelectorAll('h1, h2').forEach((heading) => {
+      if (heading.textContent.toLowerCase().replace(/\s+/g, ' ').trim() === normalizedTitle) {
+        heading.classList.add('portal-duplicate-title');
+      }
+    });
     const currentNav = nav[inferredRole];
 
     const app = document.createElement('div');
