@@ -27,9 +27,9 @@
       ['System health', '/portal/system.html', 'shield']
     ],
     teacher: [
-      ['Today', '/portal/day.html', 'today'],
-      ['Week', '/portal/week.html', 'week'],
-      ['Calendar', '/portal/calendar.html', 'calendar']
+      ["Today's Sessions", '/portal/day.html', 'today'],
+      ['Calendar', '/portal/calendar.html', 'calendar'],
+      ['My Profile', '/portal/my-profile.html', 'profile']
     ]
   };
   const icons = {
@@ -43,7 +43,7 @@
     megaphone: '<path d="m3 11 13-5v12L3 13v-2Z"/><path d="M7 14v5h4v-3M19 9v6"/>',
     shield: '<path d="M12 3 4.5 6v5.5c0 4.6 3.1 7.8 7.5 9.5 4.4-1.7 7.5-4.9 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-5"/>',
     today: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-    week: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01"/>'
+    profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'
   };
   const svg = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${icons[name] || icons.home}</svg>`;
 
@@ -175,13 +175,23 @@
     const { data: authData } = await window.sb.auth.getUser();
     const user = authData?.user;
     if (!user) return;
-    const { data: profile } = await window.sb.from('profiles').select('full_name, role').eq('id', user.id).maybeSingle();
+    const { data: profile } = await window.sb.from('profiles').select('full_name, role, teacher_profiles(photo_path)').eq('id', user.id).maybeSingle();
     const name = profile?.full_name || user.email?.split('@')[0] || 'Team member';
     const role = profile?.role || inferredRole;
     app.querySelector('#portalProfileName').textContent = name;
     app.querySelector('#portalProfileRole').textContent = role === 'admin' ? 'Administrator' : 'Teacher';
     app.querySelector('#portalProfileEmail').textContent = user.email || '';
     app.querySelector('#portalAvatar').textContent = name.slice(0, 1).toUpperCase();
+    const photoPath = profile?.teacher_profiles?.photo_path;
+    if (role === 'teacher' && photoPath) {
+      const { data: photo } = await window.sb.storage.from('teacher-photos').createSignedUrl(photoPath, 3600);
+      if (photo?.signedUrl) {
+        const avatar = app.querySelector('#portalAvatar');
+        avatar.textContent = '';
+        avatar.style.backgroundImage = `url("${photo.signedUrl}")`;
+        avatar.classList.add('has-photo');
+      }
+    }
 
     if (role === 'admin') {
       const { count } = await window.sb.from('enquiries').select('id', { count: 'exact', head: true }).eq('status', 'new');
