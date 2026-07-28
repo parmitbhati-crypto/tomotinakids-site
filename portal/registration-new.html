@@ -243,6 +243,18 @@
       return parts.length > 1 ? parts.pop().toLowerCase() : "jpg";
     }
 
+    function localDateValue(){
+      const now = new Date();
+      const offset = now.getTimezoneOffset() * 60000;
+      return new Date(now.getTime() - offset).toISOString().slice(0,10);
+    }
+
+    function parsedAge(value){
+      if (!value) return null;
+      const age = Number.parseInt(value, 10);
+      return Number.isInteger(age) && age >= 0 && age <= 120 ? age : null;
+    }
+
     const BUCKET = "student-photos"; // change if your bucket differs
 
     const form = document.getElementById("regForm");
@@ -326,8 +338,9 @@
             parent_name: parentName,
             parent_phone: parentPhone,
             address: address,
+            "Age": parsedAge(age),
             is_active: true,
-            registration_date: new Date().toISOString().slice(0,10)
+            registration_date: localDateValue()
           }])
           .select("id")
           .single();
@@ -363,7 +376,7 @@
           emergency_contact: { name: emergencyName, relationship: emergencyRelationship, phone: emergencyPhone },
           developmental: { concerns: devConcerns, strengths, enjoys, goals },
           referral: { source: referralSource },
-          office_use: { date_of_intake: new Date().toISOString().slice(0,10), staff_member: null },
+          office_use: { date_of_intake: localDateValue(), staff_member: null },
           photo_url: photoUrl
         };
 

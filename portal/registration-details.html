@@ -609,6 +609,10 @@
 
     function fmtDate(val){
       if (!val) return "—";
+      if (/^\d{4}-\d{2}-\d{2}$/.test(String(val))) {
+        const [year, month, day] = String(val).split("-").map(Number);
+        return new Date(year, month - 1, day).toLocaleDateString();
+      }
       try {
         return new Date(val).toLocaleDateString();
       } catch {
@@ -639,6 +643,12 @@
     function getFileExt(file){
       const parts = (file.name || "").split(".");
       return parts.length > 1 ? parts.pop().toLowerCase() : "jpg";
+    }
+
+    function parsedAge(value){
+      if (!value) return null;
+      const age = Number.parseInt(value, 10);
+      return Number.isInteger(age) && age >= 0 && age <= 120 ? age : null;
     }
 
     function normalizeFormData(form){
@@ -996,7 +1006,8 @@
         normalized.office_use.date_of_intake = evIntakeDate.value || "";
         normalized.office_use.staff_member = evStaff.value.trim() || "";
 
-        let latestPhotoUrl = studentRow?.photo_url || normalized.photo_url || "";
+        const previousPhotoUrl = studentRow?.photo_url || normalized.photo_url || "";
+        let latestPhotoUrl = previousPhotoUrl;
         if (evPhotoFile?.files?.[0]) {
           latestPhotoUrl = await uploadReplacementPhoto(studentId, evStudentName.value.trim() || evChildName.value.trim() || "student");
         }
@@ -1009,6 +1020,7 @@
             parent_name: evParentName.value.trim() || normalized.basic_contact.parent_name || null,
             parent_phone: evParentPhone.value.trim() || normalized.basic_contact.phone || null,
             address: evAddress.value.trim() || normalized.basic_contact.address || null,
+            "Age": parsedAge(normalized.child_profile.age),
             registration_date: evRegDate.value || null,
             is_active: evActive.value === "true",
             photo_url: latestPhotoUrl || null
@@ -1033,6 +1045,13 @@
               created_by: user?.id || null
             }]);
           if (insErr) throw insErr;
+        }
+
+        if (previousPhotoUrl && latestPhotoUrl && previousPhotoUrl !== latestPhotoUrl) {
+          const { error: removeErr } = await window.sb.storage.from(BUCKET).remove([previousPhotoUrl]);
+          if (removeErr) {
+            window.portalReportError?.("storage", "Previous registration photo could not be removed.");
+          }
         }
 
         await loadData();
