@@ -858,7 +858,25 @@
       evStaff.value = form.office_use.staff_member || "";
     }
 
-    function fillReadView(){
+    function getPrivatePhotoPath(value){
+      if (!value) return "";
+      const marker = "/student-photos/";
+      const markerIndex = value.indexOf(marker);
+      return markerIndex >= 0 ? decodeURIComponent(value.slice(markerIndex + marker.length)) : value;
+    }
+
+    async function getPrivatePhotoUrl(value){
+      const path = getPrivatePhotoPath(value);
+      if (!path) return "";
+      const { data, error } = await window.sb.storage.from(BUCKET).createSignedUrl(path, 3600);
+      if (error) {
+        window.portalReportError?.("application", "Unable to create a private student photo link.");
+        return "";
+      }
+      return data?.signedUrl || "";
+    }
+
+    async function fillReadView(){
       const isActive = !!studentRow?.is_active;
       studentTitle.textContent = studentRow?.full_name || "Student";
       activePill.textContent = isActive ? "Active" : "Inactive";
@@ -904,8 +922,9 @@
       fIntakeDate.textContent = form.office_use.date_of_intake ? fmtDate(form.office_use.date_of_intake) : "—";
       fStaff.textContent = fmt(form.office_use.staff_member);
 
-      const photoUrl = studentRow?.photo_url || form.photo_url || "";
-      photoUrlText.textContent = photoUrl || "—";
+      const photoPath = getPrivatePhotoPath(studentRow?.photo_url || form.photo_url || "");
+      const photoUrl = await getPrivatePhotoUrl(photoPath);
+      photoUrlText.textContent = photoPath ? "Private centre record" : "—";
 
       if (photoUrl) {
         photoImg.src = photoUrl;
@@ -924,8 +943,7 @@
       const { error: upErr } = await window.sb.storage.from(BUCKET).upload(path, file, { upsert: true });
       if (upErr) throw upErr;
 
-      const { data: pub } = window.sb.storage.from(BUCKET).getPublicUrl(path);
-      return pub?.publicUrl || "";
+      return path;
     }
 
     editBtn.addEventListener("click", () => {
@@ -1021,8 +1039,8 @@
         setMode("read");
         alert("Saved.");
       } catch (err) {
-        console.error(err);
-        alert("Error: " + (err?.message || "Something went wrong"));
+        window.portalReportError?.("application", "Unable to save registration details.");
+        alert("Unable to save registration details. Please try again.");
       } finally {
         saveBtn.disabled = false;
         saveBtn.textContent = "Save";
@@ -1052,7 +1070,7 @@
       if (rErr) throw rErr;
       regRow = (rData && rData.length) ? rData[0] : null;
 
-      fillReadView();
+      await fillReadView();
 
       loading.style.display = "none";
       content.style.display = "block";
@@ -1071,8 +1089,8 @@
         await loadData();
         setMode("read");
       } catch (err) {
-        console.error(err);
-        alert("Error: " + (err?.message || "Unable to load details"));
+        window.portalReportError?.("application", "Unable to load registration details.");
+        alert("Unable to load registration details. Please try again.");
         window.location.href = "./registrations.html";
       }
     })();

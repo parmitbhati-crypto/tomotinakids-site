@@ -21,7 +21,14 @@
         return;
       }
       const { data: profile } = await window.sb.from('profiles').select('role').eq('id', data.user.id).maybeSingle();
-      window.location.replace(profile?.role === 'admin' ? '/portal/admin-home.html' : '/portal/day.html');
+      if (profile?.role === 'admin') {
+        window.location.replace('/portal/admin-home.html');
+      } else if (profile?.role === 'teacher') {
+        window.location.replace('/portal/day.html');
+      } else {
+        await window.sb.auth.signOut();
+        window.location.replace('/portal/login.html?status=pending');
+      }
     })();
   </script>
 </body>

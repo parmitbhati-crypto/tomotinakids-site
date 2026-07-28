@@ -352,7 +352,7 @@
       window.tomotinaTrack?.('enquiry_submitted', { form: window.location.pathname });
       setStatus('Thanks! Your enquiry has been submitted successfully.', 'success');
     } catch (err) {
-      setStatus(err?.message || 'Something went wrong while sending your enquiry. Please try again.', 'error');
+      setStatus('Something went wrong while sending your enquiry. Please try again.', 'error');
     } finally {
       isSubmitting = false;
       if (submitBtn) {

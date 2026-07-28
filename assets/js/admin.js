@@ -1,10 +1,7 @@
 // assets/js/admin.js
 // Admin Scheduler page
-// Includes debug logs to make issues obvious.
-
-const ADMIN_DEBUG = true;
-function aLog(...args) { if (ADMIN_DEBUG) console.log("[ADMIN]", ...args); }
-function aErr(...args) { console.error("[ADMIN]", ...args); }
+function aLog() {}
+function aErr(message) { window.portalReportError?.("application", message); }
 
 function qs(id) { return document.getElementById(id); }
 
@@ -203,7 +200,8 @@ async function loadSessionsForTeacherDate() {
   aLog("sessions query:", { count: data?.length, error });
 
   if (error) {
-    listEl.innerHTML = `<div class="msg" data-type="error">${error.message}</div>`;
+    window.portalReportError?.("application", "Unable to load scheduled sessions.");
+    listEl.innerHTML = `<div class="msg" data-type="error">Unable to load scheduled sessions.</div>`;
     return;
   }
 
@@ -331,7 +329,8 @@ async function saveSession() {
 
   } catch (e) {
     aErr("saveSession failed:", e);
-    setMsg(e.message || "Save failed", "error");
+    window.portalReportError?.("application", "Unable to save the schedule.");
+    setMsg("Unable to save the schedule. Please try again.", "error");
   } finally {
     isSavingSession = false;
     if (btn) {
@@ -380,6 +379,7 @@ function clearForm() {
     aLog("ADMIN init done");
   } catch (e) {
     aErr("ADMIN init error:", e);
-    setMsg(e.message || "Admin page error", "error");
+    window.portalReportError?.("application", "Unable to initialize the admin scheduler.");
+    setMsg("Unable to load the scheduler. Please refresh.", "error");
   }
 })();

@@ -34,7 +34,7 @@
 
   if (error) {
     document.getElementById("weekWrap").innerHTML =
-      `<div class="msg" data-type="error">${error.message}</div>`;
+      `<div class="msg" data-type="error">Unable to load this week's sessions.</div>`;
     return;
   }
 

@@ -37,7 +37,7 @@
 
   if (error) {
     document.getElementById("dayTableWrap").innerHTML =
-      `<div class="msg" data-type="error">${error.message}</div>`;
+      `<div class="msg" data-type="error">Unable to load today's sessions.</div>`;
     return;
   }
 

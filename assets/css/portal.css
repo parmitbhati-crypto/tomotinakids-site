@@ -1177,6 +1177,8 @@ body.portal-ready .msg[data-type="success"]{color:var(--portal-success);backgrou
 .portal-quick-actions{display:flex;gap:9px;flex-wrap:wrap}
 .portal-section-heading{display:flex;align-items:end;justify-content:space-between;margin:12px 0}
 .portal-section-heading .h2{margin:3px 0 0}
+.portal-health-summary{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:700px){.portal-health-summary{grid-template-columns:1fr}}
 .skeleton{border-color:var(--portal-border);background:#edf3f1}
 .skeleton::after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent)}
 

@@ -227,8 +227,8 @@
 
       showMsg("Loaded attendance.", "success");
     } catch (e) {
-      console.error(e);
-      tbody.innerHTML = `<tr><td colspan="4" class="muted">Error: ${escapeHtml(e.message)}</td></tr>`;
+      window.portalReportError?.("application", "Unable to load attendance history.");
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">Unable to load attendance history.</td></tr>`;
       showMsg("Failed to load.", "error");
     }
   }
@@ -246,7 +246,7 @@
     try {
       await loadTeachers();
     } catch (e) {
-      console.error(e);
+      window.portalReportError?.("application", "Unable to refresh attendance history.");
       teacherSel.innerHTML = `<option value="">No teachers found</option>`;
     }
   })();

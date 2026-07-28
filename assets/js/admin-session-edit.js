@@ -238,7 +238,8 @@ async function saveChanges(reschedule = false) {
     setMsg(reschedule ? "Session rescheduled successfully ✅" : "Session updated successfully ✅", "success");
 
   } catch (e) {
-    setMsg(e.message || "Update failed", "error");
+    window.portalReportError?.("application", "Unable to update the session.");
+    setMsg("Unable to update the session. Please try again.", "error");
   } finally {
     isSaving = false;
 

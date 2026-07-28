@@ -40,8 +40,11 @@ async function redirectIfAlreadyLoggedIn() {
 
   if (profile.role === "admin") {
     window.location.href = "/portal/admin-home.html";
-  } else {
+  } else if (profile.role === "teacher") {
     window.location.href = "/portal/day.html";
+  } else {
+    await window.sb.auth.signOut();
+    setMsg("Your account is awaiting portal approval. Contact the administrator.", "error");
   }
 }
 
@@ -66,11 +69,6 @@ async function doLogin() {
     setMsg("We could not sign you in. Check your details and try again.", "error");
     return;
   }
-  const { data: sess } = await window.sb.auth.getSession();
-console.log("LOGIN DEBUG session:", sess?.session);
-console.log("LOGIN DEBUG access_token?", !!sess?.session?.access_token);
-console.log("LOGIN DEBUG user id:", data.user.id);
-
   // 🔑 FETCH ROLE AFTER LOGIN
   const { data: profile, error: profileError } = await window.sb
     .from("profiles")
@@ -78,11 +76,9 @@ console.log("LOGIN DEBUG user id:", data.user.id);
     .eq("id", data.user.id)
     .maybeSingle();
 
-    console.log("LOGIN DEBUG profile:", profile);
-console.log("LOGIN DEBUG profileError:", profileError);
-
-  if (profileError || !profile?.role) {
-    setMsg("Your account is signed in but has no portal role. Contact the administrator.", "error");
+  if (profileError || !["admin", "teacher"].includes(profile?.role)) {
+    await window.sb.auth.signOut();
+    setMsg("Your account is awaiting portal approval. Contact the administrator.", "error");
     return;
   }
 
@@ -119,10 +115,13 @@ async function sendReset() {
 }
 
 (async function init() {
+  if (new URLSearchParams(window.location.search).get("status") === "pending") {
+    setMsg("Your account is awaiting portal approval. Contact the administrator.", "error");
+  }
   try {
     await redirectIfAlreadyLoggedIn();
   } catch (e) {
-    console.warn(e.message);
+    // Keep sign-in available if the existing-session check is unavailable.
   }
 
   const btnLogin = qs("btnLogin");
