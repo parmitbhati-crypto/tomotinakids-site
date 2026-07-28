@@ -3,8 +3,9 @@ import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const read = (path) => readFile(resolve(root, path), "utf8");
-const [auth, login, client, headers, config, migration, rollout, setupPage, challengePage, setupScript, challengeScript, passwordScript] = await Promise.all([
-  "assets/js/auth.js", "assets/js/login.js", "assets/js/supabaseClient.js", "_headers",
+const [auth, login, client, shell, system, headers, config, migration, rollout, setupPage, challengePage, setupScript, challengeScript, passwordScript] = await Promise.all([
+  "assets/js/auth.js", "assets/js/login.js", "assets/js/supabaseClient.js",
+  "assets/js/portal-shell.js", "assets/js/system.js", "_headers",
   "supabase/config.toml", "supabase/migrations/20260728224440_enforce_active_accounts_and_admin_mfa.sql",
   "supabase/rollouts/enable_admin_mfa_after_enrollment.sql", "portal/mfa-setup.html",
   "portal/mfa-challenge.html", "assets/js/mfa-setup.js", "assets/js/mfa-challenge.js",
@@ -23,8 +24,11 @@ expect(migration.includes("active_portal_accounts_only") && migration.includes("
 expect(migration.includes("'student-photos', 'teacher-photos'"), "Private storage is not protected by active-account enforcement.");
 expect(rollout.includes("auth.jwt()->>'aal'") && rollout.includes("'aal2'"), "Post-enrollment AAL2 database enforcement is missing.");
 expect(auth.includes("getAuthenticatorAssuranceLevel") && auth.includes("/portal/mfa-challenge.html"), "Portal guard does not enforce administrator MFA.");
+expect(auth.includes('role === "admin" && isTeacherPage'), "Administrators are not redirected away from teacher-only pages.");
 expect(login.includes("routeAdminAfterPassword") && login.includes("captchaToken"), "Login is missing MFA routing or CAPTCHA token support.");
 expect(client.includes("mfa-setup|mfa-challenge"), "Standalone MFA pages are not excluded from the authenticated shell.");
+expect(shell.includes("access?.portal_role || profile?.role || inferredRole"), "Portal shell does not prefer the authoritative portal role.");
+expect(system.includes("const user = await requireAuth()") && !system.includes("profile?.role !== 'admin'"), "System Health still redirects profile-read failures to the teacher portal.");
 expect(setupPage.includes('name="robots" content="noindex,nofollow,noarchive"'), "MFA setup page is indexable.");
 expect(challengePage.includes('name="robots" content="noindex,nofollow,noarchive"'), "MFA challenge page is indexable.");
 for (const [name, script] of [["setup", setupScript], ["challenge", challengeScript]]) {

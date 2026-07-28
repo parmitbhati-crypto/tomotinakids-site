@@ -181,9 +181,14 @@
     const { data: authData } = await window.sb.auth.getUser();
     const user = authData?.user;
     if (!user) return;
+    const { data: access } = await window.sb.rpc('get_portal_access_state').maybeSingle();
     const { data: profile } = await window.sb.from('profiles').select('full_name, role, teacher_profiles(photo_path)').eq('id', user.id).maybeSingle();
     const name = profile?.full_name || user.email?.split('@')[0] || 'Team member';
-    const role = profile?.role || inferredRole;
+    const role = access?.portal_role || profile?.role || inferredRole;
+    if (role !== inferredRole) {
+      window.location.replace(role === 'admin' ? '/portal/admin-home.html' : '/portal/day.html');
+      return;
+    }
     app.querySelector('#portalProfileName').textContent = name;
     app.querySelector('#portalProfileRole').textContent = role === 'admin' ? 'Administrator' : 'Teacher';
     app.querySelector('#portalProfileEmail').textContent = user.email || '';
