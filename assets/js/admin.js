@@ -117,6 +117,7 @@ async function loadDropdowns() {
   const { data: students, error: sErr } = await window.sb
     .from("students")
     .select("id, full_name")
+    .eq("is_active", true)
     .order("full_name");
 
   aLog("students result:", { count: students?.length, sErr });
