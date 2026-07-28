@@ -18,16 +18,35 @@
   <div id="profileMessage" class="msg" data-type="info" hidden role="status" aria-live="polite"></div>
   <div class="my-profile-layout">
     <section class="card profile-photo-card">
-      <div id="profilePhoto" class="profile-photo-large" aria-label="Profile photo">T</div>
+      <div class="profile-photo-wrap">
+        <div id="profilePhoto" class="profile-photo-large" aria-label="Profile photo">T</div>
+        <button id="editPhoto" class="profile-photo-edit" type="button" aria-label="Change profile photo" title="Change profile photo">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 16-1 5 5-1L19 9l-4-4L4 16Z"/><path d="m13.5 6.5 4 4"/></svg>
+        </button>
+      </div>
+      <p class="muted">Select the edit icon to change your photo.</p>
+    </section>
+    <dialog id="photoDialog" class="profile-photo-dialog" aria-labelledby="photoDialogTitle">
+      <form method="dialog">
+        <button id="closePhotoDialog" class="dialog-close" type="submit" aria-label="Close photo editor">&times;</button>
+      </form>
+      <div>
+        <p class="portal-eyebrow">Profile photo</p>
+        <h3 id="photoDialogTitle">Upload a new photo</h3>
+        <p class="muted">Choose a clear, recent photo that helps the team recognize you.</p>
+      </div>
       <form id="photoForm" class="profile-photo-form">
         <label class="field">
-          <span>Change profile photo</span>
+          <span>Choose photo</span>
           <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp">
         </label>
         <small>JPG, PNG, or WebP. Maximum file size 5 MB.</small>
-        <button id="photoSubmit" class="btn primary" type="submit">Upload new photo</button>
+        <div class="dialog-actions">
+          <button id="cancelPhoto" class="btn" type="button">Cancel</button>
+          <button id="photoSubmit" class="btn primary" type="submit">Upload new photo</button>
+        </div>
       </form>
-    </section>
+    </dialog>
     <section class="card">
       <h3 class="h2">Basic information</h3>
       <p class="muted">Contact the centre administrator if any information below needs correction.</p>
