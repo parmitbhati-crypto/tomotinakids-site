@@ -4,6 +4,9 @@
   const form = document.getElementById("photoForm");
   const input = document.getElementById("photoInput");
   const submit = document.getElementById("photoSubmit");
+  const dialog = document.getElementById("photoDialog");
+  const editPhoto = document.getElementById("editPhoto");
+  const cancelPhoto = document.getElementById("cancelPhoto");
   let user;
   let currentPhotoPath = "";
 
@@ -21,6 +24,16 @@
     const { data } = await window.sb.storage.from("teacher-photos").createSignedUrl(path, 3600);
     if (data?.signedUrl) photo.innerHTML = `<img src="${data.signedUrl}" alt="Profile photo">`;
   };
+  const closeDialog = () => {
+    input.value = "";
+    dialog.close();
+  };
+
+  editPhoto.addEventListener("click", () => dialog.showModal());
+  cancelPhoto.addEventListener("click", closeDialog);
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) closeDialog();
+  });
 
   async function load() {
     user = await requireAuth();
@@ -75,6 +88,7 @@
         input.value = "";
         show("Your profile photo has been updated.", "success");
         if (oldPath && oldPath !== newPath) await window.sb.storage.from("teacher-photos").remove([oldPath]);
+        dialog.close();
       }
     }
     submit.disabled = false;

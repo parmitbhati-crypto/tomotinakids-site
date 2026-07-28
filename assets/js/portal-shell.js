@@ -28,8 +28,7 @@
     ],
     teacher: [
       ["Today's Sessions", '/portal/day.html', 'today'],
-      ['Calendar', '/portal/calendar.html', 'calendar'],
-      ['My Profile', '/portal/my-profile.html', 'profile']
+      ['Calendar', '/portal/calendar.html', 'calendar']
     ]
   };
   const icons = {
@@ -111,6 +110,7 @@
               </button>
               <div class="portal-popover portal-profile-menu" id="portalProfileMenu" hidden>
                 <span id="portalProfileEmail"></span>
+                ${inferredRole === 'teacher' ? `<a class="portal-profile-link" href="/portal/my-profile.html">${svg('profile')}<span>My Profile</span></a>` : ''}
                 <button type="button" id="portalLogout">Sign out</button>
               </div>
             </div>
