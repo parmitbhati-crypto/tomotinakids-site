@@ -70,7 +70,8 @@ async function requireAuth() {
     "/portal/teacher-attendance.html",
     "/portal/teacher-attendance-history.html",
     "/portal/enquiries.html",
-    "/portal/system.html"
+    "/portal/system.html",
+    "/portal/promotions.html"
   ];
 
   const isTeacherPage = teacherPages.includes(path);
