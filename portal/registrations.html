@@ -23,7 +23,6 @@
 
       <div class="portal-actions">
         <a class="btn btn-primary" href="./registration-new.html">+ New Registration</a>
-        <a class="btn btn-outline" href="./admin-home.html">Back</a>
       </div>
     </header>
 
@@ -105,7 +104,7 @@
 
     function render(rows) {
       if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="6" class="muted">No registrations found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6"><div class="portal-state portal-state-compact"><strong>No registrations found</strong><span>Create the first student registration or clear the current filters.</span><a class="btn btn-primary" href="./registration-new.html">New registration</a></div></td></tr>`;
         return;
       }
 

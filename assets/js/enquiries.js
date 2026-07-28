@@ -61,7 +61,7 @@ function render(rows) {
   if (!tbody) return;
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="muted">No enquiries found.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10"><div class="portal-state portal-state-compact"><strong>No enquiries found</strong><span>New website enquiries will appear here. Try clearing the current search or status filter.</span></div></td></tr>`;
     return;
   }
 

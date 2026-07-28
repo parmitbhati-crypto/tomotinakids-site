@@ -40,7 +40,7 @@
         <td>${escapeHtml(row.page)}</td>
         <td><span class="status-pill">${escapeHtml(row.kind)}</span></td>
         <td>${escapeHtml(row.message)}</td>
-      </tr>`).join('') : '<tr><td colspan="4" class="muted">No portal errors recorded in the last 24 hours.</td></tr>';
+      </tr>`).join('') : '<tr><td colspan="4"><div class="portal-state portal-state-compact"><strong>Everything looks healthy</strong><span>No portal errors were recorded in the last 24 hours.</span></div></td></tr>';
   }
 
   byId('refreshHealth')?.addEventListener('click', loadHealth);

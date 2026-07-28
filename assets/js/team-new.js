@@ -3,6 +3,7 @@
   const message = document.getElementById("teacherMessage");
   const button = document.getElementById("inviteTeacher");
   const programSelect = document.getElementById("programIds");
+  const programChoices = document.getElementById("programChoices");
   const editId = new URLSearchParams(location.search).get("id");
   const show = (text, type = "info") => { message.textContent = text; message.dataset.type = type; message.hidden = false; };
 
@@ -12,6 +13,11 @@
     const { data, error } = await window.sb.from("programs").select("id,name").order("name");
     if (error) return show("Programs could not be loaded. Refresh and try again.", "error");
     programSelect.innerHTML = (data || []).map((p) => `<option value="${p.id}">${p.name}</option>`).join("");
+    programChoices.innerHTML = (data || []).map((p) => `<label class="choice-card"><input type="checkbox" value="${p.id}"><span>${p.name}</span></label>`).join("") || `<div class="portal-inline-empty">No programs are configured yet.</div>`;
+    programChoices.addEventListener("change", () => {
+      const checked = new Set(Array.from(programChoices.querySelectorAll("input:checked")).map((input) => input.value));
+      Array.from(programSelect.options).forEach((option) => { option.selected = checked.has(option.value); });
+    });
     if (!editId) return;
     const { data: teacher, error: teacherError } = await window.sb.from("profiles")
       .select("full_name,specialization,is_active,teacher_profiles(*),teacher_programs(program_id)")
@@ -26,6 +32,7 @@
     form.elements.panVerified.checked = details.pan_verified;
     const selected = new Set((teacher.teacher_programs || []).map((item) => item.program_id));
     Array.from(programSelect.options).forEach((option) => { option.selected = selected.has(option.value); });
+    programChoices.querySelectorAll("input").forEach((input) => { input.checked = selected.has(input.value); });
     document.querySelector(".portal-title").textContent = "Edit Team Member";
     document.querySelector(".portal-subtitle").textContent = "Update teacher details, program assignments, and portal access.";
     button.textContent = "Save teacher profile";

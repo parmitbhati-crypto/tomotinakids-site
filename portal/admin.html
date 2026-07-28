@@ -74,11 +74,10 @@
         </div>
 
         <div style="margin-top:10px;">
-          <label>Programs / Classes (multi-select)</label>
-          <select id="programSelect" multiple size="5"></select>
-          <div class="muted" style="font-size:12px; margin-top:6px;">
-            Tip: hold <strong>Ctrl</strong> (Windows) or <strong>Cmd</strong> (Mac) to select multiple.
-          </div>
+          <label>Programs / Classes</label>
+          <div id="programChoices" class="choice-grid" aria-label="Select one or more programs"></div>
+          <select id="programSelect" multiple hidden aria-hidden="true"></select>
+          <div class="muted" style="font-size:12px; margin-top:6px;">Select every program covered in this session.</div>
         </div>
 
         <div class="row" style="margin-top:14px;">
@@ -90,10 +89,10 @@
 
       <div class="card">
         <div class="row">
-          <h2 class="h2" style="margin:0;">Scheduled Sessions (Selected Teacher + Date)</h2>
+          <h2 class="h2" style="margin:0;">Scheduled sessions</h2>
         </div>
         <div class="muted" style="margin-top:6px;">
-          Click a session to open update page (same as teacher).
+          Select a teacher and date to review their schedule. Open a session to record progress.
         </div>
         <hr />
         <div id="sessionsList" class="muted">Loading…</div>

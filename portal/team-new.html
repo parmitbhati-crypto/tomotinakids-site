@@ -25,7 +25,7 @@
     <section class="form-section">
       <h3 class="section-title">Programs and access</h3>
       <div class="form-grid">
-        <label class="field form-grid-full"><span>Programs</span><select name="programIds" id="programIds" multiple size="6"></select><small class="hint">Use Ctrl/Cmd to select more than one. These control the teacher's program access.</small></label>
+        <div class="field form-grid-full"><span>Programs</span><div id="programChoices" class="choice-grid" aria-label="Assign programs"></div><select name="programIds" id="programIds" multiple hidden aria-hidden="true"></select><small class="hint">Select every program this teacher is allowed to access.</small></div>
         <label class="team-check form-grid-full"><input name="isActive" type="checkbox" checked><span><strong>Active portal access</strong><small>Inactive teachers cannot sign in or appear in new scheduling and attendance picklists.</small></span></label>
       </div>
     </section>
