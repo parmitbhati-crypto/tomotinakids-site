@@ -1,85 +1,66 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="/assets/css/portal.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Overview | Tomotina Kids</title>
+  <link rel="stylesheet" href="/assets/css/portal.css">
 </head>
 <body>
-  <div class="container">
-
-    <!-- Topbar -->
-    <div class="topbar">
-      <div class="brand">
-        <img src="/assets/images/logo.png" class="top-logo" />
-        <div class="brand-text">
-          <div class="brand-title">Tomotina Kids</div>
-          <div class="brand-sub">Admin Dashboard</div>
+  <main class="container">
+    <div class="grid">
+      <section class="card portal-welcome">
+        <div>
+          <span class="portal-eyebrow">Today at Tomotina</span>
+          <h2 class="h1">Welcome back, <span id="who">Admin</span></h2>
+          <p class="muted">Schedule sessions, follow up with families, and keep daily operations moving.</p>
         </div>
-      </div>
-    </div>
+        <div class="portal-quick-actions">
+          <a class="btn primary" href="/portal/admin.html">Create schedule</a>
+          <a class="btn" href="/portal/registration-new.html">New registration</a>
+        </div>
+      </section>
 
-    <!-- Dashboard -->
-    <div class="grid" style="margin-top:28px;">
-      <div class="card">
-        <h2 class="h2">Welcome, <span id="who">Admin</span></h2>
-        <div class="muted">Choose what you want to manage</div>
-
-        <div class="dashboard-tiles" style="margin-top:18px;">
-
+      <section aria-labelledby="adminTasks">
+        <div class="portal-section-heading">
+          <div><span class="portal-eyebrow">Frequent tasks</span><h2 id="adminTasks" class="h2">Manage the centre</h2></div>
+        </div>
+        <div class="dashboard-tiles">
           <a href="/portal/admin.html" class="dashboard-tile">
-            <div class="tile-icon">📅</div>
-            <div class="tile-title">Create Schedule</div>
-            <div class="tile-desc">Schedule new therapy sessions</div>
+            <div class="tile-icon" aria-hidden="true">01</div>
+            <div class="tile-title">Schedule sessions</div>
+            <div class="tile-desc">Assign a teacher, student, program, time, and room.</div>
           </a>
-
-          <a href="/portal/session-history.html" class="dashboard-tile">
-            <div class="tile-icon">📖</div>
-            <div class="tile-title">Session History</div>
-            <div class="tile-desc">View attendance & progress</div>
-          </a>
-
-          <a href="/portal/registrations.html" class="dashboard-tile">
-            <div class="tile-icon">🧾</div>
-            <div class="tile-title">Registrations</div>
-            <div class="tile-desc">Create and manage student registrations</div>
-          </a>
-
-          <!-- NEW: Teacher Attendance -->
-          <a href="/portal/teacher-attendance.html" class="dashboard-tile">
-            <div class="tile-icon">✅</div>
-            <div class="tile-title">Teacher Attendance</div>
-            <div class="tile-desc">Mark daily attendance for teachers</div>
-          </a>
-
-          <!-- NEW: Attendance History -->
-          <a href="/portal/teacher-attendance-history.html" class="dashboard-tile">
-            <div class="tile-icon">📊</div>
-            <div class="tile-title">Teacher's Attendance History</div>
-            <div class="tile-desc">Monthly summary and detailed history</div>
-          </a>
-
           <a href="/portal/enquiries.html" class="dashboard-tile">
-            <div class="tile-icon">✉️</div>
-            <div class="tile-title">Enquiries</div>
-            <div class="tile-desc">View and manage website enquiries</div>
+            <div class="tile-icon" aria-hidden="true">02</div>
+            <div class="tile-title">Follow up enquiries</div>
+            <div class="tile-desc">Review new family enquiries and update their next step.</div>
           </a>
-
+          <a href="/portal/registrations.html" class="dashboard-tile">
+            <div class="tile-icon" aria-hidden="true">03</div>
+            <div class="tile-title">Manage registrations</div>
+            <div class="tile-desc">Add students and maintain registration information.</div>
+          </a>
+          <a href="/portal/teacher-attendance.html" class="dashboard-tile">
+            <div class="tile-icon" aria-hidden="true">04</div>
+            <div class="tile-title">Mark attendance</div>
+            <div class="tile-desc">Record today's teacher attendance in one place.</div>
+          </a>
+          <a href="/portal/session-history.html" class="dashboard-tile">
+            <div class="tile-icon" aria-hidden="true">05</div>
+            <div class="tile-title">Review progress</div>
+            <div class="tile-desc">Find completed sessions, attendance, and progress notes.</div>
+          </a>
+          <a href="/portal/teacher-attendance-history.html" class="dashboard-tile">
+            <div class="tile-icon" aria-hidden="true">06</div>
+            <div class="tile-title">Attendance reports</div>
+            <div class="tile-desc">Review monthly teacher attendance and daily entries.</div>
+          </a>
         </div>
-      </div>
-
-      <!-- Logout -->
-      <div class="card" style="margin-top:10px;">
-        <button id="btnLogout" class="btn danger" style="width:100%;">
-          Logout
-        </button>
-      </div>
+      </section>
     </div>
-
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script>
   <script src="/assets/js/env.js"></script>
   <script src="/assets/js/supabaseClient.js"></script>
   <script src="/assets/js/auth.js"></script>
