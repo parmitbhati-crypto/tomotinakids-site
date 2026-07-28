@@ -99,6 +99,7 @@ async function loadDropdowns() {
     .from("profiles")
     .select("id, full_name")
     .eq("role", "teacher")
+    .eq("is_active", true)
     .order("full_name");
 
   aLog("teachers result:", { count: teachers?.length, tErr });

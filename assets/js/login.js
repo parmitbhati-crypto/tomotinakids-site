@@ -115,7 +115,10 @@ async function sendReset() {
 }
 
 (async function init() {
-  if (new URLSearchParams(window.location.search).get("status") === "pending") {
+  const accountStatus = new URLSearchParams(window.location.search).get("status");
+  if (accountStatus === "inactive") {
+    setMsg("Your portal access is inactive. Contact the centre administrator.", "error");
+  } else if (accountStatus === "pending") {
     setMsg("Your account is awaiting portal approval. Contact the administrator.", "error");
   }
   try {

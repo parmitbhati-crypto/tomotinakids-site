@@ -40,7 +40,7 @@ async function requireAuth() {
   // Fetch profile (role)
   const { data: profile, error: profileError } = await window.sb
     .from("profiles")
-    .select("id, full_name, role")
+    .select("id, full_name, role, is_active")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -51,6 +51,12 @@ async function requireAuth() {
   }
 
   const role = profile.role;
+
+  if (profile.is_active === false) {
+    await window.sb.auth.signOut();
+    window.location.href = "/portal/login.html?status=inactive";
+    return null;
+  }
 
   if (!["admin", "teacher"].includes(role)) {
     await window.sb.auth.signOut();
@@ -71,7 +77,9 @@ async function requireAuth() {
     "/portal/teacher-attendance-history.html",
     "/portal/enquiries.html",
     "/portal/system.html",
-    "/portal/promotions.html"
+    "/portal/promotions.html",
+    "/portal/team.html",
+    "/portal/team-new.html"
   ];
 
   const isTeacherPage = teacherPages.includes(path);
@@ -106,7 +114,7 @@ async function getMyProfile() {
 
   const { data, error } = await window.sb
     .from("profiles")
-    .select("id, full_name, role")
+    .select("id, full_name, role, is_active")
     .eq("id", user.id)
     .maybeSingle();
 
