@@ -37,22 +37,18 @@ async function requireAuth() {
     return null;
   }
 
-  // Fetch profile (role)
-  const { data: profile, error: profileError } = await window.sb
-    .from("profiles")
-    .select("id, full_name, role, is_active")
-    .eq("id", user.id)
+  const { data: access, error: accessError } = await window.sb
+    .rpc("get_portal_access_state")
     .maybeSingle();
 
-  if (profileError || !profile) {
-    authErr("Profile fetch failed", profileError);
-    // Don't redirect blindly; just stop page logic.
+  if (accessError || !access) {
+    authErr("Portal access check failed", accessError);
     return null;
   }
 
-  const role = profile.role;
+  const role = access.portal_role;
 
-  if (profile.is_active === false) {
+  if (access.account_is_active === false) {
     await window.sb.auth.signOut();
     window.location.href = "/portal/login.html?status=inactive";
     return null;
@@ -61,6 +57,28 @@ async function requireAuth() {
   if (!["admin", "teacher"].includes(role)) {
     await window.sb.auth.signOut();
     window.location.href = "/portal/login.html?status=pending";
+    return null;
+  }
+
+  const isMfaPage = path === "/portal/mfa-setup.html" || path === "/portal/mfa-challenge.html";
+  if (role === "admin" && !isMfaPage) {
+    const { data: assurance, error: assuranceError } = await window.sb.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (assuranceError || assurance?.currentLevel !== "aal2") {
+      const { data: factors } = await window.sb.auth.mfa.listFactors();
+      const hasVerifiedTotp = (factors?.totp || []).some((factor) => factor.status === "verified");
+      window.location.href = hasVerifiedTotp ? "/portal/mfa-challenge.html" : "/portal/mfa-setup.html";
+      return null;
+    }
+  }
+
+  const { data: profile, error: profileError } = await window.sb
+    .from("profiles")
+    .select("id, full_name, role, is_active")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profileError || !profile) {
+    authErr("Profile fetch failed", profileError);
     return null;
   }
 
@@ -79,7 +97,9 @@ async function requireAuth() {
     "/portal/system.html",
     "/portal/promotions.html",
     "/portal/team.html",
-    "/portal/team-new.html"
+    "/portal/team-new.html",
+    "/portal/mfa-setup.html",
+    "/portal/mfa-challenge.html"
   ];
 
   const isTeacherPage = teacherPages.includes(path);

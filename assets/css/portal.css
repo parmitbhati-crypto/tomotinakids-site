@@ -1236,6 +1236,8 @@ body:not(.portal-ready) .card{
 .portal-login-card .btn{width:100%;min-height:46px;border-radius:11px}
 .portal-login-card .btn.primary{border-color:var(--portal-teal);background:var(--portal-teal);color:#fff}
 .portal-login-help{text-align:center;font-size:12px}
+.portal-turnstile{min-height:66px;display:grid;place-items:center}.portal-turnstile[hidden]{display:none}
+.mfa-card form{display:grid;gap:14px}.mfa-qr-state{min-height:210px;display:grid;place-items:center;padding:16px;border:1px solid var(--portal-border);border-radius:16px;background:#f8fbfa;color:var(--portal-muted);text-align:center}.mfa-qr-state img{width:min(210px,100%);height:auto;padding:8px;border-radius:10px;background:#fff}.mfa-secret-wrap{padding:12px;border:1px solid var(--portal-border);border-radius:12px;background:#fafcfb}.mfa-secret-wrap summary{cursor:pointer;font-weight:800}.mfa-secret-wrap p{margin:10px 0 5px}.mfa-secret-wrap code{display:block;overflow-wrap:anywhere;padding:8px;border-radius:8px;background:#edf3f1;color:var(--portal-copy);font-size:12px}
 .msg[hidden]{display:none!important}
 
 @media (max-width:1050px){

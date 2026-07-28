@@ -23,7 +23,9 @@ requireText("config", "verify_jwt = true", "Invitation function must require a u
 requireText("migration", "alter table public.teacher_profiles enable row level security", "Teacher details table lacks RLS.");
 requireText("migration", "'teacher-photos'", "Private teacher photo storage is missing.");
 requireText("migration", "aadhaar_last4", "Aadhaar must be stored only as a last-four reference.");
-requireText("auth", 'profile.is_active === false', "Inactive staff are not blocked from portal access.");
+if (!files.auth.includes("profile.is_active === false") && !files.auth.includes("access.account_is_active === false")) {
+  failures.push("Inactive staff are not blocked from portal access.");
+}
 for (const file of ["scheduler", "attendance", "history"]) {
   requireText(file, '.eq("is_active", true)', `${file} does not filter inactive teachers.`);
 }

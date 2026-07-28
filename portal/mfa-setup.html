@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Secure administrator account | Tomotina Kids</title>
+  <link rel="stylesheet" href="/assets/css/portal.css">
+</head>
+<body class="portal-login-page">
+<main class="portal-login-layout">
+  <section class="portal-login-story">
+    <img src="/assets/images/logo.png" alt="Tomotina Kids">
+    <div><span class="portal-login-kicker">Administrator security</span><h1>Protect sensitive centre information.</h1><p>Use an authenticator app to add a second verification step to your administrator account.</p></div>
+    <small>Tomotina Kids secure staff portal</small>
+  </section>
+  <section class="portal-login-panel">
+    <div class="portal-login-card mfa-card">
+      <div><h2>Set up authenticator</h2><p>Scan the QR code using Google Authenticator, Microsoft Authenticator, 1Password, or another TOTP app.</p></div>
+      <div id="mfaMessage" class="msg" hidden role="status" aria-live="polite"></div>
+      <div id="mfaQrWrap" class="mfa-qr-state"><span>Preparing secure QR code...</span></div>
+      <details class="mfa-secret-wrap"><summary>Cannot scan the QR code?</summary><p>Enter this setup key manually:</p><code id="mfaSecret">Not available yet</code></details>
+      <form id="mfaSetupForm">
+        <label>6-digit verification code<input id="mfaCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required placeholder="000000"></label>
+        <button id="verifyMfa" class="btn primary" type="submit">Verify and continue</button>
+      </form>
+      <button id="mfaSetupLogout" class="btn" type="button">Sign out</button>
+    </div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script>
+<script src="/assets/js/env.js"></script>
+<script src="/assets/js/supabaseClient.js"></script>
+<script src="/assets/js/mfa-setup.js"></script>
+</body>
+</html>

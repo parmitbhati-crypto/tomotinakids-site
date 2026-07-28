@@ -33,6 +33,7 @@
           <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
         </label>
         <div id="msg" class="msg" data-type="info" hidden role="status" aria-live="polite"></div>
+        <div id="turnstileWrap" class="portal-turnstile" hidden><div id="turnstileWidget"></div></div>
         <button id="btnLogin" class="btn primary" type="submit">Sign in securely</button>
         <button id="btnReset" class="btn" type="button">Send password reset link</button>
         <p class="portal-login-help">Having trouble? Contact the centre administrator.</p>
@@ -42,6 +43,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script>
   <script src="/assets/js/env.js"></script>
   <script src="/assets/js/supabaseClient.js"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <script src="/assets/js/login.js"></script>
 </body>
 </html>

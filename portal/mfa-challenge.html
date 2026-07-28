@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Administrator verification | Tomotina Kids</title>
+  <link rel="stylesheet" href="/assets/css/portal.css">
+</head>
+<body class="portal-login-page">
+<main class="portal-login-layout">
+  <section class="portal-login-story">
+    <img src="/assets/images/logo.png" alt="Tomotina Kids">
+    <div><span class="portal-login-kicker">Second verification step</span><h1>Confirm it's really you.</h1><p>Administrator access requires a current code from your authenticator app.</p></div>
+    <small>Tomotina Kids secure staff portal</small>
+  </section>
+  <section class="portal-login-panel">
+    <form id="mfaChallengeForm" class="portal-login-card mfa-card">
+      <div><h2>Enter authenticator code</h2><p>Open your authenticator app and enter the current six-digit code.</p></div>
+      <div id="mfaMessage" class="msg" hidden role="status" aria-live="polite"></div>
+      <label>6-digit verification code<input id="mfaCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required autofocus placeholder="000000"></label>
+      <button id="verifyMfa" class="btn primary" type="submit">Verify administrator access</button>
+      <button id="mfaChallengeLogout" class="btn" type="button">Sign out</button>
+    </form>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script>
+<script src="/assets/js/env.js"></script>
+<script src="/assets/js/supabaseClient.js"></script>
+<script src="/assets/js/mfa-challenge.js"></script>
+</body>
+</html>
