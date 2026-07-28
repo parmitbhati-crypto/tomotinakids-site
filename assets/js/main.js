@@ -1,5 +1,27 @@
 // Tomotina Kids - site interactions
 
+// Privacy-aware campaign attribution and conversion hooks.
+// Events stay in the browser unless a future analytics provider consumes dataLayer.
+(() => {
+  const params = new URLSearchParams(window.location.search);
+  const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  const campaign = Object.fromEntries(campaignKeys.map((key) => [key, params.get(key)]).filter(([, value]) => value));
+  if (Object.keys(campaign).length) sessionStorage.setItem('tomotina_campaign', JSON.stringify(campaign));
+  window.dataLayer = window.dataLayer || [];
+  window.tomotinaTrack = (event, details = {}) => {
+    const stored = JSON.parse(sessionStorage.getItem('tomotina_campaign') || '{}');
+    window.dataLayer.push({ event, ...stored, ...details });
+  };
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a');
+    if (!link) return;
+    const href = link.getAttribute('href') || '';
+    if (href.startsWith('tel:')) window.tomotinaTrack('phone_click');
+    if (href.includes('wa.me')) window.tomotinaTrack('whatsapp_click');
+    if (href.includes('contact.html') || href.startsWith('#enquiry')) window.tomotinaTrack('enquiry_cta_click');
+  });
+})();
+
 (function () {
   document.documentElement.classList.add('js');
 
@@ -24,6 +46,41 @@
   document.querySelectorAll('.nav-links a').forEach((link) => {
     const href = (link.getAttribute('href') || '').split('?')[0];
     if (href === current) link.classList.add('active');
+  });
+
+  // Consistent legal and accessibility navigation across legacy footers.
+  document.querySelectorAll('footer .footer-bottom').forEach((footerBottom) => {
+    if (footerBottom.querySelector('.legal-links')) return;
+    const links = document.createElement('span');
+    links.className = 'legal-links';
+    links.innerHTML = '<a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="accessibility.html">Accessibility</a>';
+    footerBottom.appendChild(links);
+  });
+
+  // Add audience, process and enquiry paths to every program card.
+  const programAudience = {
+    'Special Education': 'Children needing individualized academic and learning support',
+    'School Readiness Program': 'Children preparing to enter a classroom environment',
+    'NIOS Support': 'Students who benefit from a flexible education pathway',
+    'Speech & Language Therapy': 'Children with speech, language, listening, or social communication needs',
+    'Oral Placement Therapy (OPT)': 'Children with speech-motor or feeding-related challenges',
+    'Applied Behavior Analysis (ABA)': 'Children building communication, attention, play, and daily living skills',
+    'Activities of Daily Living (ADL)': 'Children developing everyday self-care and independence',
+    'Occupational Therapy': 'Children with sensory, movement, attention, play, or self-care needs',
+    'Sports Program': 'Children building coordination, fitness, teamwork, and confidence',
+    'Art Program': 'Children who benefit from creative, sensory, and fine-motor expression',
+    'Music Program': 'Children building listening, rhythm, communication, and social engagement',
+    'Dance & Movement Therapy (DMT)': 'Children who connect and regulate through movement and non-verbal expression'
+  };
+  document.querySelectorAll('.program-card .program-body').forEach((body) => {
+    const heading = body.querySelector('h3');
+    const audience = programAudience[heading?.textContent.trim()];
+    if (!audience || body.querySelector('.program-fit')) return;
+    const name = heading.textContent.trim();
+    const fit = document.createElement('div');
+    fit.className = 'program-fit';
+    fit.innerHTML = `<strong>Best suited for</strong><span>${audience}</span><small>Process: consultation → individualized plan → sessions → family feedback</small><a class="program-enquire" href="contact.html?program=${encodeURIComponent(name)}#enquiry">Ask about this program →</a>`;
+    body.appendChild(fit);
   });
 
   // Hero carousel
@@ -217,7 +274,12 @@
 
   const submitBtn = form.querySelector('[data-enquiry-submit]');
   const statusEl = form.querySelector('[data-enquiry-status]');
+  const requestedProgram = new URLSearchParams(window.location.search).get('program');
   let isSubmitting = false;
+
+  if (requestedProgram && form.elements.message && !form.elements.message.value.trim()) {
+    form.elements.message.value = `I would like to enquire about ${requestedProgram}.`;
+  }
 
   function setStatus(message, type = 'info') {
     if (!statusEl) return;
@@ -251,8 +313,9 @@
     const childName = form.elements.child_name?.value.trim() || '';
     const childAge = form.elements.child_age?.value.trim() || '';
     const message = form.elements.message?.value.trim() || '';
+    const consent = form.elements.consent;
 
-    if (!name || !phone || !childName || !message) {
+    if (!name || !phone || !childName || !message || (consent && !consent.checked)) {
       setStatus('Please fill all required fields.', 'error');
       return;
     }
@@ -286,6 +349,7 @@
       if (error) throw error;
 
       form.reset();
+      window.tomotinaTrack?.('enquiry_submitted', { form: window.location.pathname });
       setStatus('Thanks! Your enquiry has been submitted successfully.', 'success');
     } catch (err) {
       setStatus(err?.message || 'Something went wrong while sending your enquiry. Please try again.', 'error');

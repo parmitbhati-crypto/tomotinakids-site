@@ -1540,3 +1540,18 @@ footer{border-top-color:rgba(15,118,110,.1)}
   .page-hero-title{font-size:clamp(2.15rem,9vw,3.5rem)}
   .page-hero-media,.page-hero-media img{min-height:250px;height:280px}
 }
+.program-fit{margin-top:16px;padding-top:14px;border-top:1px solid rgba(15,118,110,.12);display:grid;gap:5px}
+.program-fit strong{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:#0f766e}
+.program-fit span{font-size:.9rem;color:#354f4d}
+.program-fit small{color:#687d7b;line-height:1.5}
+.program-enquire{margin-top:5px;color:#0f766e;font-weight:750}
+.legal-links{display:inline-flex;gap:14px;margin-left:18px;flex-wrap:wrap}
+.legal-links a{text-decoration:underline;text-underline-offset:3px}
+.consent-row{display:flex;align-items:flex-start;gap:10px;margin:12px 0;font-size:.85rem;color:var(--muted)}
+.consent-row input{min-height:auto;margin-top:4px}
+.policy-page{max-width:840px;margin:0 auto}
+.policy-page h2{margin-top:34px}
+.policy-page li{margin-bottom:8px}
+.campaign-hero{padding:clamp(70px,10vw,130px) 0;background:linear-gradient(135deg,rgba(15,118,110,.96),rgba(20,154,145,.88)),url("../images/home/program-skills.jpg.JPG") center/cover;color:#fff}
+.campaign-hero h1{font-size:clamp(2.6rem,7vw,5.4rem);line-height:1;max-width:12ch}
+.campaign-hero p{max-width:62ch;font-size:1.12rem;color:rgba(255,255,255,.86)}
