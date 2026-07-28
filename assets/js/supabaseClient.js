@@ -22,7 +22,8 @@
     }
   );
 
-  if (window.location.pathname.startsWith("/portal/") && !window.location.pathname.includes("/login")) {
+  const isStandaloneAuthPage = /\/portal\/(?:login|mfa-setup|mfa-challenge)(?:\.html)?\/?$/.test(window.location.pathname);
+  if (window.location.pathname.startsWith("/portal/") && !isStandaloneAuthPage) {
     const monitoringScript = document.createElement("script");
     monitoringScript.src = "/assets/js/portal-monitoring.js";
     monitoringScript.defer = true;

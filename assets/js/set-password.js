@@ -7,7 +7,9 @@
     const data = new FormData(form);
     const password = String(data.get("password") || "");
     if (password !== data.get("confirmPassword")) return show("Passwords do not match.", "error");
-    if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) return show("Include at least one letter and one number.", "error");
+    if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+      return show("Use uppercase, lowercase, a number, and a symbol.", "error");
+    }
     const button = form.querySelector("button");
     button.disabled = true;
     const { error } = await window.sb.auth.updateUser({ password });

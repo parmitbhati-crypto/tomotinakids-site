@@ -3,6 +3,8 @@
 function qs(id) {
   return document.getElementById(id);
 }
+let captchaToken = "";
+let turnstileWidgetId;
 
 function setMsg(text, type = "info") {
   const el = qs("msg");
@@ -30,22 +32,36 @@ async function redirectIfAlreadyLoggedIn() {
   const { data: { user } } = await window.sb.auth.getUser();
   if (!user) return;
 
-  const { data: profile, error } = await window.sb
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+  const { data: access, error } = await window.sb
+    .rpc("get_portal_access_state")
+    .maybeSingle();
 
-  if (error || !profile?.role) return;
+  if (error || !access?.portal_role) return;
+  if (access.account_is_active === false) {
+    await window.sb.auth.signOut();
+    setMsg("Your portal access is inactive. Contact the centre administrator.", "error");
+    return;
+  }
 
-  if (profile.role === "admin") {
-    window.location.href = "/portal/admin-home.html";
-  } else if (profile.role === "teacher") {
+  if (access.portal_role === "admin") {
+    await routeAdminAfterPassword();
+  } else if (access.portal_role === "teacher") {
     window.location.href = "/portal/day.html";
   } else {
     await window.sb.auth.signOut();
     setMsg("Your account is awaiting portal approval. Contact the administrator.", "error");
   }
+}
+
+async function routeAdminAfterPassword() {
+  const { data: assurance } = await window.sb.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (assurance?.currentLevel === "aal2") {
+    window.location.href = "/portal/admin-home.html";
+    return;
+  }
+  const { data: factors } = await window.sb.auth.mfa.listFactors();
+  const hasVerifiedTotp = (factors?.totp || []).some((factor) => factor.status === "verified");
+  window.location.href = hasVerifiedTotp ? "/portal/mfa-challenge.html" : "/portal/mfa-setup.html";
 }
 
 async function doLogin() {
@@ -59,32 +75,42 @@ async function doLogin() {
     setMsg("Enter your email and password.", "error");
     return;
   }
+  if (window.ENV_TURNSTILE_SITE_KEY && !captchaToken) {
+    setMsg("Complete the security check before signing in.", "error");
+    return;
+  }
 
   const { data, error } = await window.sb.auth.signInWithPassword({
     email,
-    password
+    password,
+    options: captchaToken ? { captchaToken } : undefined
   });
 
   if (error || !data?.user) {
+    if (window.turnstile && turnstileWidgetId !== undefined) window.turnstile.reset(turnstileWidgetId);
+    captchaToken = "";
     setMsg("We could not sign you in. Check your details and try again.", "error");
     return;
   }
   // 🔑 FETCH ROLE AFTER LOGIN
-  const { data: profile, error: profileError } = await window.sb
-    .from("profiles")
-    .select("role")
-    .eq("id", data.user.id)
+  const { data: access, error: profileError } = await window.sb
+    .rpc("get_portal_access_state")
     .maybeSingle();
 
-  if (profileError || !["admin", "teacher"].includes(profile?.role)) {
+  if (profileError || !["admin", "teacher"].includes(access?.portal_role)) {
     await window.sb.auth.signOut();
     setMsg("Your account is awaiting portal approval. Contact the administrator.", "error");
     return;
   }
+  if (access.account_is_active === false) {
+    await window.sb.auth.signOut();
+    setMsg("Your portal access is inactive. Contact the centre administrator.", "error");
+    return;
+  }
 
   // ✅ ROLE-BASED LANDING
-  if (profile.role === "admin") {
-    window.location.href = "/portal/admin-home.html";
+  if (access.portal_role === "admin") {
+    await routeAdminAfterPassword();
   } else {
     window.location.href = "/portal/day.html";
   }
@@ -103,7 +129,8 @@ async function sendReset() {
   const redirectTo = `${window.location.origin}/portal/login.html`;
 
   const { error } = await window.sb.auth.resetPasswordForEmail(email, {
-    redirectTo
+    redirectTo,
+    captchaToken: captchaToken || undefined
   });
 
   if (error) {
@@ -145,3 +172,18 @@ async function sendReset() {
     });
   }
 })();
+
+window.addEventListener("load", () => {
+  if (!window.ENV_TURNSTILE_SITE_KEY || !window.turnstile) return;
+  qs("turnstileWrap").hidden = false;
+  turnstileWidgetId = window.turnstile.render("#turnstileWidget", {
+    sitekey: window.ENV_TURNSTILE_SITE_KEY,
+    theme: "light",
+    callback: (token) => { captchaToken = token; },
+    "expired-callback": () => { captchaToken = ""; },
+    "error-callback": () => {
+      captchaToken = "";
+      setMsg("The security check could not load. Refresh and try again.", "error");
+    }
+  });
+});

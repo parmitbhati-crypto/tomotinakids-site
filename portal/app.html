@@ -20,10 +20,20 @@
         window.location.replace('/portal/login.html');
         return;
       }
-      const { data: profile } = await window.sb.from('profiles').select('role').eq('id', data.user.id).maybeSingle();
-      if (profile?.role === 'admin') {
-        window.location.replace('/portal/admin-home.html');
-      } else if (profile?.role === 'teacher') {
+      const { data: access } = await window.sb.rpc('get_portal_access_state').maybeSingle();
+      if (access?.account_is_active === false) {
+        await window.sb.auth.signOut();
+        window.location.replace('/portal/login.html?status=inactive');
+      } else if (access?.portal_role === 'admin') {
+        const { data: assurance } = await window.sb.auth.mfa.getAuthenticatorAssuranceLevel();
+        if (assurance?.currentLevel === 'aal2') {
+          window.location.replace('/portal/admin-home.html');
+        } else {
+          const { data: factors } = await window.sb.auth.mfa.listFactors();
+          const verified = (factors?.totp || []).some((factor) => factor.status === 'verified');
+          window.location.replace(verified ? '/portal/mfa-challenge.html' : '/portal/mfa-setup.html');
+        }
+      } else if (access?.portal_role === 'teacher') {
         window.location.replace('/portal/day.html');
       } else {
         await window.sb.auth.signOut();
