@@ -29,6 +29,7 @@ expect(setupPage.includes('name="robots" content="noindex,nofollow,noarchive"'),
 expect(challengePage.includes('name="robots" content="noindex,nofollow,noarchive"'), "MFA challenge page is indexable.");
 for (const [name, script] of [["setup", setupScript], ["challenge", challengeScript]]) {
   expect(script.includes("auth.mfa.challenge") && script.includes("auth.mfa.verify"), `MFA ${name} flow is incomplete.`);
+  expect(!script.includes("auth.refreshSession"), `MFA ${name} must preserve the AAL2 session returned by verification.`);
 }
 expect(passwordScript.includes("/[a-z]/") && passwordScript.includes("/[A-Z]/") && passwordScript.includes("/[^A-Za-z0-9]/"), "Client password strength validation is incomplete.");
 

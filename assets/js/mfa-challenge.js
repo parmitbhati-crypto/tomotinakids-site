@@ -47,7 +47,6 @@
       button.textContent = "Verify administrator access";
       return;
     }
-    await window.sb.auth.refreshSession();
     window.location.href = "/portal/admin-home.html";
   });
 

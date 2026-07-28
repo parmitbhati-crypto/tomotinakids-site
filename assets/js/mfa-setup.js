@@ -69,7 +69,6 @@
       button.textContent = "Verify and continue";
       return;
     }
-    await window.sb.auth.refreshSession();
     window.location.href = "/portal/admin-home.html";
   });
 
