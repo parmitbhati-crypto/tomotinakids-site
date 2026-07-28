@@ -1,25 +1,48 @@
 // Tomotina Kids - site interactions
 
-// Privacy-aware campaign attribution and conversion hooks.
-// Events stay in the browser unless a future analytics provider consumes dataLayer.
+// Privacy-aware first-touch attribution and conversion hooks.
 (() => {
   const params = new URLSearchParams(window.location.search);
-  const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  const campaignKeys = [
+    'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
+    'gclid', 'gbraid', 'wbraid', 'fbclid'
+  ];
   const campaign = Object.fromEntries(campaignKeys.map((key) => [key, params.get(key)]).filter(([, value]) => value));
-  if (Object.keys(campaign).length) sessionStorage.setItem('tomotina_campaign', JSON.stringify(campaign));
+  try {
+    if (Object.keys(campaign).length && !sessionStorage.getItem('tomotina_campaign')) {
+      sessionStorage.setItem('tomotina_campaign', JSON.stringify(campaign));
+    }
+  } catch (_) {
+    // Attribution remains optional when browser storage is unavailable.
+  }
   window.dataLayer = window.dataLayer || [];
+  window.tomotinaAttribution = () => {
+    try {
+      const stored = JSON.parse(sessionStorage.getItem('tomotina_campaign') || '{}');
+      return stored && typeof stored === 'object' ? stored : {};
+    } catch (_) {
+      return {};
+    }
+  };
   window.tomotinaTrack = (event, details = {}) => {
-    const stored = JSON.parse(sessionStorage.getItem('tomotina_campaign') || '{}');
-    window.dataLayer.push({ event, ...stored, ...details });
+    const payload = { event, ...window.tomotinaAttribution(), ...details };
+    window.dataLayer.push(payload);
+    const consent = localStorage.getItem('tomotina_analytics_consent') === 'granted';
+    if (!consent) return;
+    if (typeof window.gtag === 'function') window.gtag('event', event, details);
+    if (typeof window.fbq === 'function') window.fbq('trackCustom', event, details);
   };
   document.addEventListener('click', (event) => {
     const link = event.target.closest('a');
     if (!link) return;
     const href = link.getAttribute('href') || '';
-    if (href.startsWith('tel:')) window.tomotinaTrack('phone_click');
-    if (href.includes('wa.me')) window.tomotinaTrack('whatsapp_click');
-    if (href.includes('contact.html') || href.startsWith('#enquiry')) window.tomotinaTrack('enquiry_cta_click');
+    const label = link.textContent.trim().slice(0, 80);
+    if (href.startsWith('tel:')) window.tomotinaTrack('phone_click', { link_url: href, link_text: label });
+    if (href.includes('wa.me')) window.tomotinaTrack('whatsapp_click', { link_url: href.split('?')[0], link_text: label });
+    if (href.includes('google.com/maps')) window.tomotinaTrack('directions_click', { link_text: label });
+    if (href.includes('contact.html') || href.startsWith('#enquiry')) window.tomotinaTrack('enquiry_cta_click', { link_text: label });
   });
+  window.tomotinaTrack('page_view', { page_path: window.location.pathname });
 })();
 
 (function () {
@@ -333,9 +356,7 @@
     setStatus('');
 
     try {
-      const { error } = await window.sb
-        .from('enquiries')
-        .insert([{
+      const enquiry = {
           parent_name: name,
           phone,
           email: email || null,
@@ -343,8 +364,21 @@
           child_age: childAge || null,
           message,
           status: 'new',
-          source: 'website_home_form'
-        }]);
+          source: 'website_form',
+          attribution: {
+            ...window.tomotinaAttribution?.(),
+            conversion_path: window.location.pathname,
+            campaign_slug: new URLSearchParams(window.location.search).get('campaign') || null
+          }
+      };
+      let { error } = await window.sb.from('enquiries').insert([enquiry]);
+
+      // Keep forms operational during the safe release window before the Phase 5
+      // migration adds the attribution column.
+      if (error && /attribution|schema cache/i.test(error.message || '')) {
+        delete enquiry.attribution;
+        ({ error } = await window.sb.from('enquiries').insert([enquiry]));
+      }
 
       if (error) throw error;
 
