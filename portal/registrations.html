@@ -114,7 +114,12 @@
         const parent  = escapeHtml(r.parent_name || "");
         const phone   = escapeHtml(r.parent_phone || "");
         const addr    = escapeHtml(r.address || "");
-        const regDate = r.registration_date ? new Date(r.registration_date).toLocaleDateString() : "";
+        const regDate = r.registration_date
+          ? (() => {
+              const [year, month, day] = String(r.registration_date).split("-").map(Number);
+              return new Date(year, month - 1, day).toLocaleDateString();
+            })()
+          : "";
         const checked = r.is_active ? "checked" : "";
 
         return `
