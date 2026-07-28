@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>My Profile | Tomotina Kids</title>
+  <link rel="stylesheet" href="/assets/css/portal.css">
+</head>
+<body>
+<main class="container">
+  <div class="portal-header">
+    <div>
+      <p class="portal-eyebrow">Personal information</p>
+      <h2 class="portal-title">My Profile</h2>
+      <p class="portal-subtitle">Review your staff information and keep your profile photo current.</p>
+    </div>
+  </div>
+  <div id="profileMessage" class="msg" data-type="info" hidden role="status" aria-live="polite"></div>
+  <div class="my-profile-layout">
+    <section class="card profile-photo-card">
+      <div id="profilePhoto" class="profile-photo-large" aria-label="Profile photo">T</div>
+      <form id="photoForm" class="profile-photo-form">
+        <label class="field">
+          <span>Change profile photo</span>
+          <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp">
+        </label>
+        <small>JPG, PNG, or WebP. Maximum file size 5 MB.</small>
+        <button id="photoSubmit" class="btn primary" type="submit">Upload new photo</button>
+      </form>
+    </section>
+    <section class="card">
+      <h3 class="h2">Basic information</h3>
+      <p class="muted">Contact the centre administrator if any information below needs correction.</p>
+      <hr>
+      <dl class="profile-details">
+        <div><dt>Full name</dt><dd id="profileName">Loading…</dd></div>
+        <div><dt>Designation</dt><dd id="profileDesignation">—</dd></div>
+        <div><dt>Email ID</dt><dd id="profileEmail">—</dd></div>
+        <div><dt>Mobile number</dt><dd id="profileMobile">—</dd></div>
+        <div><dt>Address</dt><dd id="profileAddress">—</dd></div>
+      </dl>
+    </section>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script>
+<script src="/assets/js/env.js"></script>
+<script src="/assets/js/supabaseClient.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/my-profile.js"></script>
+</body>
+</html>

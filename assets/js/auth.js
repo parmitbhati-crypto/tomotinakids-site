@@ -65,7 +65,7 @@ async function requireAuth() {
   }
 
   // Page groups
-  const teacherPages = ["/portal/day.html", "/portal/week.html", "/portal/calendar.html"];
+  const teacherPages = ["/portal/day.html", "/portal/calendar.html", "/portal/session.html", "/portal/my-profile.html"];
 
   const adminPages = [
     "/portal/admin-home.html",
