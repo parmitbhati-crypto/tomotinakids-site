@@ -114,6 +114,12 @@ async function requireAuth() {
     return null;
   }
 
+  if (role === "admin" && isTeacherPage) {
+    authLog("Admin attempted teacher page. Redirecting to admin-home.html");
+    window.location.href = "/portal/admin-home.html";
+    return null;
+  }
+
   // Admins should not stay on login page
   if (role === "admin" && isLoginPage) {
     authLog("Admin on login page. Redirecting to admin-home.html");

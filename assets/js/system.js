@@ -7,11 +7,8 @@
   async function loadHealth() {
     const message = byId('systemMessage');
     message.hidden = true;
-    const profile = await getMyProfile();
-    if (profile?.role !== 'admin') {
-      window.location.href = '/portal/day.html';
-      return;
-    }
+    const user = await requireAuth();
+    if (!user) return;
 
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data, error, count } = await window.sb
