@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Invite Team Member | Tomotina Kids</title><link rel="stylesheet" href="/assets/css/portal.css"></head>
+<body>
+<main class="container">
+  <div class="portal-header">
+    <div><p class="portal-eyebrow">People and access</p><h2 class="portal-title">Invite Team Member</h2><p class="portal-subtitle">Create a secure teacher profile and send their password setup email.</p></div>
+    <div class="portal-actions"><a class="btn" href="/portal/team.html">Back to Team Directory</a></div>
+  </div>
+  <form id="teacherForm" class="card team-form">
+    <div id="teacherMessage" class="msg" data-type="info" hidden role="status"></div>
+    <section class="form-section">
+      <h3 class="section-title">Basic information</h3>
+      <div class="form-grid">
+        <label class="field"><span>Full name *</span><input name="fullName" required maxlength="120" autocomplete="name"></label>
+        <label class="field"><span>Email address *</span><input name="email" type="email" required maxlength="254" autocomplete="email"><small class="hint">The invitation and future login use this address.</small></label>
+        <label class="field"><span>Mobile number *</span><input name="mobile" type="tel" required maxlength="20" autocomplete="tel" placeholder="+91 98765 43210"></label>
+        <label class="field"><span>Title / designation *</span><input name="designation" required maxlength="100" placeholder="Special Educator"></label>
+        <label class="field"><span>Employment type</span><select name="employmentType"><option value="full_time">Full-time</option><option value="part_time">Part-time</option><option value="consultant">Consultant</option><option value="intern">Intern</option></select></label>
+        <label class="field"><span>Joining date</span><input name="joiningDate" type="date"></label>
+        <label class="field form-grid-full"><span>Address</span><textarea name="address" maxlength="500" autocomplete="street-address"></textarea></label>
+        <label class="field form-grid-full"><span>Profile photo</span><input name="photo" type="file" accept="image/jpeg,image/png,image/webp"><small class="hint">JPG, PNG or WebP, up to 5 MB. Stored privately.</small></label>
+      </div>
+    </section>
+    <section class="form-section">
+      <h3 class="section-title">Programs and access</h3>
+      <div class="form-grid">
+        <label class="field form-grid-full"><span>Programs</span><select name="programIds" id="programIds" multiple size="6"></select><small class="hint">Use Ctrl/Cmd to select more than one. These control the teacher's program access.</small></label>
+        <label class="team-check form-grid-full"><input name="isActive" type="checkbox" checked><span><strong>Active portal access</strong><small>Inactive teachers cannot sign in or appear in new scheduling and attendance picklists.</small></span></label>
+      </div>
+    </section>
+    <section class="form-section sensitive-section">
+      <h3 class="section-title">Identity verification</h3>
+      <p class="muted">For privacy, never enter full Aadhaar or PAN numbers here. Keep original documents in your controlled HR records.</p>
+      <div class="form-grid">
+        <label class="field"><span>Aadhaar last 4 digits</span><input name="aadhaarLast4" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="1234"></label>
+        <label class="team-check"><input name="aadhaarVerified" type="checkbox"><span><strong>Aadhaar verified</strong><small>Admin has checked the original.</small></span></label>
+        <label class="field"><span>PAN last 4 characters</span><input name="panLast4" pattern="[A-Za-z0-9]{4}" maxlength="4" placeholder="1A2B"></label>
+        <label class="team-check"><input name="panVerified" type="checkbox"><span><strong>PAN verified</strong><small>Admin has checked the original.</small></span></label>
+      </div>
+    </section>
+    <div class="form-actions"><button id="inviteTeacher" class="btn primary" type="submit">Create profile &amp; send invitation</button><p class="hint">The teacher will set their own password. Administrators never see or choose it.</p></div>
+  </form>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script><script src="/assets/js/env.js"></script><script src="/assets/js/supabaseClient.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/team-new.js"></script>
+</body></html>
