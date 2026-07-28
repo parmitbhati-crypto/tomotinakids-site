@@ -364,7 +364,8 @@
           child_age: childAge || null,
           message,
           status: 'new',
-          source: 'website_form',
+          // Must match the public INSERT allow-list in the Supabase RLS policy.
+          source: 'website_home_form',
           attribution: {
             ...window.tomotinaAttribution?.(),
             conversion_path: window.location.pathname,
