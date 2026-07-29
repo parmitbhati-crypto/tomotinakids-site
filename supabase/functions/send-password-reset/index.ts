@@ -65,17 +65,21 @@ Deno.serve(async (req: Request) => {
     const url = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
-    const redirectOrigin = origin && allowedOrigins.has(origin) ? origin : "https://tomotinakids.com";
-    const redirectTo = `${redirectOrigin}/portal/set-password.html`;
     const { data: generated, error: linkError } = await admin.auth.admin.generateLink({
       type: "recovery",
       email,
-      options: { redirectTo },
     });
 
     const actionLink = generated?.properties?.action_link;
-    if (linkError || !actionLink) {
-      console.warn("Password recovery link was not generated:", linkError?.message || "unknown account");
+    let tokenHash = "";
+    try {
+      tokenHash = actionLink ? new URL(actionLink).searchParams.get("token") || "" : "";
+    } catch {
+      tokenHash = "";
+    }
+
+    if (linkError || !tokenHash) {
+      console.warn("Password recovery token was not generated:", linkError?.message || "unknown account");
       return json({ message: "If an account exists for that address, a password reset email has been sent." }, 200, origin);
     }
 
@@ -84,7 +88,7 @@ Deno.serve(async (req: Request) => {
         to: email,
         recipientName: generated.user?.user_metadata?.full_name || null,
         flow: "recovery",
-        actionLink,
+        tokenHash,
       });
     } catch (emailError) {
       console.error("Password recovery email failed:", emailError);
