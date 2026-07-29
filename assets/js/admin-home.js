@@ -14,5 +14,4 @@ function qs(id) {
   }
 
   qs("who").textContent = profile.full_name || "Admin";
-  qs("btnLogout").onclick = logout;
 })();

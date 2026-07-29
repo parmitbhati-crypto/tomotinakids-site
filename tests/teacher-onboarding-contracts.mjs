@@ -29,6 +29,10 @@ if (!files.auth.includes("profile.is_active === false") && !files.auth.includes(
 for (const file of ["scheduler", "attendance", "history"]) {
   requireText(file, '.eq("is_active", true)', `${file} does not filter inactive teachers.`);
 }
+requireText("history", "new Date(year, month - 1, day)", "Attendance-only dates are not formatted in local calendar time.");
+if (files.history.includes("new Date(r.date).toLocaleDateString()")) {
+  failures.push("Attendance history still parses date-only values as UTC timestamps.");
+}
 requireText("newPage", 'rpc("replace_teacher_programs"', "Editing program assignments is not transactional.");
 requireText("directory", 'data-action="toggle"', "Team Directory cannot deactivate/reactivate teachers.");
 

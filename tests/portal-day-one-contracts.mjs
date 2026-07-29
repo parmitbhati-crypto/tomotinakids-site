@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 const paths = {
   shell: "assets/js/portal-shell.js",
+  adminHome: "assets/js/admin-home.js",
   schedulerPage: "portal/admin.html",
   scheduler: "assets/js/admin.js",
   teamPage: "portal/team.html",
@@ -21,6 +22,7 @@ const failures = [];
 const expect = (condition, message) => { if (!condition) failures.push(message); };
 
 expect(files.shell.includes("portal-duplicate-title"), "Shared shell does not suppress duplicate page headings.");
+expect(!files.adminHome.includes('qs("btnLogout").onclick'), "Admin overview still binds a removed legacy logout button.");
 expect(!files.schedulerPage.includes("Ctrl") && !files.schedulerPage.includes("Cmd"), "Scheduler still requires keyboard-modifier multi-selection.");
 expect(files.schedulerPage.includes('id="programChoices"'), "Scheduler program choices are missing.");
 expect(files.scheduler.includes('#programChoices input:checked'), "Scheduler does not read touch-friendly program choices.");

@@ -145,6 +145,13 @@
     return `<span class="pill ${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</span>`;
   }
 
+  function formatDateOnly(value){
+    if (!value) return "—";
+    const [year, month, day] = String(value).split("-").map(Number);
+    if (!year || !month || !day) return "—";
+    return new Date(year, month - 1, day).toLocaleDateString();
+  }
+
   function monthRange(monthStr){
     // monthStr = "2026-02"
     const [y, m] = monthStr.split("-").map(Number);
@@ -210,7 +217,7 @@
       }
 
       tbody.innerHTML = rows.map(r => {
-        const d = r.date ? new Date(r.date).toLocaleDateString() : "—";
+        const d = formatDateOnly(r.date);
         const st = pill(r.status);
         const notes = escapeHtml(r.notes || "");
         const up = r.updated_at ? new Date(r.updated_at).toLocaleString() : "—";

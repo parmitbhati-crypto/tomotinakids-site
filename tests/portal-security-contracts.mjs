@@ -3,10 +3,11 @@ import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const read = (path) => readFile(resolve(root, path), "utf8");
-const [auth, login, client, shell, system, headers, config, migration, rollout, setupPage, challengePage, setupScript, challengeScript, passwordScript] = await Promise.all([
+const [auth, login, client, shell, system, headers, config, migration, helperGrantMigration, rollout, setupPage, challengePage, setupScript, challengeScript, passwordScript] = await Promise.all([
   "assets/js/auth.js", "assets/js/login.js", "assets/js/supabaseClient.js",
   "assets/js/portal-shell.js", "assets/js/system.js", "_headers",
   "supabase/config.toml", "supabase/migrations/20260728224440_enforce_active_accounts_and_admin_mfa.sql",
+  "supabase/migrations/20260728230000_restore_rls_helper_execution.sql",
   "supabase/rollouts/enable_admin_mfa_after_enrollment.sql", "portal/mfa-setup.html",
   "portal/mfa-challenge.html", "assets/js/mfa-setup.js", "assets/js/mfa-challenge.js",
   "assets/js/set-password.js",
@@ -22,6 +23,8 @@ expect(headers.includes("X-Frame-Options: DENY") && headers.includes("X-Content-
 expect(migration.includes("get_portal_access_state"), "Safe pre-MFA access-state function is missing.");
 expect(migration.includes("active_portal_accounts_only") && migration.includes("as restrictive"), "Restrictive active-account RLS is missing.");
 expect(migration.includes("'student-photos', 'teacher-photos'"), "Private storage is not protected by active-account enforcement.");
+expect(helperGrantMigration.includes("grant execute on function private.current_user_meets_portal_requirements() to authenticated"), "Authenticated portal users cannot evaluate the active-account RLS helper.");
+expect(helperGrantMigration.includes("grant execute on function private.current_user_is_admin() to authenticated"), "Authenticated administrators cannot evaluate the admin RLS helper.");
 expect(rollout.includes("auth.jwt()->>'aal'") && rollout.includes("'aal2'"), "Post-enrollment AAL2 database enforcement is missing.");
 expect(auth.includes("getAuthenticatorAssuranceLevel") && auth.includes("/portal/mfa-challenge.html"), "Portal guard does not enforce administrator MFA.");
 expect(auth.includes('role === "admin" && isTeacherPage'), "Administrators are not redirected away from teacher-only pages.");
