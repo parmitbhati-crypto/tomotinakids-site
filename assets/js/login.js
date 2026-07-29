@@ -121,20 +121,28 @@ async function sendReset() {
   await ensureClientReady();
 
   const email = (qs("email").value || "").trim();
+
   if (!email) {
     setMsg("Enter your email address first.", "error");
     return;
   }
 
-  const redirectTo = `${window.location.origin}/portal/login.html`;
+  const redirectTo =
+    `${window.location.origin}/portal/set-password.html`;
 
-  const { error } = await window.sb.auth.resetPasswordForEmail(email, {
-    redirectTo,
-    captchaToken: captchaToken || undefined
-  });
+  const { error } =
+    await window.sb.auth.resetPasswordForEmail(email, {
+      redirectTo,
+      captchaToken: captchaToken || undefined
+    });
 
   if (error) {
-    setMsg("We could not send the reset link. Please try again.", "error");
+    console.error("Password reset error:", error);
+
+    setMsg(
+      "We could not send the reset link. Please try again.",
+      "error"
+    );
     return;
   }
 
