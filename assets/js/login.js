@@ -23,6 +23,15 @@ async function ensureClientReady() {
   }
 }
 
+async function edgeFunctionErrorMessage(error, fallback) {
+  try {
+    const payload = await error?.context?.json();
+    return payload?.error || payload?.message || error?.message || fallback;
+  } catch {
+    return error?.message || fallback;
+  }
+}
+
 /**
  * Redirect logged-in users away from login page (ROLE AWARE)
  */
@@ -121,32 +130,33 @@ async function sendReset() {
   await ensureClientReady();
 
   const email = (qs("email").value || "").trim();
-
   if (!email) {
     setMsg("Enter your email address first.", "error");
     return;
   }
-
-  const redirectTo =
-    `${window.location.origin}/portal/set-password.html`;
-
-  const { error } =
-    await window.sb.auth.resetPasswordForEmail(email, {
-      redirectTo,
-      captchaToken: captchaToken || undefined
-    });
-
-  if (error) {
-    console.error("Password reset error:", error);
-
-    setMsg(
-      "We could not send the reset link. Please try again.",
-      "error"
-    );
+  if (!window.ENV_TURNSTILE_SITE_KEY || !captchaToken) {
+    setMsg("Complete the security check before requesting a reset link.", "error");
     return;
   }
 
-  setMsg("Reset link sent. Check your email.", "success");
+  const { data, error } = await window.sb.functions.invoke("send-password-reset", {
+    body: { email, captchaToken }
+  });
+
+  if (window.turnstile && turnstileWidgetId !== undefined) window.turnstile.reset(turnstileWidgetId);
+  captchaToken = "";
+
+  if (error) {
+    console.error("Password reset function error:", error);
+    setMsg(await edgeFunctionErrorMessage(error, "We could not send the reset link. Please try again."), "error");
+    return;
+  }
+  if (data?.error) {
+    setMsg(data.error, "error");
+    return;
+  }
+
+  setMsg(data?.message || "If an account exists for that address, a reset link has been sent.", "success");
 }
 
 (async function init() {

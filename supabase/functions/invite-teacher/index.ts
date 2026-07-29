@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { sendAuthEmail } from "../_shared/auth-email.ts";
 
 const allowedOrigins = new Set([
   "https://tomotinakids.com",
@@ -26,7 +27,7 @@ function json(body: unknown, status: number, origin: string | null) {
 const text = (value: unknown, max: number) =>
   typeof value === "string" ? value.trim().slice(0, max) : "";
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
   const origin = req.headers.get("origin");
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors(origin) });
   if (req.method !== "POST") return json({ error: "Method not allowed." }, 405, origin);
@@ -75,17 +76,30 @@ Deno.serve(async (req) => {
     }
 
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
-    const redirectTo = `${origin && allowedOrigins.has(origin) ? origin : "https://tomotinakids.com"}/portal/set-password.html`;
-    const { data: invited, error: inviteError } = await admin.auth.admin.inviteUserByEmail(email, {
-      redirectTo,
-      data: { full_name: fullName },
+    const redirectOrigin = origin && allowedOrigins.has(origin) ? origin : "https://tomotinakids.com";
+    const redirectTo = `${redirectOrigin}/portal/set-password.html`;
+    const { data: generated, error: linkError } = await admin.auth.admin.generateLink({
+      type: "invite",
+      email,
+      options: {
+        redirectTo,
+        data: { full_name: fullName },
+      },
     });
-    if (inviteError || !invited.user) {
-      const duplicate = /already|registered|exists/i.test(inviteError?.message || "");
-      return json({ error: duplicate ? "A user with this email already exists." : "Invitation could not be sent." }, 400, origin);
+
+    const actionLink = generated?.properties?.action_link;
+    if (linkError || !generated?.user || !actionLink) {
+      const errorMessage = linkError?.message || "";
+      const duplicate = /already|registered|exists/i.test(errorMessage);
+      console.error("Invite link generation failed:", linkError);
+      return json({
+        error: duplicate
+          ? "A user with this email already exists. Use Resend setup link from Team Directory instead."
+          : "The secure invitation link could not be generated.",
+      }, duplicate ? 409 : 400, origin);
     }
 
-    const userId = invited.user.id;
+    const userId = generated.user.id;
     const { error: profileError } = await admin.from("profiles").upsert({
       id: userId,
       full_name: fullName,
@@ -111,11 +125,29 @@ Deno.serve(async (req) => {
     });
 
     if (profileError || detailError) {
+      console.error("Teacher profile creation failed:", { profileError, detailError });
       await admin.auth.admin.deleteUser(userId);
       return json({ error: "The invitation was rolled back because the staff profile could not be saved." }, 500, origin);
     }
+
+    try {
+      await sendAuthEmail({
+        to: email,
+        recipientName: fullName,
+        flow: "invite",
+        actionLink,
+      });
+    } catch (emailError) {
+      console.error("Custom invitation email failed:", emailError);
+      await admin.auth.admin.deleteUser(userId);
+      return json({
+        error: "The profile was rolled back because the invitation email could not be delivered. Check the Resend configuration and try again.",
+      }, 502, origin);
+    }
+
     return json({ userId, email, invitationStatus: "invited" }, 201, origin);
-  } catch {
+  } catch (error) {
+    console.error("Unexpected invitation error:", error);
     return json({ error: "Unexpected invitation error." }, 500, origin);
   }
 });
