@@ -21,8 +21,10 @@ const escapeHtml = (value: string) =>
 const siteOrigin = () =>
   (Deno.env.get("PUBLIC_SITE_URL") || "https://tomotinakids.com").replace(/\/+$/, "");
 
+// Keep the one-time Supabase URL in the fragment so it is not sent to
+// Cloudflare/server request logs or included in the HTTP Referer header.
 const continueUrl = (actionLink: string, flow: AuthEmailFlow) =>
-  `${siteOrigin()}/portal/auth-action.html?flow=${encodeURIComponent(flow)}&confirmation_url=${encodeURIComponent(actionLink)}`;
+  `${siteOrigin()}/portal/auth-action.html#flow=${encodeURIComponent(flow)}&confirmation_url=${encodeURIComponent(actionLink)}`;
 
 export async function sendAuthEmail({
   to,
