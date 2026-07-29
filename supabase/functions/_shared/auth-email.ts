@@ -4,7 +4,7 @@ type SendAuthEmailInput = {
   to: string;
   recipientName?: string | null;
   flow: AuthEmailFlow;
-  actionLink: string;
+  tokenHash: string;
 };
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
@@ -21,16 +21,17 @@ const escapeHtml = (value: string) =>
 const siteOrigin = () =>
   (Deno.env.get("PUBLIC_SITE_URL") || "https://tomotinakids.com").replace(/\/+$/, "");
 
-// Keep the one-time Supabase URL in the fragment so it is not sent to
-// Cloudflare/server request logs or included in the HTTP Referer header.
-const continueUrl = (actionLink: string, flow: AuthEmailFlow) =>
-  `${siteOrigin()}/portal/auth-action.html#flow=${encodeURIComponent(flow)}&confirmation_url=${encodeURIComponent(actionLink)}`;
+// Keep the one-time token in the fragment so it is not sent to Cloudflare/server
+// request logs or included in the HTTP Referer header. The confirmation page
+// requires a deliberate user click before the browser verifies the token.
+const continueUrl = (tokenHash: string, flow: AuthEmailFlow) =>
+  `${siteOrigin()}/portal/auth-action.html#flow=${encodeURIComponent(flow)}&token_hash=${encodeURIComponent(tokenHash)}`;
 
 export async function sendAuthEmail({
   to,
   recipientName,
   flow,
-  actionLink,
+  tokenHash,
 }: SendAuthEmailInput) {
   const apiKey = Deno.env.get("RESEND_API_KEY");
   const from = Deno.env.get("AUTH_EMAIL_FROM");
@@ -41,7 +42,7 @@ export async function sendAuthEmail({
   }
 
   const firstName = (recipientName || "there").trim().split(/\s+/)[0] || "there";
-  const buttonUrl = continueUrl(actionLink, flow);
+  const buttonUrl = continueUrl(tokenHash, flow);
   const isInvite = flow === "invite";
   const subject = isInvite
     ? "Set up your Tomotina Kids staff account"
@@ -68,7 +69,7 @@ export async function sendAuthEmail({
                 <p style="margin:0 0 26px">
                   <a href="${escapeHtml(buttonUrl)}" style="display:inline-block;background:#d9725b;color:#ffffff;text-decoration:none;font-weight:700;padding:13px 20px;border-radius:10px">${buttonLabel}</a>
                 </p>
-                <p style="margin:0;font-size:13px;line-height:1.6;color:#6b7d7e">For security, the email button first opens a Tomotina confirmation page. The one-time Supabase link is used only after you press Continue.</p>
+                <p style="margin:0;font-size:13px;line-height:1.6;color:#6b7d7e">For security, the email button first opens a Tomotina confirmation page. Your one-time token is verified only after you press Continue.</p>
                 <p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:#6b7d7e">If you did not expect this email, you can safely ignore it.</p>
               </td>
             </tr>
