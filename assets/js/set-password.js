@@ -3,7 +3,7 @@
   const message = document.getElementById("passwordMessage");
   const button = form.querySelector('button[type="submit"]');
 
-  let invitationSessionReady = false;
+  let authSessionReady = false;
 
   const show = (text, type) => {
     message.textContent = text;
@@ -19,19 +19,25 @@
     );
   };
 
-  async function establishInvitationSession() {
+  async function establishAuthSession() {
     button.disabled = true;
 
     try {
       const url = new URL(window.location.href);
+      const hashParams = new URLSearchParams(url.hash.substring(1));
 
       const code = url.searchParams.get("code");
-      const tokenHash = url.searchParams.get("token_hash");
-      const invitationType =
-        url.searchParams.get("type") || "invite";
+      const tokenHash =
+        url.searchParams.get("token_hash") ||
+        hashParams.get("token_hash");
+      const rawType =
+        url.searchParams.get("type") ||
+        hashParams.get("type") ||
+        "invite";
+      const verificationType = rawType === "recovery" ? "recovery" : "invite";
 
       /*
-       * PKCE invitation flow:
+       * PKCE flow:
        * /set-password.html?code=...
        */
       if (code) {
@@ -44,13 +50,13 @@
       }
 
       /*
-       * Custom token-hash invitation flow:
-       * /set-password.html?token_hash=...&type=invite
+       * Tomotina custom email flow. The token hash stays in the browser URL
+       * fragment until this deliberate page action verifies it with Supabase.
        */
       if (!code && tokenHash) {
         const { error } = await window.sb.auth.verifyOtp({
           token_hash: tokenHash,
-          type: invitationType
+          type: verificationType
         });
 
         if (error) {
@@ -59,8 +65,7 @@
       }
 
       /*
-       * Check whether Supabase automatically processed
-       * an implicit-flow URL fragment.
+       * Check whether Supabase automatically processed an implicit-flow URL.
        */
       let {
         data: { session },
@@ -72,14 +77,10 @@
       }
 
       /*
-       * Fallback for implicit invitation URLs:
+       * Backward-compatible fallback for old implicit URLs:
        * #access_token=...&refresh_token=...
        */
       if (!session && window.location.hash) {
-        const hashParams = new URLSearchParams(
-          window.location.hash.substring(1)
-        );
-
         const accessToken = hashParams.get("access_token");
         const refreshToken = hashParams.get("refresh_token");
 
@@ -102,18 +103,18 @@
 
       if (!session) {
         throw new Error(
-          "No authentication session was created from the invitation link."
+          "No authentication session was created from the secure link."
         );
       }
 
-      invitationSessionReady = true;
+      authSessionReady = true;
       cleanAuthUrl();
       button.disabled = false;
     } catch (error) {
-      console.error("Invitation verification failed:", error);
+      console.error("Secure-link verification failed:", error);
 
       show(
-        "This invitation could not be verified. Please ask your administrator for a new invitation.",
+        "This secure link could not be verified. Request a new invitation or password reset email.",
         "error"
       );
 
@@ -124,9 +125,9 @@
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    if (!invitationSessionReady) {
+    if (!authSessionReady) {
       show(
-        "The invitation is still being verified or is no longer valid.",
+        "The secure link is still being verified or is no longer valid.",
         "error"
       );
       return;
@@ -181,9 +182,9 @@
     );
 
     window.setTimeout(() => {
-      window.location.href = "/portal/day.html";
+      window.location.href = "/portal/app.html";
     }, 800);
   });
 
-  establishInvitationSession();
+  establishAuthSession();
 })();
