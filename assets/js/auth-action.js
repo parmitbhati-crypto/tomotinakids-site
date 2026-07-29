@@ -3,7 +3,7 @@
   const copy = document.getElementById("actionCopy");
   const message = document.getElementById("actionMessage");
   const button = document.getElementById("continueAction");
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(window.location.hash.slice(1));
   const flow = params.get("flow") === "invite" ? "invite" : "recovery";
   const confirmationUrl = params.get("confirmation_url") || "";
 
