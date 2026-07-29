@@ -72,16 +72,20 @@ Deno.serve(async (req: Request) => {
       return json({ error: "Reactivate the teacher before sending a setup link." }, 400, origin);
     }
 
-    const redirectOrigin = origin && allowedOrigins.has(origin) ? origin : "https://tomotinakids.com";
-    const redirectTo = `${redirectOrigin}/portal/set-password.html`;
     const { data: generated, error: linkError } = await admin.auth.admin.generateLink({
       type: "recovery",
       email,
-      options: { redirectTo },
     });
     const actionLink = generated?.properties?.action_link;
-    if (linkError || !actionLink) {
-      console.error("Teacher recovery link generation failed:", linkError);
+    let tokenHash = "";
+    try {
+      tokenHash = actionLink ? new URL(actionLink).searchParams.get("token") || "" : "";
+    } catch {
+      tokenHash = "";
+    }
+
+    if (linkError || !tokenHash) {
+      console.error("Teacher recovery token generation failed:", linkError);
       return json({ error: "A new setup link could not be generated." }, 400, origin);
     }
 
@@ -90,7 +94,7 @@ Deno.serve(async (req: Request) => {
         to: email,
         recipientName: teacher.full_name,
         flow: "recovery",
-        actionLink,
+        tokenHash,
       });
     } catch (emailError) {
       console.error("Teacher setup email failed:", emailError);
