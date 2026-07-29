@@ -76,22 +76,26 @@ Deno.serve(async (req: Request) => {
     }
 
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
-    const redirectOrigin = origin && allowedOrigins.has(origin) ? origin : "https://tomotinakids.com";
-    const redirectTo = `${redirectOrigin}/portal/set-password.html`;
     const { data: generated, error: linkError } = await admin.auth.admin.generateLink({
       type: "invite",
       email,
       options: {
-        redirectTo,
         data: { full_name: fullName },
       },
     });
 
     const actionLink = generated?.properties?.action_link;
-    if (linkError || !generated?.user || !actionLink) {
+    let tokenHash = "";
+    try {
+      tokenHash = actionLink ? new URL(actionLink).searchParams.get("token") || "" : "";
+    } catch {
+      tokenHash = "";
+    }
+
+    if (linkError || !generated?.user || !tokenHash) {
       const errorMessage = linkError?.message || "";
       const duplicate = /already|registered|exists/i.test(errorMessage);
-      console.error("Invite link generation failed:", linkError);
+      console.error("Invite token generation failed:", linkError);
       return json({
         error: duplicate
           ? "A user with this email already exists. Use Resend setup link from Team Directory instead."
@@ -135,7 +139,7 @@ Deno.serve(async (req: Request) => {
         to: email,
         recipientName: fullName,
         flow: "invite",
-        actionLink,
+        tokenHash,
       });
     } catch (emailError) {
       console.error("Custom invitation email failed:", emailError);
