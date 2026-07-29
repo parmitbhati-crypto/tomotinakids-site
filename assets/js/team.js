@@ -8,6 +8,15 @@
   const esc = (value = "") => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
   const show = (text, type = "info") => { message.textContent = text; message.dataset.type = type; message.hidden = false; };
 
+  async function functionErrorMessage(error, fallback) {
+    try {
+      const payload = await error?.context?.json();
+      return payload?.error || payload?.message || error?.message || fallback;
+    } catch {
+      return error?.message || fallback;
+    }
+  }
+
   async function photoUrl(path) {
     if (!path) return "";
     const { data } = await window.sb.storage.from("teacher-photos").createSignedUrl(path, 3600);
@@ -45,12 +54,15 @@
       const programs = (teacher.teacher_programs || []).map((x) => x.programs?.name).filter(Boolean);
       const missing = readiness(teacher);
       const avatar = urls[index] ? `<img src="${esc(urls[index])}" alt="">` : `<span>${esc((teacher.full_name || "T").slice(0, 1).toUpperCase())}</span>`;
+      const resendButton = details.invitation_status === "invited" && teacher.is_active
+        ? `<button class="btn" data-action="resend" type="button">Resend setup link</button>`
+        : "";
       return `<article class="team-card" data-id="${teacher.id}">
         <div class="team-card-head"><div class="team-avatar">${avatar}</div><div><h3>${esc(teacher.full_name || "Unnamed teacher")}</h3><p>${esc(details.designation || teacher.specialization || "Teacher")}</p></div><span class="status-pill ${teacher.is_active ? "is-published" : ""}">${teacher.is_active ? "Active" : "Inactive"}</span></div>
         <dl class="team-meta"><div><dt>Email</dt><dd>${esc(details.email || "—")}</dd></div><div><dt>Mobile</dt><dd>${esc(details.mobile || "—")}</dd></div><div><dt>Invitation</dt><dd>${esc(details.invitation_status || "unknown")}</dd></div><div><dt>Employment</dt><dd>${esc((details.employment_type || "—").replace("_", " "))}</dd></div><div><dt>Programs</dt><dd>${esc(programs.join(", ") || "Not assigned")}</dd></div><div><dt>Joined</dt><dd>${esc(details.joining_date || "Not recorded")}</dd></div></dl>
         ${missing.length ? `<div class="team-readiness"><strong>Needs attention</strong><span>Add ${esc(missing.join(", "))} before regular scheduling.</span></div>` : `<div class="team-ready">Profile ready for scheduling</div>`}
         <div class="team-verification"><span>Aadhaar ${details.aadhaar_verified ? "verified" : "not verified"}${details.aadhaar_last4 ? ` · •••• ${esc(details.aadhaar_last4)}` : ""}</span><span>PAN ${details.pan_verified ? "verified" : "not verified"}${details.pan_last4 ? ` · •••• ${esc(details.pan_last4)}` : ""}</span></div>
-        <div class="team-actions"><a class="btn" href="/portal/team-new.html?id=${teacher.id}">Edit profile</a><button class="btn ${teacher.is_active ? "danger" : "primary"}" data-action="toggle" type="button">${teacher.is_active ? "Deactivate access" : "Reactivate access"}</button></div>
+        <div class="team-actions"><a class="btn" href="/portal/team-new.html?id=${teacher.id}">Edit profile</a>${resendButton}<button class="btn ${teacher.is_active ? "danger" : "primary"}" data-action="toggle" type="button">${teacher.is_active ? "Deactivate access" : "Reactivate access"}</button></div>
       </article>`;
     }).join("");
   }
@@ -61,10 +73,30 @@
     teachers = data || []; render();
   }
   list.addEventListener("click", async (event) => {
-    const button = event.target.closest("[data-action='toggle']");
+    const button = event.target.closest("[data-action]");
     if (!button) return;
     const teacher = teachers.find((item) => item.id === button.closest("[data-id]").dataset.id);
     if (!teacher) return;
+
+    if (button.dataset.action === "resend") {
+      if (!window.confirm(`Send a new password setup link to ${teacher.teacher_profiles?.email}?`)) return;
+      button.disabled = true;
+      button.textContent = "Sending…";
+      const { data, error } = await window.sb.functions.invoke("resend-teacher-setup", {
+        body: { userId: teacher.id }
+      });
+      if (error) {
+        show(await functionErrorMessage(error, "The setup link could not be sent."), "error");
+      } else if (data?.error) {
+        show(data.error, "error");
+      } else {
+        show(data?.message || `A new setup link was sent to ${teacher.teacher_profiles?.email}.`, "success");
+      }
+      button.disabled = false;
+      button.textContent = "Resend setup link";
+      return;
+    }
+
     const next = !teacher.is_active;
     if (!window.confirm(`${next ? "Reactivate" : "Deactivate"} ${teacher.full_name}? Historical records will be kept.`)) return;
     button.disabled = true;
