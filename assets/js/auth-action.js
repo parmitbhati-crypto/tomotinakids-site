@@ -5,7 +5,7 @@
   const button = document.getElementById("continueAction");
   const params = new URLSearchParams(window.location.hash.slice(1));
   const flow = params.get("flow") === "invite" ? "invite" : "recovery";
-  const confirmationUrl = params.get("confirmation_url") || "";
+  const tokenHash = params.get("token_hash") || "";
 
   const show = (text, type = "error") => {
     message.textContent = text;
@@ -23,15 +23,9 @@
     button.textContent = "Continue to reset password";
   }
 
-  let secureUrl;
-  try {
-    secureUrl = new URL(confirmationUrl);
-    const expectedHost = new URL(window.ENV_SUPABASE_URL || "https://invalid.local").host;
-    if (!expectedHost || secureUrl.protocol !== "https:" || secureUrl.host !== expectedHost || !secureUrl.pathname.startsWith("/auth/v1/verify")) {
-      throw new Error("Unexpected confirmation destination.");
-    }
-  } catch (error) {
-    console.error("Invalid auth action URL:", error);
+  // Supabase token hashes are URL-safe opaque values. Keep them in the URL
+  // fragment so they never reach Cloudflare/server request logs.
+  if (!/^[A-Za-z0-9._~-]{20,512}$/.test(tokenHash)) {
     button.disabled = true;
     show("This secure link is incomplete or invalid. Request a new invitation or password reset email.");
     return;
@@ -40,6 +34,7 @@
   button.addEventListener("click", () => {
     button.disabled = true;
     button.textContent = "Opening…";
-    window.location.assign(secureUrl.href);
+    const target = `/portal/set-password.html#token_hash=${encodeURIComponent(tokenHash)}&type=${encodeURIComponent(flow)}`;
+    window.location.assign(target);
   });
 })();
