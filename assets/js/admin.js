@@ -25,7 +25,7 @@ function setMsg(text, type = "info") {
 function todayYmd() {
   const d = new Date();
   const pad = n => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1, "0")}-${pad(d.getDate(), "0")}`;
 }
 
 // Store local datetime as UTC ISO
@@ -93,15 +93,12 @@ async function loadDropdowns() {
     return;
   }
 
-  // Teachers
   const { data: teachers, error: tErr } = await window.sb
     .from("profiles")
     .select("id, full_name")
     .eq("role", "teacher")
     .eq("is_active", true)
     .order("full_name");
-
-  aLog("teachers result:", { count: teachers?.length, tErr });
 
   if (tErr) {
     setMsg("Teacher list failed: " + tErr.message, "error");
@@ -113,14 +110,11 @@ async function loadDropdowns() {
     `<option value="">— Select teacher —</option>` +
     (teachers || []).map(t => `<option value="${t.id}">${t.full_name}</option>`).join("");
 
-  // Students
   const { data: students, error: sErr } = await window.sb
     .from("students")
     .select("id, full_name")
     .eq("is_active", true)
     .order("full_name");
-
-  aLog("students result:", { count: students?.length, sErr });
 
   if (sErr) {
     setMsg("Student list failed: " + sErr.message, "error");
@@ -132,13 +126,10 @@ async function loadDropdowns() {
     `<option value="">— Select student —</option>` +
     (students || []).map(s => `<option value="${s.id}">${s.full_name}</option>`).join("");
 
-  // Programs
   const { data: programs, error: pErr } = await window.sb
     .from("programs")
     .select("id, name")
     .order("name");
-
-  aLog("programs result:", { count: programs?.length, pErr });
 
   if (pErr) {
     setMsg("Programs failed: " + pErr.message, "error");
@@ -154,8 +145,6 @@ async function loadDropdowns() {
       <input type="checkbox" value="${p.id}">
       <span>${p.name}</span>
     </label>`).join("") || `<div class="portal-inline-empty">No programs are configured yet.</div>`;
-
-  aLog("loadDropdowns() done");
 }
 
 /* ===============================
@@ -172,38 +161,24 @@ async function loadSessionsForTeacherDate() {
   const dateStr = qs("dateInput")?.value;
   const listEl = qs("sessionsList");
 
-  aLog("loadSessionsForTeacherDate()", { teacherId, dateStr });
-
-  if (!listEl) {
-    aErr("sessionsList element missing");
-    return;
-  }
-
+  if (!listEl) return;
   if (!teacherId || !dateStr) {
     listEl.innerHTML = `<div class="portal-state portal-state-compact"><strong>Select a teacher and date</strong><span>Their scheduled sessions will appear here.</span></div>`;
     return;
   }
 
   listEl.innerHTML = renderSkeletonList(4);
-
   const from = new Date(`${dateStr}T00:00:00`);
   const to = new Date(from);
   to.setDate(to.getDate() + 1);
 
   const { data, error } = await window.sb
     .from("sessions")
-    .select(`
-      id, starts_at, ends_at, location, status,
-      students(full_name),
-      session_programs(programs(name)),
-      session_updates(attendance, progress_score, remarks, updated_at)
-    `)
+    .select(`id, starts_at, ends_at, location, status, students(full_name), session_programs(programs(name)), session_updates(attendance, progress_score, remarks, updated_at)`)
     .eq("teacher_id", teacherId)
     .gte("starts_at", from.toISOString())
     .lt("starts_at", to.toISOString())
     .order("starts_at");
-
-  aLog("sessions query:", { count: data?.length, error });
 
   if (error) {
     window.portalReportError?.("application", "Unable to load scheduled sessions.");
@@ -216,45 +191,19 @@ async function loadSessionsForTeacherDate() {
     return;
   }
 
-  listEl.innerHTML = `<div class="list">${
-    data.map(s => {
-      const st = new Date(s.starts_at);
-      const en = new Date(s.ends_at);
-      const student = s.students?.full_name || "Student";
-
-      const programs = (s.session_programs || [])
-        .map(x => x.programs?.name)
-        .filter(Boolean)
-        .join(", ") || "—";
-
-      const latestUpdate = Array.isArray(s.session_updates)
-        ? s.session_updates.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0]
-        : null;
-
-      const updText = latestUpdate
-        ? `${latestUpdate.attendance?.toUpperCase() || ""}${
-            latestUpdate.progress_score != null ? ` • ${latestUpdate.progress_score}%` : ""
-          }${latestUpdate.remarks ? ` • ${latestUpdate.remarks}` : ""}`
-        : "No update yet";
-
-      return `
-        <a class="list-item"
-           href="/portal/admin-session-edit.html?session=${encodeURIComponent(s.id)}">
-          <div class="li-main">
-            <div class="li-title">${student}</div>
-            <div class="li-sub">${fmtTime(st)}–${fmtTime(en)} • ${s.location || "—"}</div>
-            <div class="li-meta">
-              <span class="badge">Programs: ${programs}</span>
-              <span class="status-pill ${statusClass(s.status)}">
-                ${(s.status || "scheduled").toUpperCase()}
-              </span>
-              <span class="badge">${updText}</span>
-            </div>
-          </div>
-        </a>
-      `;
-    }).join("")
-  }</div>`;
+  listEl.innerHTML = `<div class="list">${data.map(s => {
+    const st = new Date(s.starts_at);
+    const en = new Date(s.ends_at);
+    const student = s.students?.full_name || "Student";
+    const programs = (s.session_programs || []).map(x => x.programs?.name).filter(Boolean).join(", ") || "—";
+    const latestUpdate = Array.isArray(s.session_updates)
+      ? s.session_updates.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0]
+      : null;
+    const updText = latestUpdate
+      ? `${latestUpdate.attendance?.toUpperCase() || ""}${latestUpdate.progress_score != null ? ` • ${latestUpdate.progress_score}%` : ""}${latestUpdate.remarks ? ` • ${latestUpdate.remarks}` : ""}`
+      : "No update yet";
+    return `<a class="list-item" href="/portal/admin-session-edit.html?session=${encodeURIComponent(s.id)}"><div class="li-main"><div class="li-title">${student}</div><div class="li-sub">${fmtTime(st)}–${fmtTime(en)} • ${s.location || "—"}</div><div class="li-meta"><span class="badge">Programs: ${programs}</span><span class="status-pill ${statusClass(s.status)}">${(s.status || "scheduled").toUpperCase()}</span><span class="badge">${updText}</span></div></div></a>`;
+  }).join("")}</div>`;
 }
 
 /* ===============================
@@ -279,8 +228,6 @@ async function saveSession() {
     const location = qs("locationInput")?.value.trim() || null;
     const programIds = selectedMultiValues(qs("programSelect"));
 
-    aLog("saveSession inputs", { teacherId, studentId, dateStr, startTime, endTime, programIds });
-
     if (!teacherId || !studentId || !dateStr || !startTime || !endTime) {
       setMsg("Select a teacher, student, date, start time, and end time.", "error");
       return;
@@ -294,21 +241,22 @@ async function saveSession() {
       return;
     }
 
-    // Conflict check
     const { data: conflicts, error: cErr } = await window.sb
       .from("sessions")
-      .select("id")
+      .select("id, starts_at, ends_at")
       .eq("teacher_id", teacherId)
       .neq("status", "cancelled")
       .lt("starts_at", endsAt)
       .gt("ends_at", startsAt);
 
-    aLog("conflicts:", { conflictsCount: conflicts?.length, cErr });
-
     if (cErr) throw cErr;
-    if (conflicts?.length) throw new Error("This teacher already has a session in that time slot.");
+    if (conflicts?.length) {
+      const conflict = conflicts[0];
+      const conflictStart = fmtTime(new Date(conflict.starts_at));
+      const conflictEnd = fmtTime(new Date(conflict.ends_at));
+      throw new Error(`This teacher already has a session from ${conflictStart} to ${conflictEnd}. Choose a different time or edit the existing session.`);
+    }
 
-    // Insert session
     const { data: inserted, error } = await window.sb
       .from("sessions")
       .insert([{
@@ -334,11 +282,13 @@ async function saveSession() {
     setMsg("Saved ✅", "success");
     clearForm();
     await loadSessionsForTeacherDate();
-
   } catch (e) {
-    aErr("saveSession failed:", e);
-    window.portalReportError?.("application", "Unable to save the schedule.");
-    setMsg("Unable to save the schedule. Please try again.", "error");
+    const safeMessage = e instanceof Error && e.message.startsWith("This teacher already has a session")
+      ? e.message
+      : "Unable to save the schedule. Please try again.";
+    aErr(e instanceof Error ? `saveSession failed: ${e.message}` : "saveSession failed");
+    window.portalReportError?.("application", safeMessage);
+    setMsg(safeMessage, "error");
   } finally {
     isSavingSession = false;
     if (btn) {
@@ -358,36 +308,25 @@ function clearForm() {
   setMsg("", "info");
 }
 
-/* ===============================
-   INIT
-================================ */
 (async function init() {
-  aLog("ADMIN init start");
-
   try {
     const ok = await requireAdmin();
     if (!ok) return;
-
     if (qs("dateInput")) qs("dateInput").value = todayYmd();
     if (qs("startTime")) qs("startTime").value = "10:00";
     if (qs("endTime")) qs("endTime").value = "10:30";
-
     await loadDropdowns();
     await loadSessionsForTeacherDate();
-
     const btnSave = qs("btnSave");
     const btnClear = qs("btnClear");
     if (btnSave) btnSave.onclick = saveSession;
     if (btnClear) btnClear.onclick = clearForm;
-
     const teacherSel = qs("teacherSelect");
     const dateIn = qs("dateInput");
     if (teacherSel) teacherSel.addEventListener("change", loadSessionsForTeacherDate);
     if (dateIn) dateIn.addEventListener("change", loadSessionsForTeacherDate);
-
-    aLog("ADMIN init done");
   } catch (e) {
-    aErr("ADMIN init error:", e);
+    aErr(e instanceof Error ? `ADMIN init error: ${e.message}` : "ADMIN init error");
     window.portalReportError?.("application", "Unable to initialize the admin scheduler.");
     setMsg("Unable to load the scheduler. Please refresh.", "error");
   }
