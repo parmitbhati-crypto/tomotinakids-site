@@ -1,34 +1,108 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Promotions | Tomotina Kids</title><link rel="stylesheet" href="/assets/css/portal.css"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Promotions | Tomotina Kids</title>
+  <link rel="stylesheet" href="/assets/css/portal.css">
+  <link rel="stylesheet" href="/assets/css/promotions-admin.css">
+</head>
 <body>
   <main class="container">
     <div class="grid promotions-layout">
       <section class="card">
         <span class="portal-eyebrow">Marketing</span>
         <h2 class="h2">Promotional content</h2>
-        <p class="muted">Publish workshops, events, consultations and seasonal campaigns without editing website code.</p>
+        <p class="muted">Create an advertisement, upload its photo, and publish it without editing website code.</p>
+        <div class="promotion-help">
+          <strong>What happens after publishing?</strong>
+          <span>It appears on the home page and Workshops &amp; Events page. The newest active advertisement also opens once as a popup for each visitor. It disappears automatically after the end date.</span>
+        </div>
         <div id="promotionMessage" class="msg" data-type="info" hidden></div>
+
         <form id="promotionForm" class="portal-promotion-form">
           <input type="hidden" name="id">
-          <div class="fieldrow">
-            <label>Type<select name="campaign_type" required><option value="consultation">Consultation</option><option value="workshop">Workshop</option><option value="event">Event</option><option value="seasonal">Seasonal</option></select></label>
-            <label>URL slug<input name="slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="parent-workshop"></label>
+          <input type="hidden" name="slug">
+          <input type="hidden" name="image_url">
+
+          <label>
+            Type
+            <select name="campaign_type" required>
+              <option value="consultation">Consultation</option>
+              <option value="workshop">Workshop</option>
+              <option value="event">Event</option>
+              <option value="seasonal">Seasonal</option>
+            </select>
+          </label>
+
+          <label>
+            Title
+            <input name="title" required minlength="3" maxlength="120" placeholder="Example: Parent workshop on communication skills">
+          </label>
+
+          <label>
+            Short summary
+            <textarea name="summary" required minlength="10" maxlength="300" rows="3" placeholder="A short description shown on the popup and promotional cards."></textarea>
+          </label>
+
+          <label>
+            Full details <span class="optional-label">Optional</span>
+            <textarea name="details" rows="5" placeholder="Add timing, activities, eligibility, booking information, or other useful details."></textarea>
+          </label>
+
+          <label>
+            Location <span class="optional-label">Optional</span>
+            <input name="location" value="Tomotina Kids, Sector 40, Gurugram">
+          </label>
+
+          <label>
+            Advertising end date and time
+            <input name="ends_at" type="datetime-local" required>
+            <small class="field-help">The advertisement will stop appearing automatically after this time.</small>
+          </label>
+
+          <div class="promotion-photo-field">
+            <div>
+              <strong>Advertisement photo</strong>
+              <p>Upload a JPG, PNG, or WebP image up to 5 MB. A Google Drive link is not needed.</p>
+            </div>
+            <label class="promotion-upload-button">
+              <span>Choose photo</span>
+              <input name="image_file" type="file" accept="image/jpeg,image/png,image/webp">
+            </label>
+            <div id="promotionImagePreview" class="promotion-image-preview" hidden>
+              <img alt="Advertisement preview">
+              <button id="removePromotionImage" class="btn danger" type="button">Remove photo</button>
+            </div>
           </div>
-          <label>Small heading<input name="eyebrow" maxlength="80" placeholder="Parent workshop in Gurugram"></label>
-          <label>Title<input name="title" required maxlength="120"></label>
-          <label>Short summary<textarea name="summary" required maxlength="300" rows="3"></textarea></label>
-          <label>Full details<textarea name="details" rows="5"></textarea></label>
-          <div class="fieldrow"><label>Audience<input name="audience" placeholder="Parents of children aged..."></label><label>Location<input name="location" value="Tomotina Kids, Sector 40, Gurugram"></label></div>
-          <div class="fieldrow"><label>Starts<input name="starts_at" type="datetime-local"></label><label>Ends<input name="ends_at" type="datetime-local"></label></div>
-          <div class="fieldrow"><label>Button label<input name="cta_label" value="Enquire now"></label><label>Button link<input name="cta_url" value="/contact.html#enquiry"></label></div>
-          <label>Image URL<input name="image_url" placeholder="/assets/images/... or https://..."></label>
-          <div class="promotion-options"><label><input name="published" type="checkbox"> Published</label><label><input name="featured" type="checkbox"> Featured</label></div>
-          <div class="portal-quick-actions"><button class="btn primary" type="submit">Save promotion</button><button class="btn" id="resetPromotion" type="button">Clear form</button><a class="btn" href="/campaigns.html" target="_blank" rel="noopener">View public page</a></div>
+
+          <label class="promotion-publish-toggle">
+            <input name="published" type="checkbox">
+            <span><strong>Publish this advertisement</strong><small>Leave unchecked to save it as a draft.</small></span>
+          </label>
+
+          <div class="portal-quick-actions">
+            <button class="btn primary" type="submit">Save advertisement</button>
+            <button class="btn" id="resetPromotion" type="button">Clear form</button>
+            <a class="btn" href="/campaigns.html" target="_blank" rel="noopener">View public page</a>
+          </div>
         </form>
       </section>
-      <section class="card"><div class="row"><div><span class="portal-eyebrow">Content library</span><h2 class="h2">Campaigns</h2></div><button class="btn right" id="refreshPromotions" type="button">Refresh</button></div><div id="promotionList" class="promotion-admin-list"><p class="muted">Loading…</p></div></section>
+
+      <section class="card">
+        <div class="row">
+          <div><span class="portal-eyebrow">Content library</span><h2 class="h2">Advertisements</h2></div>
+          <button class="btn right" id="refreshPromotions" type="button">Refresh</button>
+        </div>
+        <div id="promotionList" class="promotion-admin-list"><p class="muted">Loading…</p></div>
+      </section>
     </div>
   </main>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script><script src="/assets/js/env.js"></script><script src="/assets/js/supabaseClient.js"></script><script src="/assets/js/auth.js"></script><script src="/assets/js/promotions-admin.js"></script>
-</body></html>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script>
+  <script src="/assets/js/env.js"></script>
+  <script src="/assets/js/supabaseClient.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/promotions-admin.js"></script>
+</body>
+</html>
