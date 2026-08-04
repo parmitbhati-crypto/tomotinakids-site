@@ -21,7 +21,9 @@
   };
 
   const clean = (value) => value === '' ? null : value;
-  const dateForInput = (value) => value ? new Date(value).toISOString().slice(0, 16) : '';
+  const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+  const dateForInput = (value) => value ? new Date(new Date(value).getTime() + IST_OFFSET_MS).toISOString().slice(0, 16) : '';
+  const istInputToIso = (value) => value ? new Date(`${value}:00+05:30`).toISOString() : null;
   const escapeHtml = (value = '') => String(value).replace(/[&<>"']/g, (char) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
   }[char]));
@@ -99,10 +101,11 @@
 
   const formatEndDate = (value) => {
     if (!value) return 'No end date';
-    return new Intl.DateTimeFormat('en-IN', {
+    return `${new Intl.DateTimeFormat('en-IN', {
+      timeZone: 'Asia/Kolkata',
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
-    }).format(new Date(value));
+    }).format(new Date(value))} IST`;
   };
 
   const render = () => {
@@ -189,7 +192,7 @@
         audience: '',
         location: form.elements.location.value.trim() || 'Tomotina Kids, Sector 40, Gurugram',
         starts_at: null,
-        ends_at: clean(form.elements.ends_at.value),
+        ends_at: istInputToIso(form.elements.ends_at.value),
         cta_label: 'Enquire now',
         cta_url: '/contact.html#enquiry',
         image_url: uploadedUrl || (removeExistingImage ? null : clean(imageUrlInput.value)),
