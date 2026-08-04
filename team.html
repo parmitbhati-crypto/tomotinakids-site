@@ -7,65 +7,54 @@
   <meta name="description" content="Meet the multidisciplinary team supporting children and families at Tomotina Kids Development Centre in Gurugram." />
   <link rel="canonical" href="https://tomotinakids.com/team.html" />
   <title>Our Team | Tomotina Kids Development Centre</title>
-  <meta
-    name="description"
-    content="Meet the Tomotina Kids Development Centre team — dedicated professionals supporting children with autism and developmental needs through therapy, education, and individualized care."
-  />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .team-profiles{display:grid;gap:28px;margin-top:34px}
+    .profile-row{display:grid;grid-template-columns:minmax(260px,390px) 1fr;gap:42px;align-items:center;padding:28px;background:rgba(255,255,255,.82);border:1px solid rgba(226,232,240,.92);border-radius:28px;box-shadow:0 20px 55px rgba(15,23,42,.09);overflow:hidden}
+    .profile-row:nth-child(even){grid-template-columns:1fr minmax(260px,390px)}
+    .profile-row:nth-child(even) .profile-photo{order:2}
+    .profile-photo{position:relative;min-height:420px;border-radius:22px;overflow:hidden;background:linear-gradient(145deg,#e6f7f4,#f8fbff)}
+    .profile-photo::after{content:"";position:absolute;inset:auto 18px 18px auto;width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,rgba(20,184,166,.28),rgba(245,158,11,.28));filter:blur(2px)}
+    .profile-photo img{width:100%;height:100%;min-height:420px;object-fit:cover;object-position:center top}
+    .profile-copy{padding:10px 8px}
+    .profile-number{display:inline-flex;align-items:center;gap:8px;color:#0f766e;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px}
+    .profile-number::before{content:"";width:34px;height:2px;background:#f59e0b;border-radius:99px}
+    .profile-copy h2{margin:0 0 8px;font-size:clamp(30px,4vw,48px);line-height:1.05;color:#102f31}
+    .profile-role{font-family:"Plus Jakarta Sans",sans-serif;font-weight:800;color:#0f766e;font-size:17px;line-height:1.5;margin-bottom:18px}
+    .profile-copy p{margin:0;color:#52666a;font-size:17px;line-height:1.85}
+    .team-intro{text-align:center;max-width:760px;margin:0 auto}
+    .team-intro h2{margin-bottom:10px}
+    @media(max-width:820px){
+      .profile-row,.profile-row:nth-child(even){grid-template-columns:1fr;gap:22px;padding:18px}
+      .profile-row:nth-child(even) .profile-photo{order:0}
+      .profile-photo,.profile-photo img{min-height:0;height:auto;aspect-ratio:4/5}
+      .profile-copy{padding:4px 4px 10px}
+      .profile-copy h2{font-size:32px}
+    }
+  </style>
 </head>
-
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-
   <header class="site-header">
     <div class="container">
       <nav class="navbar" aria-label="Primary">
-        <a class="brand" href="index.html" aria-label="Tomotina Kids home">
-          <img src="assets/images/logo.png" alt="Tomotina Kids logo" />
-        </a>
-
+        <a class="brand" href="index.html" aria-label="Tomotina Kids home"><img src="assets/images/logo.png" alt="Tomotina Kids logo" /></a>
         <div class="nav-links" aria-label="Main menu">
-          <a href="index.html">Home</a>
-          <a href="about.html">About</a>
-          <a href="programs.html">Programs</a>
-          <a href="gallery.html">Gallery</a>
-          <a href="team.html">Our Team</a>
-          <a href="contact.html">Contact</a>
+          <a href="index.html">Home</a><a href="about.html">About</a><a href="programs.html">Programs</a><a href="gallery.html">Gallery</a><a href="team.html">Our Team</a><a href="contact.html">Contact</a>
         </div>
-
         <div class="nav-actions">
           <a class="btn btn-primary nav-enquire" href="contact.html">Enquire Now</a>
-          <button
-            class="hamburger"
-            data-hamburger
-            aria-label="Open menu"
-            aria-expanded="false"
-            aria-controls="mobileMenu"
-            type="button"
-          >
-            <span></span><span></span><span></span>
-          </button>
+          <button class="hamburger" data-hamburger aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" type="button"><span></span><span></span><span></span></button>
         </div>
       </nav>
-
       <div id="mobileMenu" class="mobile-panel" data-mobile-panel>
         <div class="nav-links" aria-label="Mobile menu">
-          <a href="index.html">Home</a>
-          <a href="about.html">About</a>
-          <a href="programs.html">Programs</a>
-          <a href="gallery.html">Gallery</a>
-          <a href="team.html">Our Team</a>
-          <a href="contact.html">Contact</a>
+          <a href="index.html">Home</a><a href="about.html">About</a><a href="programs.html">Programs</a><a href="gallery.html">Gallery</a><a href="team.html">Our Team</a><a href="contact.html">Contact</a>
         </div>
-        <div class="nav-actions">
-          <a class="btn btn-primary" href="contact.html">Enquire Now</a>
-        </div>
+        <div class="nav-actions"><a class="btn btn-primary" href="contact.html">Enquire Now</a></div>
       </div>
     </div>
   </header>
@@ -78,20 +67,11 @@
             <div>
               <div class="breadcrumb">Home / Team</div>
               <span class="page-hero-kicker">Our team</span>
-              <h1 class="page-hero-title">Meet the professionals behind Tomotina Kids.</h1>
-              <p class="page-hero-sub">
-                Our team brings together special education, psychology, therapy support, and structured
-                child development practices to help every child grow with confidence, care, and dignity.
-              </p>
-              <div class="page-hero-actions">
-                <a class="btn btn-primary" href="contact.html">Enquire Now</a>
-                <a class="btn btn-outline" href="join-our-team.html">Careers</a>
-              </div>
+              <h1 class="page-hero-title">Meet the people who support every child’s journey.</h1>
+              <p class="page-hero-sub">A multidisciplinary team bringing together therapy, special education, counselling, coordination, sports and family support with compassion and professionalism.</p>
+              <div class="page-hero-actions"><a class="btn btn-primary" href="contact.html">Enquire Now</a><a class="btn btn-outline" href="join-our-team.html">Careers</a></div>
             </div>
-
-            <div class="page-hero-media">
-              <img src="assets/images/home/hero-office.jpg.JPG" alt="Tomotina Kids professional centre environment" />
-            </div>
+            <div class="page-hero-media"><img src="assets/images/home/hero-office.jpg.JPG" alt="Tomotina Kids professional centre environment" /></div>
           </div>
         </div>
       </div>
@@ -99,234 +79,53 @@
 
     <section class="section">
       <div class="container">
-        <div class="section-title">
-          <div>
-            <p class="kicker">Our philosophy</p>
-            <h2>A multidisciplinary team focused on the whole child</h2>
-            <p>
-              Tomotina’s team works with warmth and professionalism to support communication,
-              behaviour, confidence, learning, and everyday life skills.
-            </p>
-          </div>
+        <div class="team-intro">
+          <p class="kicker">Our professionals</p>
+          <h2>Experience, empathy and individualized care</h2>
+          <p>Every member contributes a distinct area of expertise while working toward the same goal: helping children build confidence, communication, independence and meaningful life skills.</p>
         </div>
 
-        <div class="feature-grid">
-          <div class="feature-card card">
-            <div class="f-ico" aria-hidden="true">👩‍🏫</div>
-            <h3>Special educators</h3>
-            <p>Structured support for learning, routines, engagement, and developmental goals.</p>
-          </div>
+        <div class="team-profiles">
+          <article class="profile-row">
+            <div class="profile-photo"><img src="assets/images/team/sachin.jpg" alt="Sachin Kumar" /></div>
+            <div class="profile-copy"><div class="profile-number">Profile 01</div><h2>Sachin Kumar</h2><div class="profile-role">HOD · ABA &amp; Language Therapist · Oral Placement Therapist</div><p>Sachin is a dedicated therapist specializing in ABA, Language Therapy, and Oral Placement Therapy. He provides individualized, evidence-based interventions to help children develop communication, behavior, speech, and functional skills while working closely with families to achieve meaningful progress.</p></div>
+          </article>
 
-          <div class="feature-card card">
-            <div class="f-ico" aria-hidden="true">🧠</div>
-            <h3>Psychology support</h3>
-            <p>Guidance for emotional regulation, behaviour, confidence, and family understanding.</p>
-          </div>
+          <article class="profile-row">
+            <div class="profile-photo"><img src="assets/images/team/Mantsha.JPG" alt="Mantsha" /></div>
+            <div class="profile-copy"><div class="profile-number">Profile 02</div><h2>Mantsha</h2><div class="profile-role">Centre Administrator</div><p>A dedicated Centre Administrator with experience in child development settings and program management. Committed to creating a nurturing environment while maintaining high standards of care and professionalism.</p></div>
+          </article>
 
-          <div class="feature-card card">
-            <div class="f-ico" aria-hidden="true">🤝</div>
-            <h3>Parent collaboration</h3>
-            <p>Clear communication and guidance that helps progress continue at home too.</p>
-          </div>
+          <article class="profile-row">
+            <div class="profile-photo"><img src="assets/images/team/Amrita.JPG" alt="Amrita Talapatra" /></div>
+            <div class="profile-copy"><div class="profile-number">Profile 03</div><h2>Amrita Talapatra</h2><div class="profile-role">Centre Coordinator · Parent Counsellor · Art Therapist</div><p>Grounded in empathetic listening, Amrita strives to make every individual feel heard, valued, and respected. Her approach is rooted in a deep understanding of human interaction, behavior, and holistic wellbeing, and is further supported by an MSc in Psychology (Health and Wellbeing).</p></div>
+          </article>
 
-          <div class="feature-card card">
-            <div class="f-ico" aria-hidden="true">🌱</div>
-            <h3>Child-centered care</h3>
-            <p>Every child is seen for their strengths, pace, and unique developmental journey.</p>
-          </div>
+          <article class="profile-row">
+            <div class="profile-photo"><img src="assets/images/team/Akshat.PNG" alt="Akshat Kaushik" /></div>
+            <div class="profile-copy"><div class="profile-number">Profile 04</div><h2>Akshat Kaushik</h2><div class="profile-role">Sports and Occupational Therapist</div><p>A child development and sports professional with 6 years of experience in inclusive sports programs. Passionate about helping children build confidence, resilience, and lifelong skills through play and physical activity.</p></div>
+          </article>
+
+          <article class="profile-row">
+            <div class="profile-photo"><img src="assets/images/team/Sonia.jpg" alt="Sonia Rawat" /></div>
+            <div class="profile-copy"><div class="profile-number">Profile 05</div><h2>Sonia Rawat</h2><div class="profile-role">Special Educator and Psychologist</div><p>A Special Educator and Counselling Psychologist with a Master’s degree in Counselling Psychology, passionate about helping every child thrive. Dedicated to fostering inclusive learning, confidence, independence, and lifelong skills.</p></div>
+          </article>
+
+          <article class="profile-row">
+            <div class="profile-photo"><img src="assets/images/team/Shweta.jpg" alt="Mrs. Shweta Banerjee" /></div>
+            <div class="profile-copy"><div class="profile-number">Profile 06</div><h2>Mrs. Shweta Banerjee</h2><div class="profile-role">Special Educator Volunteer</div><p>An RCI-certified Special Educator with experience supporting children with diverse learning and developmental needs. Dedicated to creating personalized, evidence-based learning plans that build confidence, independence, and a love for learning.</p></div>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- Leadership -->
-    <section class="section">
-      <div class="container">
-        <div class="section-head">
-          <h2>Leadership</h2>
-          <p>Experienced professionals guiding the vision, quality, and care at Tomotina Kids.</p>
-        </div>
-
-        <div class="team-grid">
-          <article class="team-card">
-            <img src="assets/images/team/director.png" alt="Nitin Bhati, Founder and Director" />
-            <div class="team-body">
-              <h3>Nitin Bhati</h3>
-              <div class="team-meta">Founder & Director</div>
-              <div class="team-speciality">
-                Special educator with a strong focus on early intervention, individualized guidance,
-                inclusive care, and holistic child development.
-              </div>
-            </div>
-          </article>
-
-          <!-- <article class="team-card">
-            <img src="assets/images/team/manager.png" alt="Parnika Bansal, Manager and Senior Psychologist" />
-            <div class="team-body">
-              <h3>Parnika Bansal</h3>
-              <div class="team-meta">Manager & Senior Psychologist</div>
-              <div class="team-speciality">
-                Supports emotional well-being, behavioural understanding, family guidance,
-                and structured developmental support for children.
-              </div>
-            </div>
-          </article> -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Educators / Specialists
-    <section class="section section-soft">
-      <div class="container">
-        <div class="section-head">
-          <h2>Educators & Specialists</h2>
-          <p>
-            Our teaching and support team works closely with children and families through
-            structured sessions, individualized attention, and patient guidance.
-          </p>
-        </div>
-
-        <div class="team-grid">
-          <article class="team-card">
-            <img src="assets/images/team/teacher1.png" alt="Priya Dalal, Senior Special Educator" />
-            <div class="team-body">
-              <h3>Priya Dalal</h3>
-              <div class="team-meta">Senior Special Educator</div>
-              <div class="team-speciality">
-                Focused on structured support, skill-building, and helping children grow in
-                communication, participation, and confidence.
-              </div>
-            </div>
-          </article>
-
-          <!-- Add future team members below in the same format -->
-
-          <!--
-          <article class="team-card">
-            <img src="assets/images/team/teacher1.png" alt="Tomotina Kids educator" />
-            <div class="team-body">
-              <h3>Team Member Name</h3>
-              <div class="team-meta">Role / Designation</div>
-              <div class="team-speciality">
-                Short professional description about expertise, strengths, or area of support.
-              </div>
-            </div>
-          </article>
-          -->
-
-          <!--
-          <article class="team-card">
-            <img src="assets/images/team/manager.png" alt="Tomotina Kids team member" />
-            <div class="team-body">
-              <h3>Team Member Name</h3>
-              <div class="team-meta">Role / Designation</div>
-              <div class="team-speciality">
-                Short professional description about expertise, strengths, or area of support.
-              </div>
-            </div>
-          </article>
-        
-        </div>
-      </div>
-    </section> 
-      -->
-
-    <!-- Why team matters -->
-    <section class="section">
-      <div class="container">
-        <div class="section-title">
-          <div>
-            <p class="kicker">Why this matters</p>
-            <h2>The right people make all the difference</h2>
-            <p>
-              Parents are not just choosing a centre — they are choosing the people who will
-              support their child’s growth, confidence, and development.
-            </p>
-          </div>
-        </div>
-
-        <div class="grid-3">
-          <div class="card">
-            <div class="icon teal" aria-hidden="true">💬</div>
-            <h3>Clear communication</h3>
-            <p>Families need updates they can understand and trust. Our team keeps communication open and supportive.</p>
-          </div>
-
-          <div class="card">
-            <div class="icon" aria-hidden="true">🧩</div>
-            <h3>Individual attention</h3>
-            <p>Every child is different, and our team works with patience, structure, and care for that reason.</p>
-          </div>
-
-          <div class="card">
-            <div class="icon sun" aria-hidden="true">🌟</div>
-            <h3>Confidence-building support</h3>
-            <p>We aim to create an environment where children feel safe, capable, and encouraged to progress.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="cta">
-      <div class="container">
-        <div class="cta-wrap">
-          <div>
-            <h3>Want to work with a team that truly cares?</h3>
-            <p>Connect with us to learn more about Tomotina or explore career opportunities.</p>
-          </div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <a class="btn btn-primary" href="contact.html">Contact Us</a>
-            <a class="btn btn-outline" href="join-our-team.html">View Careers</a>
-          </div>
-        </div>
-      </div>
-    </section>
+    <section class="cta"><div class="container"><div class="cta-wrap"><div><h3>Looking for the right support for your child?</h3><p>Speak with the Tomotina Kids team and learn how we can guide your family.</p></div><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-primary" href="contact.html">Contact Us</a><a class="btn btn-outline" href="programs.html">Explore Programs</a></div></div></div></section>
   </main>
 
-  <footer>
-    <div class="container">
-      <div class="footer-wrap">
-        <div>
-          <h4>Tomotina Kids Development Centre</h4>
-          <p>A nurturing and structured child development centre built on care, support, and trust.</p>
-        </div>
-
-        <div>
-          <h4>Quick Links</h4>
-          <p><a href="about.html">About</a></p>
-          <p><a href="programs.html">Programs</a></p>
-          <p><a href="gallery.html">Gallery</a></p>
-          <p><a href="team.html">Our Team</a></p>
-          <p><a href="join-our-team.html">Careers</a></p>
-          <p><a href="contact.html">Contact</a></p>
-        </div>
-
-        <div>
-          <h4>Contact</h4>
-          <p>📍 1080, Sector 40, Gurugram, Haryana</p>
-          <p>📞 +91 9643294715, +91 7009470084</p>
-          <p>✉️ tomotinaofficial@gmail.com</p>
-        </div>
-      </div>
-
-      <div class="footer-bottom">© <span id="year"></span> Tomotina Kids Development Centre.</div>
-    </div>
-  </footer>
+  <footer><div class="container"><div class="footer-wrap"><div><h4>Tomotina Kids Development Centre</h4><p>A nurturing and structured child development centre built on care, support, and trust.</p></div><div><h4>Quick Links</h4><p><a href="about.html">About</a></p><p><a href="programs.html">Programs</a></p><p><a href="gallery.html">Gallery</a></p><p><a href="team.html">Our Team</a></p><p><a href="join-our-team.html">Careers</a></p><p><a href="contact.html">Contact</a></p></div><div><h4>Contact</h4><p>📍 1080, Sector 40, Gurugram, Haryana</p><p>📞 +91 9643294715, +91 7009470084</p><p>✉️ tomotinaofficial@gmail.com</p></div></div><div class="footer-bottom">© <span id="year"></span> Tomotina Kids Development Centre.</div></div></footer>
 
   <script src="assets/js/main.js"></script>
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-
-  <div class="mobile-contact-bar" aria-label="Quick contact">
-    <a class="mcb-btn" href="tel:+917009470084" aria-label="Call">
-      <span class="mcb-ico">📞</span><span>Call</span>
-    </a>
-    <a class="mcb-btn" href="https://wa.me/917009470084?text=Hello%20Tomotina%20Kids%2C%20I%20have%20an%20enquiry." target="_blank" rel="noopener" aria-label="WhatsApp">
-      <span class="mcb-ico">💬</span><span>WhatsApp</span>
-    </a>
-    <a class="mcb-btn mcb-primary" href="contact.html" aria-label="Enquiry form">
-      <span class="mcb-ico">✉️</span><span>Enquiry</span>
-    </a>
-  </div>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+  <div class="mobile-contact-bar" aria-label="Quick contact"><a class="mcb-btn" href="tel:+917009470084" aria-label="Call"><span class="mcb-ico">📞</span><span>Call</span></a><a class="mcb-btn" href="https://wa.me/917009470084?text=Hello%20Tomotina%20Kids%2C%20I%20have%20an%20enquiry." target="_blank" rel="noopener" aria-label="WhatsApp"><span class="mcb-ico">💬</span><span>WhatsApp</span></a><a class="mcb-btn mcb-primary" href="contact.html" aria-label="Enquiry form"><span class="mcb-ico">✉️</span><span>Enquiry</span></a></div>
 </body>
 </html>
