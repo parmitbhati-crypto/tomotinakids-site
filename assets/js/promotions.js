@@ -68,12 +68,16 @@
     const image = safeImageUrl(item.image_url);
     if (image) {
       const proof = document.querySelector('.campaign-proof');
-      if (proof && !proof.querySelector('.campaign-feature-image')) {
-        const img = document.createElement('img');
-        img.className = 'campaign-feature-image';
+      if (proof) {
+        proof.classList.add('has-promotion-image');
+        let img = proof.querySelector('.campaign-feature-image');
+        if (!img) {
+          img = document.createElement('img');
+          img.className = 'campaign-feature-image';
+          proof.prepend(img);
+        }
         img.src = image;
         img.alt = item.title || 'Tomotina Kids advertisement';
-        proof.prepend(img);
       }
       document.querySelector('meta[property="og:image"]')?.setAttribute('content', image);
     }
