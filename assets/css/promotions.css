@@ -1,13 +1,16 @@
 .promotion-card-media{
+  display:block;
   width:calc(100% + 52px);
-  height:210px;
+  height:clamp(340px,48vw,520px);
   margin:-26px -26px 20px;
-  object-fit:cover;
+  object-fit:contain;
+  object-position:center;
   border-radius:inherit;
   border-bottom-left-radius:0;
   border-bottom-right-radius:0;
-  background:#e9f2f0;
+  background:#f5f1ea;
 }
+
 .home-promotions{padding-top:18px}
 .home-promotion-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .home-promotion-card{
@@ -17,20 +20,38 @@
   min-height:100%;
   padding:0;
 }
-.home-promotion-card img{width:100%;height:210px;object-fit:cover;background:#e9f2f0}
+.home-promotion-card img{
+  display:block;
+  width:100%;
+  height:clamp(360px,48vw,540px);
+  object-fit:contain;
+  object-position:center;
+  background:#f5f1ea;
+}
 .home-promotion-card-copy{display:flex;flex:1;flex-direction:column;align-items:flex-start;padding:22px}
 .home-promotion-card-copy h3{margin:10px 0 7px;font-size:1.25rem;line-height:1.28}
 .home-promotion-card-copy p{color:var(--muted)}
 .home-promotion-card-copy .btn{margin-top:auto}
+
+.campaign-proof.has-promotion-image{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  align-self:start;
+}
 .campaign-feature-image{
+  display:block;
   width:100%;
-  max-height:330px;
-  margin:0 0 18px;
-  object-fit:cover;
+  height:min(72vh,720px);
+  margin:0 0 4px;
+  object-fit:contain;
+  object-position:center;
   border-radius:18px;
   border:1px solid rgba(255,255,255,.24);
+  background:rgba(255,255,255,.94);
   box-shadow:0 18px 50px rgba(2,6,23,.22);
 }
+
 .promotion-modal{
   position:fixed;
   inset:0;
@@ -51,8 +72,36 @@
   background:#fff;
   box-shadow:0 30px 100px rgba(0,0,0,.35);
 }
-.promotion-modal-image{width:100%;max-height:360px;object-fit:cover;background:#e9f2f0}
+.promotion-modal-card.has-image{
+  display:grid;
+  grid-template-columns:minmax(300px,.9fr) minmax(340px,1.1fr);
+  width:min(96vw,1040px);
+  height:min(88vh,780px);
+  max-height:88vh;
+  overflow:hidden;
+}
+.promotion-modal-image{
+  display:block;
+  width:100%;
+  max-height:360px;
+  object-fit:contain;
+  object-position:center;
+  background:#f5f1ea;
+}
+.promotion-modal-card.has-image .promotion-modal-image{
+  width:100%;
+  height:100%;
+  max-height:none;
+  object-fit:contain;
+  object-position:center;
+  background:#f5f1ea;
+}
 .promotion-modal-copy{padding:clamp(22px,4vw,34px)}
+.promotion-modal-card.has-image .promotion-modal-copy{
+  align-self:stretch;
+  overflow:auto;
+  min-width:0;
+}
 .promotion-modal-copy h2{margin:10px 0 10px;font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.13}
 .promotion-modal-copy p{color:var(--muted);font-size:1rem}
 .promotion-modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
@@ -65,7 +114,7 @@
   height:42px;
   border:0;
   border-radius:50%;
-  background:rgba(255,255,255,.94);
+  background:rgba(255,255,255,.96);
   color:#0f172a;
   font-size:25px;
   line-height:1;
@@ -73,11 +122,47 @@
   box-shadow:0 8px 24px rgba(2,6,23,.18);
 }
 body.promotion-modal-open{overflow:hidden}
-@media(max-width:900px){.home-promotion-grid{grid-template-columns:1fr 1fr}}
+
+@media(max-width:900px){
+  .home-promotion-grid{grid-template-columns:1fr 1fr}
+  .promotion-modal-card.has-image{
+    grid-template-columns:minmax(260px,.85fr) minmax(300px,1.15fr);
+  }
+}
+
+@media(max-width:760px){
+  .campaign-proof.has-promotion-image{display:flex}
+}
+
 @media(max-width:640px){
   .home-promotion-grid{grid-template-columns:1fr}
-  .promotion-modal{padding:10px}
-  .promotion-modal-card{width:100%;border-radius:19px}
-  .promotion-modal-image{max-height:290px}
+  .home-promotion-card img{height:min(68vh,560px)}
+  .promotion-card-media{height:min(68vh,560px)}
+  .promotion-modal{padding:8px}
+  .promotion-modal-card,
+  .promotion-modal-card.has-image{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    height:auto;
+    max-height:94vh;
+    overflow:auto;
+    border-radius:19px;
+  }
+  .promotion-modal-card.has-image .promotion-modal-image,
+  .promotion-modal-image{
+    flex:0 0 auto;
+    width:100%;
+    height:min(44vh,430px);
+    max-height:430px;
+    object-fit:contain;
+    background:#f5f1ea;
+  }
+  .promotion-modal-card.has-image .promotion-modal-copy{
+    overflow:visible;
+  }
+  .promotion-modal-copy{padding:22px}
+  .promotion-modal-copy h2{font-size:clamp(1.55rem,7vw,2.15rem)}
   .promotion-modal-actions .btn{width:100%}
+  .campaign-feature-image{height:min(72vh,680px)}
 }
