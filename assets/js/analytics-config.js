@@ -33,21 +33,28 @@ window.TOMOTINA_ANALYTICS = {
     }
   };
 
-  if (localStorage.getItem(choiceKey)) {
+  if (!localStorage.getItem(choiceKey)) {
+    const banner = document.createElement('aside');
+    banner.className = 'consent-banner';
+    banner.setAttribute('aria-label', 'Analytics preferences');
+    banner.innerHTML = '<div><strong>Your privacy choices</strong><p>Essential site features always work. Optional analytics help us understand which campaigns lead families to useful support.</p></div><div class="consent-actions"><button class="btn btn-outline" type="button" data-consent="denied">Essential only</button><button class="btn btn-primary" type="button" data-consent="granted">Allow analytics</button></div>';
+    document.body.appendChild(banner);
+    banner.addEventListener('click', (event) => {
+      const choice = event.target.closest('[data-consent]')?.dataset.consent;
+      if (!choice) return;
+      localStorage.setItem(choiceKey, choice);
+      banner.remove();
+      loadProviders();
+    });
+  } else {
     loadProviders();
-    return;
   }
 
-  const banner = document.createElement('aside');
-  banner.className = 'consent-banner';
-  banner.setAttribute('aria-label', 'Analytics preferences');
-  banner.innerHTML = '<div><strong>Your privacy choices</strong><p>Essential site features always work. Optional analytics help us understand which campaigns lead families to useful support.</p></div><div class="consent-actions"><button class="btn btn-outline" type="button" data-consent="denied">Essential only</button><button class="btn btn-primary" type="button" data-consent="granted">Allow analytics</button></div>';
-  document.body.appendChild(banner);
-  banner.addEventListener('click', (event) => {
-    const choice = event.target.closest('[data-consent]')?.dataset.consent;
-    if (!choice) return;
-    localStorage.setItem(choiceKey, choice);
-    banner.remove();
-    loadProviders();
-  });
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  if (['/', '/index.html'].includes(path) && !document.querySelector('script[data-home-promotions-loader]')) {
+    const script = document.createElement('script');
+    script.src = '/assets/js/promotions-home.js';
+    script.dataset.homePromotionsLoader = 'true';
+    document.body.appendChild(script);
+  }
 })();
