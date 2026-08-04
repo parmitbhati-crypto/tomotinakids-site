@@ -1,0 +1,79 @@
+.promotion-help{
+  display:grid;
+  gap:5px;
+  margin:16px 0 4px;
+  padding:13px 14px;
+  border:1px solid rgba(15,118,110,.18);
+  border-radius:13px;
+  background:#f1faf7;
+  color:#315a57;
+  font-size:13px;
+}
+.promotion-help strong{color:#174e4d}
+.optional-label{font-weight:600;color:var(--portal-muted);font-size:11px}
+.field-help{display:block;margin-top:6px;color:var(--portal-muted);font-size:11px;line-height:1.45}
+.promotion-photo-field{
+  display:grid;
+  gap:12px;
+  padding:16px;
+  border:1px dashed rgba(15,118,110,.34);
+  border-radius:14px;
+  background:#f8fcfb;
+}
+.promotion-photo-field strong{color:var(--portal-ink)}
+.promotion-photo-field p{margin:4px 0 0;color:var(--portal-muted);font-size:12px}
+.promotion-upload-button{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  width:max-content;
+  min-width:150px;
+  padding:10px 14px;
+  border:1px solid rgba(15,118,110,.28);
+  border-radius:999px;
+  background:#fff;
+  color:#174e4d!important;
+  cursor:pointer;
+}
+.promotion-upload-button input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.promotion-image-preview{display:grid;gap:10px;justify-items:start}
+.promotion-image-preview img{
+  width:min(100%,420px);
+  max-height:260px;
+  object-fit:cover;
+  border-radius:14px;
+  border:1px solid var(--portal-border);
+  background:#fff;
+}
+.promotion-publish-toggle{
+  display:flex!important;
+  grid-template-columns:none!important;
+  align-items:flex-start;
+  gap:10px!important;
+  padding:14px;
+  border:1px solid var(--portal-border);
+  border-radius:13px;
+  background:#fff;
+}
+.promotion-publish-toggle input{width:auto!important;margin-top:3px}
+.promotion-publish-toggle span{display:grid;gap:3px}
+.promotion-publish-toggle small{font-weight:500;color:var(--portal-muted)}
+.promotion-admin-item{align-items:flex-start}
+.promotion-admin-main{display:grid;grid-template-columns:92px 1fr;gap:14px;min-width:0;flex:1}
+.promotion-admin-thumb{
+  width:92px;
+  height:76px;
+  object-fit:cover;
+  border-radius:11px;
+  border:1px solid var(--portal-border);
+  background:#eef5f3;
+}
+.promotion-admin-thumb.is-empty{display:grid;place-items:center;color:var(--portal-muted);font-size:11px;text-align:center;padding:8px}
+.promotion-admin-copy{min-width:0}
+.promotion-admin-copy h3{overflow-wrap:anywhere}
+.promotion-admin-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px;color:var(--portal-muted);font-size:11px}
+@media(max-width:600px){
+  .promotion-admin-main{grid-template-columns:1fr}
+  .promotion-admin-thumb{width:100%;height:180px}
+  .promotion-upload-button{width:100%}
+}
