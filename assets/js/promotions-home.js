@@ -99,7 +99,7 @@
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
     modal.setAttribute('aria-labelledby', 'promotionModalTitle');
-    modal.innerHTML = `<article class="promotion-modal-card">
+    modal.innerHTML = `<article class="promotion-modal-card${image ? ' has-image' : ''}">
       <button class="promotion-modal-close" type="button" aria-label="Close advertisement">×</button>
       ${image ? `<img class="promotion-modal-image" src="${escapeHtml(image)}" alt="${escapeHtml(item.title)}">` : ''}
       <div class="promotion-modal-copy">
