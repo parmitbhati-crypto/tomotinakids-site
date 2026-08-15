@@ -1013,39 +1013,23 @@
         }
         normalized.photo_url = latestPhotoUrl || "";
 
-        const { error: uErr } = await window.sb
-          .from("students")
-          .update({
-            full_name: evStudentName.value.trim() || normalized.child_profile.child_name || null,
-            parent_name: evParentName.value.trim() || normalized.basic_contact.parent_name || null,
-            parent_phone: evParentPhone.value.trim() || normalized.basic_contact.phone || null,
-            address: evAddress.value.trim() || normalized.basic_contact.address || null,
-            "Age": parsedAge(normalized.child_profile.age),
-            registration_date: evRegDate.value || null,
-            is_active: evActive.value === "true",
-            photo_url: latestPhotoUrl || null
-          })
-          .eq("id", studentId);
+        const { data: savedRegistrationId, error: saveError } = await window.sb
+          .rpc("save_registration_details", {
+            p_student_id: studentId,
+            p_registration_id: regRow?.id || null,
+            p_full_name: evStudentName.value.trim() || normalized.child_profile.child_name || null,
+            p_parent_name: evParentName.value.trim() || normalized.basic_contact.parent_name || null,
+            p_parent_phone: evParentPhone.value.trim() || normalized.basic_contact.phone || null,
+            p_address: evAddress.value.trim() || normalized.basic_contact.address || null,
+            p_age: parsedAge(normalized.child_profile.age),
+            p_registration_date: evRegDate.value || null,
+            p_is_active: evActive.value === "true",
+            p_photo_url: latestPhotoUrl || null,
+            p_form_data: normalized
+          });
 
-        if (uErr) throw uErr;
-
-        if (regRow?.id) {
-          const { error: rErr } = await window.sb
-            .from("student_registrations")
-            .update({ form_data: normalized })
-            .eq("id", regRow.id);
-          if (rErr) throw rErr;
-        } else {
-          const user = await requireAdmin();
-          const { error: insErr } = await window.sb
-            .from("student_registrations")
-            .insert([{
-              student_id: studentId,
-              form_data: normalized,
-              created_by: user?.id || null
-            }]);
-          if (insErr) throw insErr;
-        }
+        if (saveError) throw saveError;
+        if (!savedRegistrationId) throw new Error("Registration save returned no record.");
 
         if (previousPhotoUrl && latestPhotoUrl && previousPhotoUrl !== latestPhotoUrl) {
           const { error: removeErr } = await window.sb.storage.from(BUCKET).remove([previousPhotoUrl]);

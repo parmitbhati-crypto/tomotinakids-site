@@ -209,7 +209,8 @@
     refreshBtn.addEventListener("click", load);
 
     (async function init() {
-      await requireAdmin();
+      const admin = await requireAdmin();
+      if (!admin) return;
       await load();
     })();
   </script>

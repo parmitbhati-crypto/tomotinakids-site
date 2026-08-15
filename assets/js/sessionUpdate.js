@@ -208,20 +208,18 @@ let sessionCompleted = false;
         updated_by: user.id
       };
 
-      const { error: updErr } = await sb
-        .from("session_updates")
-        .upsert(payload, { onConflict: "session_id" });
+      const { data: completedSessionId, error: completionError } = await sb
+        .rpc("complete_assigned_session", {
+          p_session_id: payload.session_id,
+          p_attendance: payload.attendance,
+          p_progress_score: payload.progress_score,
+          p_remarks: payload.remarks
+        });
 
-      if (updErr) throw updErr;
-
-      // ✅ Auto-complete session
-      const { error: sessUpErr } = await sb
-        .from("sessions")
-        .update({ status: "completed" })
-        .eq("id", sessionId)
-        .eq("status", "scheduled");
-
-      if (sessUpErr) throw sessUpErr;
+      if (completionError) throw completionError;
+      if (completedSessionId !== sessionId) {
+        throw new Error("The session was not completed.");
+      }
 
       sessionCompleted = true;
       lockTeacherUI();

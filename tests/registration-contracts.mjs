@@ -6,13 +6,14 @@ const registrationNew = await readFile(resolve(root, 'portal/registration-new.ht
 const registrationDetails = await readFile(resolve(root, 'portal/registration-details.html'), 'utf8');
 const registrations = await readFile(resolve(root, 'portal/registrations.html'), 'utf8');
 const scheduler = await readFile(resolve(root, 'assets/js/admin.js'), 'utf8');
+const reviewMigration = await readFile(resolve(root, 'supabase/migrations/20260815034123_fix_review_findings.sql'), 'utf8');
 const failures = [];
 
 if (!registrationNew.includes('"Age": parsedAge(age)')) {
   failures.push('New registration does not persist age to students.Age.');
 }
-if (!registrationDetails.includes('"Age": parsedAge(normalized.child_profile.age)')) {
-  failures.push('Registration edits do not synchronize students.Age.');
+if (!registrationDetails.includes('p_age: parsedAge(normalized.child_profile.age)') || !reviewMigration.includes('"Age" = p_age')) {
+  failures.push('Registration edits do not synchronize students.Age through the atomic RPC.');
 }
 if (!registrationDetails.includes('.remove([previousPhotoUrl])')) {
   failures.push('Photo replacement does not remove the previous Storage object.');
@@ -25,6 +26,12 @@ if (!registrations.includes('new Date(year, month - 1, day).toLocaleDateString()
 }
 if (!scheduler.match(/from\(["']students["']\)[\s\S]*?\.eq\(["']is_active["'], true\)[\s\S]*?\.order\(["']full_name["']\)/)) {
   failures.push('Scheduler student picklist is not restricted to active registrations.');
+}
+if (!registrationDetails.includes('.rpc("save_registration_details"')) {
+  failures.push('Registration details do not use the atomic save RPC.');
+}
+if (!reviewMigration.includes('create or replace function public.save_registration_details')) {
+  failures.push('Atomic registration save migration is missing.');
 }
 
 if (failures.length) {

@@ -3,14 +3,15 @@ import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const read = (path) => readFile(resolve(root, path), "utf8");
-const [auth, login, client, shell, system, headers, config, migration, helperGrantMigration, rollout, setupPage, challengePage, setupScript, challengeScript, passwordScript] = await Promise.all([
+const [auth, login, client, shell, system, headers, config, migration, helperGrantMigration, rollout, setupPage, challengePage, setupScript, challengeScript, passwordScript, sessionHistory, sessionUpdate, registrations, reviewMigration] = await Promise.all([
   "assets/js/auth.js", "assets/js/login.js", "assets/js/supabaseClient.js",
   "assets/js/portal-shell.js", "assets/js/system.js", "_headers",
   "supabase/config.toml", "supabase/migrations/20260728224440_enforce_active_accounts_and_admin_mfa.sql",
   "supabase/migrations/20260728230000_restore_rls_helper_execution.sql",
   "supabase/rollouts/enable_admin_mfa_after_enrollment.sql", "portal/mfa-setup.html",
   "portal/mfa-challenge.html", "assets/js/mfa-setup.js", "assets/js/mfa-challenge.js",
-  "assets/js/set-password.js",
+  "assets/js/set-password.js", "assets/js/sessionHistory.js", "assets/js/sessionUpdate.js",
+  "portal/registrations.html", "supabase/migrations/20260815034123_fix_review_findings.sql",
 ].map(read));
 const failures = [];
 const expect = (condition, message) => { if (!condition) failures.push(message); };
@@ -39,6 +40,10 @@ for (const [name, script] of [["setup", setupScript], ["challenge", challengeScr
   expect(!script.includes("auth.refreshSession"), `MFA ${name} must preserve the AAL2 session returned by verification.`);
 }
 expect(passwordScript.includes("/[a-z]/") && passwordScript.includes("/[A-Z]/") && passwordScript.includes("/[^A-Za-z0-9]/"), "Client password strength validation is incomplete.");
+expect(sessionHistory.includes("escapeSessionHistoryHtml(upd.remarks)"), "Session remarks are not escaped before HTML rendering.");
+expect(sessionUpdate.includes('.rpc("complete_assigned_session"'), "Session completion does not use the atomic RPC.");
+expect(reviewMigration.includes("sessions_teacher_complete_assigned") && reviewMigration.includes("guard_teacher_session_completion"), "Teacher session completion is not constrained by policy and trigger.");
+expect(registrations.includes("const admin = await requireAdmin();") && registrations.includes("if (!admin) return;"), "Registrations continue loading after the admin guard fails.");
 
 const portalFiles = (await readdir(resolve(root, "portal"))).filter((name) => name.endsWith(".html"));
 expect(portalFiles.length >= 20, "Portal page inventory unexpectedly changed; review crawler coverage.");

@@ -1,5 +1,15 @@
 // assets/js/sessionHistory.js
 
+function escapeSessionHistoryHtml(value = "") {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[character]);
+}
+
 (async function () {
   const user = await requireAuth();
   if (!user) return;
@@ -31,7 +41,7 @@
 
   studentSelect.innerHTML =
     `<option value="">— Select student —</option>` +
-    students.map(s => `<option value="${s.id}">${s.full_name}</option>`).join("");
+    students.map(s => `<option value="${escapeSessionHistoryHtml(s.id)}">${escapeSessionHistoryHtml(s.full_name)}</option>`).join("");
 
   container.innerHTML =
     `<div class="msg" data-type="info">Select a student to view session history.</div>`;
@@ -117,6 +127,18 @@
         .map(p => p.programs?.name)
         .filter(Boolean);
 
+      const teacherName = escapeSessionHistoryHtml(s.teacher?.full_name ?? "—");
+      const programNames = escapeSessionHistoryHtml(programs.length ? programs.join(", ") : "No program");
+      const attendance = upd?.attendance == null
+        ? `<span class="session-empty">Not marked</span>`
+        : escapeSessionHistoryHtml(upd.attendance);
+      const progress = upd?.progress_score == null
+        ? `<span class="session-empty">—</span>`
+        : escapeSessionHistoryHtml(upd.progress_score);
+      const remarks = upd?.remarks == null || upd.remarks === ""
+        ? `<span class="session-empty">No remarks</span>`
+        : escapeSessionHistoryHtml(upd.remarks);
+
       html += `
         <div class="session-card">
           <div class="session-card-header">
@@ -129,24 +151,24 @@
           </div>
 
           <div class="session-meta">
-            <span class="badge">👩‍🏫 ${s.teacher?.full_name ?? "—"}</span>
-            <span class="badge">📘 ${programs.length ? programs.join(", ") : "No program"}</span>
+            <span class="badge">👩‍🏫 ${teacherName}</span>
+            <span class="badge">📘 ${programNames}</span>
           </div>
 
           <div class="session-details">
             <div class="session-detail">
               <strong>Attendance</strong>
-              ${upd?.attendance ?? `<span class="session-empty">Not marked</span>`}
+              ${attendance}
             </div>
 
             <div class="session-detail">
               <strong>Progress</strong>
-              ${upd?.progress_score ?? `<span class="session-empty">—</span>`}
+              ${progress}
             </div>
 
             <div class="session-detail">
               <strong>Remarks</strong>
-              ${upd?.remarks ?? `<span class="session-empty">No remarks</span>`}
+              ${remarks}
             </div>
           </div>
         </div>
