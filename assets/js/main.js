@@ -40,7 +40,7 @@
     if (href.startsWith('tel:')) window.tomotinaTrack('phone_click', { link_url: href, link_text: label });
     if (href.includes('wa.me')) window.tomotinaTrack('whatsapp_click', { link_url: href.split('?')[0], link_text: label });
     if (href.includes('google.com/maps')) window.tomotinaTrack('directions_click', { link_text: label });
-    if (href.includes('contact.html') || href.startsWith('#enquiry')) window.tomotinaTrack('enquiry_cta_click', { link_text: label });
+    if (href.includes('contact.html') || href.includes('home-enquiry') || href.startsWith('#enquiry')) window.tomotinaTrack('enquiry_cta_click', { link_text: label });
   });
   window.tomotinaTrack('page_view', { page_path: window.location.pathname });
 })();
@@ -160,7 +160,7 @@
 
   // Reveal animation
   const revealEls = Array.from(
-    document.querySelectorAll('.card, .hero-card, .hero-side, .cta-wrap, .trust-item, .img-premium')
+    document.querySelectorAll('.card, .hero-card, .hero-side, .cta-wrap, .trust-item, .img-premium, .calm-reveal')
   );
   revealEls.forEach((el) => el.classList.add('reveal'));
 
@@ -296,6 +296,7 @@
   if (!form) return;
 
   const submitBtn = form.querySelector('[data-enquiry-submit]');
+  const submitLabel = submitBtn?.textContent || 'Send Enquiry';
   const statusEl = form.querySelector('[data-enquiry-status]');
   const requestedProgram = new URLSearchParams(window.location.search).get('program');
   let isSubmitting = false;
@@ -392,7 +393,7 @@
       isSubmitting = false;
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Send Enquiry';
+        submitBtn.textContent = submitLabel;
       }
     }
   });
