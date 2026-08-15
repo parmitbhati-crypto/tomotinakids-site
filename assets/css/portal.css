@@ -1211,6 +1211,15 @@ body.portal-ready .day-table tr:nth-child(even) td{background:#fbfcfc}
 .cal-cell:hover{transform:none;border-color:var(--portal-teal);box-shadow:0 8px 20px rgba(15,118,110,.08)}
 .cal-cell.today{border-color:var(--portal-teal);background:var(--portal-mint);box-shadow:none}
 .cal-item,.session-chip{border-color:#bcded7;background:var(--portal-mint);color:var(--portal-teal-dark)}
+.cal-item[class*="session-"],.calendar-session-card[class*="session-"]{border-left-width:4px;border-left-style:solid}
+.cal-item.session-completed,.calendar-session-card.session-completed{border-color:#86c99f;background:#eaf8ef;color:#17643a}
+.cal-item.session-needs-update,.calendar-session-card.session-needs-update{border-color:#e69a9a;background:#fff0f0;color:#8f2525}
+.cal-item.session-upcoming,.calendar-session-card.session-upcoming{border-color:#9bbbe8;background:#eef5ff;color:#275b9b}
+.cal-item.session-cancelled,.calendar-session-card.session-cancelled{border-color:#c5cdcb;background:#f1f4f3;color:#65716f}
+.calendar-status-icon{display:inline-grid;place-items:center;flex:0 0 auto;width:16px;height:16px;border:1px solid currentColor;border-radius:50%;font-size:11px;font-weight:900}
+.calendar-status-pill{display:inline-flex;align-items:center;gap:5px;width:max-content;margin-top:8px;padding:4px 8px;border:1px solid currentColor;border-radius:999px;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.03em}
+.calendar-status-pill span{font-size:12px;font-weight:900}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 
 /* Login */
 body:not(.portal-ready) .card{

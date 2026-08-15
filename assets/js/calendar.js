@@ -10,6 +10,30 @@ function monthLabel(d) {
   return d.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 }
 
+function getCalendarSessionState(session, now = new Date()) {
+  const status = String(session.status || "scheduled").toLowerCase();
+  if (status === "completed") {
+    return { key: "completed", label: "Completed", icon: "✓" };
+  }
+  if (status === "cancelled") {
+    return { key: "cancelled", label: "Cancelled", icon: "×" };
+  }
+  if (new Date(session.ends_at) < now) {
+    return { key: "needs-update", label: "Update required", icon: "!" };
+  }
+  return { key: "upcoming", label: "Upcoming", icon: "•" };
+}
+
+function calendarSessionTile(session) {
+  const state = getCalendarSessionState(session);
+  const studentName = session.students?.full_name || "Student";
+  return `<div class="cal-item session-${state.key}" title="${state.label}">
+    <span class="calendar-status-icon" aria-hidden="true">${state.icon}</span>
+    <span>${studentName}</span>
+    <span class="sr-only">${state.label}</span>
+  </div>`;
+}
+
 async function fetchMonthSessions(from, to) {
   const user = await requireAuth();
   if (!user) return [];
@@ -17,7 +41,7 @@ async function fetchMonthSessions(from, to) {
   const { data, error } = await window.sb
     .from("sessions")
     .select(`
-      id, starts_at, ends_at, location,
+      id, starts_at, ends_at, location, status,
       students(full_name),
       session_programs(programs(name))
     `)
@@ -94,7 +118,7 @@ async function renderCalendar() {
     cell.innerHTML = `
       <div class="d">${d.getDate()}</div>
       <div class="cal-items">
-        ${list.slice(0,3).map(s => `<div class="cal-item">${s.students?.full_name || "Student"}</div>`).join("")}
+        ${list.slice(0,3).map(calendarSessionTile).join("")}
         ${list.length > 3 ? `<div class="cal-item">+${list.length - 3} more</div>` : ""}
       </div>
     `;
@@ -140,12 +164,14 @@ function showDayDetails(dateObj, list) {
 
     const progText = progNames.length ? progNames.join(", ") : "—";
     const locText = s.location ? s.location : "—";
+    const state = getCalendarSessionState(s);
 
     return `
-      <a class="list-item" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
+      <a class="list-item calendar-session-card session-${state.key}" href="/portal/session.html?session=${encodeURIComponent(s.id)}">
         <div class="li-main">
           <div class="li-title">${toTimeLabel(st)}–${toTimeLabel(en)} • ${name}</div>
           <div class="li-sub">Programs: ${progText} • Location: ${locText}</div>
+          <div class="calendar-status-pill"><span aria-hidden="true">${state.icon}</span>${state.label}</div>
         </div>
       </a>
     `;
