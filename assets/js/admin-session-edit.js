@@ -4,8 +4,11 @@ function qs(id) {
 
 let sessionId = null;
 let teacherId = null;
+let studentId = null;
 let isSaving = false;
 let currentStatus = "scheduled";
+const GROUP_SESSION_PROGRAM_NAMES = new Set(["group therapy", "sports activity"]);
+const programNamesById = new Map();
 
 /* =========================
    Helpers
@@ -38,6 +41,25 @@ function toISO(date, time) {
   return new Date(`${date}T${time}:00`).toISOString();
 }
 
+function normalizeProgramName(name) {
+  return String(name || "").trim().toLowerCase();
+}
+
+function isGroupSessionProgramIds(programIds) {
+  return programIds.length > 0 && programIds.every(id =>
+    GROUP_SESSION_PROGRAM_NAMES.has(normalizeProgramName(programNamesById.get(String(id))))
+  );
+}
+
+function isGroupSessionConflict(session) {
+  const names = (session.session_programs || [])
+    .map(item => item.programs?.name)
+    .filter(Boolean);
+  return names.length > 0 && names.every(name =>
+    GROUP_SESSION_PROGRAM_NAMES.has(normalizeProgramName(name))
+  );
+}
+
 /* =========================
    Auth
 ========================= */
@@ -65,6 +87,11 @@ async function loadPrograms() {
 
   if (error) throw error;
 
+  programNamesById.clear();
+  (data || []).forEach(program => {
+    programNamesById.set(String(program.id), program.name);
+  });
+
   qs("programSelect").innerHTML = (data || []).map(p =>
     `<option value="${p.id}">${p.name}</option>`
   ).join("");
@@ -73,12 +100,12 @@ async function loadPrograms() {
 /* =========================
    Conflict Check
 ========================= */
-async function hasTeacherConflict(newStartsAt, newEndsAt) {
+async function hasTeacherConflict(newStartsAt, newEndsAt, programIds) {
   if (!teacherId) return false;
 
   const { data, error } = await window.sb
     .from("sessions")
-    .select("id")
+    .select("id, student_id, session_programs(programs(name))")
     .eq("teacher_id", teacherId)
     .neq("id", sessionId)
     .neq("status", "cancelled")
@@ -87,7 +114,11 @@ async function hasTeacherConflict(newStartsAt, newEndsAt) {
 
   if (error) throw error;
 
-  return Array.isArray(data) && data.length > 0;
+  return (data || []).some(session =>
+    session.student_id === studentId ||
+    !isGroupSessionProgramIds(programIds) ||
+    !isGroupSessionConflict(session)
+  );
 }
 
 /* =========================
@@ -106,6 +137,7 @@ async function loadSession() {
     .select(`
       id,
       teacher_id,
+      student_id,
       starts_at,
       ends_at,
       location,
@@ -120,6 +152,7 @@ async function loadSession() {
   if (error) throw error;
 
   teacherId = data.teacher_id;
+  studentId = data.student_id;
   currentStatus = data.status || "scheduled";
 
   qs("studentName").textContent = `Student: ${data.students?.full_name || "—"}`;
@@ -196,9 +229,9 @@ async function saveChanges(reschedule = false) {
       throw new Error("End time must be after start time.");
     }
 
-    const conflictExists = await hasTeacherConflict(startsAt, endsAt);
+    const conflictExists = await hasTeacherConflict(startsAt, endsAt, programs);
     if (conflictExists) {
-      throw new Error("This teacher already has another session that overlaps with the selected time.");
+      throw new Error("Only Group Therapy and Sports Activity may include multiple students at the same time.");
     }
 
     /* Update session */
@@ -239,7 +272,10 @@ async function saveChanges(reschedule = false) {
 
   } catch (e) {
     window.portalReportError?.("application", "Unable to update the session.");
-    setMsg("Unable to update the session. Please try again.", "error");
+    const safeMessage = e instanceof Error && e.message.startsWith("Only Group Therapy")
+      ? e.message
+      : "Unable to update the session. Please try again.";
+    setMsg(safeMessage, "error");
   } finally {
     isSaving = false;
 

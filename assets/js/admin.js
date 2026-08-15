@@ -9,6 +9,8 @@ function qs(id) { return document.getElementById(id); }
    GLOBAL STATE
 ================================ */
 let isSavingSession = false;
+const GROUP_SESSION_PROGRAM_NAMES = new Set(["group therapy", "sports activity"]);
+const programNamesById = new Map();
 
 /* ===============================
    UI HELPERS
@@ -36,6 +38,29 @@ function toLocalDateTimeISO(dateStr, timeStr) {
 function selectedMultiValues(selectEl) {
   return Array.from(document.querySelectorAll("#programChoices input:checked"))
     .map(input => input.value);
+}
+
+function normalizeProgramName(name) {
+  return String(name || "").trim().toLowerCase();
+}
+
+function isGroupSessionProgramNames(programNames) {
+  return programNames.length > 0 && programNames.every(name =>
+    GROUP_SESSION_PROGRAM_NAMES.has(normalizeProgramName(name))
+  );
+}
+
+function isGroupSessionProgramIds(programIds) {
+  return programIds.length > 0 && programIds.every(id =>
+    GROUP_SESSION_PROGRAM_NAMES.has(normalizeProgramName(programNamesById.get(String(id))))
+  );
+}
+
+function isGroupSessionConflict(session) {
+  const programNames = (session.session_programs || [])
+    .map(item => item.programs?.name)
+    .filter(Boolean);
+  return isGroupSessionProgramNames(programNames);
 }
 
 function fmtTime(d) {
@@ -136,6 +161,11 @@ async function loadDropdowns() {
     programEl.innerHTML = ``;
     return;
   }
+
+  programNamesById.clear();
+  (programs || []).forEach(program => {
+    programNamesById.set(String(program.id), program.name);
+  });
 
   programEl.innerHTML = (programs || [])
     .map(p => `<option value="${p.id}">${p.name}</option>`)
@@ -243,18 +273,23 @@ async function saveSession() {
 
     const { data: conflicts, error: cErr } = await window.sb
       .from("sessions")
-      .select("id, starts_at, ends_at")
+      .select("id, student_id, starts_at, ends_at, session_programs(programs(name))")
       .eq("teacher_id", teacherId)
       .neq("status", "cancelled")
       .lt("starts_at", endsAt)
       .gt("ends_at", startsAt);
 
     if (cErr) throw cErr;
-    if (conflicts?.length) {
-      const conflict = conflicts[0];
+    const blockingConflict = (conflicts || []).find(conflict =>
+      conflict.student_id === studentId ||
+      !isGroupSessionProgramIds(programIds) ||
+      !isGroupSessionConflict(conflict)
+    );
+    if (blockingConflict) {
+      const conflict = blockingConflict;
       const conflictStart = fmtTime(new Date(conflict.starts_at));
       const conflictEnd = fmtTime(new Date(conflict.ends_at));
-      throw new Error(`This teacher already has a session from ${conflictStart} to ${conflictEnd}. Choose a different time or edit the existing session.`);
+      throw new Error(`This teacher already has an incompatible session from ${conflictStart} to ${conflictEnd}. Only Group Therapy and Sports Activity may include multiple students at the same time.`);
     }
 
     const { data: inserted, error } = await window.sb
