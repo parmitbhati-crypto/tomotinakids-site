@@ -40,13 +40,15 @@
     if (href.startsWith('tel:')) window.tomotinaTrack('phone_click', { link_url: href, link_text: label });
     if (href.includes('wa.me')) window.tomotinaTrack('whatsapp_click', { link_url: href.split('?')[0], link_text: label });
     if (href.includes('google.com/maps')) window.tomotinaTrack('directions_click', { link_text: label });
-    if (href.includes('contact.html') || href.startsWith('#enquiry')) window.tomotinaTrack('enquiry_cta_click', { link_text: label });
+    if (href.includes('contact.html') || href.includes('home-enquiry') || href.startsWith('#enquiry')) window.tomotinaTrack('enquiry_cta_click', { link_text: label });
   });
   window.tomotinaTrack('page_view', { page_path: window.location.pathname });
 })();
 
 (function () {
   document.documentElement.classList.add('js');
+  const isPublicSite = !window.location.pathname.includes('/portal/');
+  if (isPublicSite) document.body.classList.add('joyful-growth');
 
   const hamburger = document.querySelector('[data-hamburger]');
   const mobilePanel = document.querySelector('[data-mobile-panel]');
@@ -66,10 +68,144 @@
   }
 
   const current = (window.location.pathname.split('/').pop() || 'index.html').split('?')[0];
+  if (isPublicSite) {
+    document.querySelectorAll('.nav-links').forEach((nav) => {
+      if (nav.querySelector('a[href="campaigns.html"]')) return;
+      const programs = nav.querySelector('a[href="programs.html"]');
+      if (!programs) return;
+      const events = document.createElement('a');
+      events.href = 'campaigns.html';
+      events.textContent = 'Workshops & Events';
+      programs.after(events);
+    });
+  }
   document.querySelectorAll('.nav-links a').forEach((link) => {
     const href = (link.getAttribute('href') || '').split('?')[0];
     if (href === current) link.classList.add('active');
   });
+
+  // Accessible desktop program mega-menu; mobile keeps the simpler page link.
+  if (isPublicSite) {
+    const serviceLinks = [
+      ['Special Education','special-education'],['School Readiness','school-readiness'],['NIOS Support','nios-support'],
+      ['Speech & Language Therapy','speech-language-therapy'],['Oral Placement Therapy','oral-placement-therapy'],['ABA','aba'],
+      ['Activities of Daily Living','activities-daily-living'],['Occupational Therapy','occupational-therapy'],['Sports Program','sports-program'],
+      ['Art Program','art-program'],['Music Program','music-program'],['Dance & Movement Therapy','dance-movement-therapy'],
+      ['Adolescent Counselling','adolescent-counselling']
+    ];
+    const inServiceDirectory = window.location.pathname.includes('/services/');
+    const servicePrefix = inServiceDirectory ? '' : 'services/';
+    document.querySelectorAll('.navbar > .nav-links').forEach((nav) => {
+      nav.querySelectorAll('a').forEach((candidate) => {
+        if (/^admissions?$/i.test(candidate.textContent.trim())) candidate.remove();
+      });
+      const link = nav.querySelector('a[href$="programs.html"]');
+      if (!link || link.closest('.program-menu')) return;
+      const menu = document.createElement('div');
+      menu.className = 'program-menu';
+      link.before(menu);
+      menu.appendChild(link);
+      link.classList.add('program-menu-trigger');
+      link.setAttribute('aria-haspopup', 'true');
+      link.setAttribute('aria-expanded', 'false');
+      const panel = document.createElement('div');
+      panel.className = 'program-menu-panel';
+      panel.innerHTML = `<div class="program-menu-grid">${serviceLinks.map(([name,slug]) => `<a href="${servicePrefix}${slug}.html">${name}</a>`).join('')}</div><a class="program-menu-all" href="${inServiceDirectory ? '../programs.html' : 'programs.html'}">View all programs <span aria-hidden="true">→</span></a>`;
+      menu.appendChild(panel);
+      const setOpen = (open) => { menu.classList.toggle('open', open); link.setAttribute('aria-expanded', String(open)); };
+      menu.addEventListener('mouseenter', () => setOpen(true));
+      menu.addEventListener('mouseleave', () => setOpen(false));
+      menu.addEventListener('focusin', () => setOpen(true));
+      menu.addEventListener('focusout', (event) => { if (!menu.contains(event.relatedTarget)) setOpen(false); });
+      menu.addEventListener('keydown', (event) => { if (event.key === 'Escape') { setOpen(false); link.focus(); } });
+    });
+  }
+
+  // About menu and consistent primary navigation order.
+  if (isPublicSite) {
+    const inServiceDirectory = window.location.pathname.includes('/services/');
+    const rootPrefix = inServiceDirectory ? '../' : '';
+    document.querySelectorAll('.navbar > .nav-links').forEach((nav) => {
+      const aboutLink = nav.querySelector('a[href$="about.html"]');
+      if (aboutLink && !aboutLink.closest('.about-menu')) {
+        const galleryLink = nav.querySelector('a[href$="gallery.html"]');
+        galleryLink?.remove();
+        const menu = document.createElement('div');
+        menu.className = 'about-menu';
+        aboutLink.before(menu);
+        menu.appendChild(aboutLink);
+        aboutLink.setAttribute('aria-haspopup', 'true');
+        aboutLink.setAttribute('aria-expanded', 'false');
+        const panel = document.createElement('div');
+        panel.className = 'about-menu-panel';
+        panel.innerHTML = `<a href="${rootPrefix}about.html">About Tomotina</a><a href="${rootPrefix}gallery.html">Gallery</a><a href="${rootPrefix}visit.html">Visit the Centre</a>`;
+        menu.appendChild(panel);
+        const setOpen = (open) => { menu.classList.toggle('open', open); aboutLink.setAttribute('aria-expanded', String(open)); };
+        menu.addEventListener('mouseenter', () => setOpen(true));
+        menu.addEventListener('mouseleave', () => setOpen(false));
+        menu.addEventListener('focusin', () => setOpen(true));
+        menu.addEventListener('focusout', (event) => { if (!menu.contains(event.relatedTarget)) setOpen(false); });
+        menu.addEventListener('keydown', (event) => { if (event.key === 'Escape') { setOpen(false); aboutLink.focus(); } });
+      }
+      nav.querySelectorAll('a[href$="join-our-team.html"]').forEach((link) => {
+        if (!link.closest('.team-menu')) link.remove();
+      });
+      const teamLink = nav.querySelector('a[href$="team.html"]');
+      if (teamLink && !teamLink.closest('.team-menu')) {
+        const menu = document.createElement('div');
+        menu.className = 'team-menu';
+        teamLink.before(menu);
+        menu.appendChild(teamLink);
+        teamLink.setAttribute('aria-haspopup', 'true');
+        teamLink.setAttribute('aria-expanded', 'false');
+        if (current === 'join-our-team.html') teamLink.classList.add('active');
+        const panel = document.createElement('div');
+        panel.className = 'team-menu-panel';
+        panel.innerHTML = `<a href="${rootPrefix}team.html">Meet Our Team</a><a href="${rootPrefix}join-our-team.html">Careers</a>`;
+        menu.appendChild(panel);
+        const setOpen = (open) => { menu.classList.toggle('open', open); teamLink.setAttribute('aria-expanded', String(open)); };
+        menu.addEventListener('mouseenter', () => setOpen(true));
+        menu.addEventListener('mouseleave', () => setOpen(false));
+        menu.addEventListener('focusin', () => setOpen(true));
+        menu.addEventListener('focusout', (event) => { if (!menu.contains(event.relatedTarget)) setOpen(false); });
+        menu.addEventListener('keydown', (event) => { if (event.key === 'Escape') { setOpen(false); teamLink.focus(); } });
+      }
+      const home = nav.querySelector('a[href$="index.html"]');
+      const about = nav.querySelector('.about-menu');
+      const programs = nav.querySelector('.program-menu') || nav.querySelector('a[href$="programs.html"]');
+      const team = nav.querySelector('.team-menu') || nav.querySelector('a[href$="team.html"]');
+      const events = nav.querySelector('a[href$="campaigns.html"]');
+      const contact = nav.querySelector('a[href$="contact.html"]');
+      nav.querySelectorAll('a[href$="contact.html"]').forEach((candidate) => { if (candidate !== contact) candidate.remove(); });
+      [home, about, programs, team, events, contact].filter(Boolean).forEach((item) => nav.appendChild(item));
+    });
+
+    // Mobile navigation mirrors the same six-item order on every public page.
+    document.querySelectorAll('[data-mobile-panel] .nav-links').forEach((nav) => {
+      const links = [
+        ['Home', 'index.html'],
+        ['About', 'about.html'],
+        ['Programs', 'programs.html'],
+        ['Our Team', 'team.html'],
+        ['Workshops & Events', 'campaigns.html'],
+        ['Contact', 'contact.html']
+      ];
+      nav.innerHTML = links.map(([label, href]) => {
+        if (href === 'team.html') {
+          const active = current === 'team.html' || current === 'join-our-team.html' ? ' active' : '';
+          return `<details class="mobile-team-menu"><summary class="${active.trim()}">${label}</summary><div><a href="${rootPrefix}team.html">Meet Our Team</a><a href="${rootPrefix}join-our-team.html">Careers</a></div></details>`;
+        }
+        const active = href === current ? ' class="active"' : '';
+        return `<a href="${rootPrefix}${href}"${active}>${label}</a>`;
+      }).join('');
+      nav.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          mobilePanel?.classList.remove('open');
+          hamburger?.setAttribute('aria-expanded', 'false');
+        });
+      });
+    });
+  }
 
   // Consistent legal and accessibility navigation across legacy footers.
   document.querySelectorAll('footer .footer-bottom').forEach((footerBottom) => {
@@ -93,7 +229,16 @@
     'Sports Program': 'Children building coordination, fitness, teamwork, and confidence',
     'Art Program': 'Children who benefit from creative, sensory, and fine-motor expression',
     'Music Program': 'Children building listening, rhythm, communication, and social engagement',
-    'Dance & Movement Therapy (DMT)': 'Children who connect and regulate through movement and non-verbal expression'
+    'Dance & Movement Therapy (DMT)': 'Children who connect and regulate through movement and non-verbal expression',
+    'Adolescent Counselling': 'Teenagers seeking confidential support for emotional, academic, relational, or life concerns'
+  };
+  const programPages = {
+    'Special Education': 'special-education', 'School Readiness Program': 'school-readiness',
+    'NIOS Support': 'nios-support', 'Speech & Language Therapy': 'speech-language-therapy',
+    'Oral Placement Therapy (OPT)': 'oral-placement-therapy', 'Applied Behavior Analysis (ABA)': 'aba',
+    'Activities of Daily Living (ADL)': 'activities-daily-living', 'Occupational Therapy': 'occupational-therapy',
+    'Sports Program': 'sports-program', 'Art Program': 'art-program', 'Music Program': 'music-program',
+    'Dance & Movement Therapy (DMT)': 'dance-movement-therapy', 'Adolescent Counselling': 'adolescent-counselling'
   };
   document.querySelectorAll('.program-card .program-body').forEach((body) => {
     const heading = body.querySelector('h3');
@@ -102,7 +247,8 @@
     const name = heading.textContent.trim();
     const fit = document.createElement('div');
     fit.className = 'program-fit';
-    fit.innerHTML = `<strong>Best suited for</strong><span>${audience}</span><small>Process: consultation → individualized plan → sessions → family feedback</small><a class="program-enquire" href="contact.html?program=${encodeURIComponent(name)}#enquiry">Ask about this program →</a>`;
+    const detailsUrl = programPages[name] ? `services/${programPages[name]}.html` : `contact.html?program=${encodeURIComponent(name)}#enquiry`;
+    fit.innerHTML = `<strong>Best suited for</strong><span>${audience}</span><small>Process: consultation → individualized plan → sessions → family feedback</small><a class="program-enquire" href="${detailsUrl}">Explore this program →</a>`;
     body.appendChild(fit);
   });
 
@@ -111,6 +257,8 @@
   if (carousel) {
     const track = carousel.querySelector('[data-carousel-track]');
     const dotsWrap = carousel.querySelector('[data-carousel-dots]');
+    const previous = carousel.querySelector('[data-carousel-prev]');
+    const next = carousel.querySelector('[data-carousel-next]');
     const slides = Array.from(track?.children || []);
     let idx = 0;
     let timer = null;
@@ -132,6 +280,9 @@
       if (!slides.length) return;
       idx = (next + slides.length) % slides.length;
       track.style.transform = `translateX(-${idx * 100}%)`;
+      slides.forEach((slide, i) => {
+        slide.setAttribute('aria-hidden', String(i !== idx));
+      });
       dotsWrap?.querySelectorAll('.dot').forEach((d, i) => {
         d.classList.toggle('active', i === idx);
       });
@@ -151,16 +302,24 @@
 
     renderDots();
     goTo(0);
-    start();
+    if (carousel.hasAttribute('data-autoplay')) start();
 
+    previous?.addEventListener('click', () => goTo(idx - 1));
+    next?.addEventListener('click', () => goTo(idx + 1));
+    carousel.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') goTo(idx - 1);
+      if (event.key === 'ArrowRight') goTo(idx + 1);
+    });
     carousel.addEventListener('mouseenter', stop);
-    carousel.addEventListener('mouseleave', start);
+    carousel.addEventListener('mouseleave', () => {
+      if (carousel.hasAttribute('data-autoplay')) start();
+    });
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
   }
 
   // Reveal animation
   const revealEls = Array.from(
-    document.querySelectorAll('.card, .hero-card, .hero-side, .cta-wrap, .trust-item, .img-premium')
+    document.querySelectorAll('.card, .hero-card, .hero-side, .cta-wrap, .trust-item, .img-premium, .calm-reveal')
   );
   revealEls.forEach((el) => el.classList.add('reveal'));
 
@@ -296,6 +455,7 @@
   if (!form) return;
 
   const submitBtn = form.querySelector('[data-enquiry-submit]');
+  const submitLabel = submitBtn?.textContent || 'Send Enquiry';
   const statusEl = form.querySelector('[data-enquiry-status]');
   const requestedProgram = new URLSearchParams(window.location.search).get('program');
   let isSubmitting = false;
@@ -392,7 +552,7 @@
       isSubmitting = false;
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Send Enquiry';
+        submitBtn.textContent = submitLabel;
       }
     }
   });

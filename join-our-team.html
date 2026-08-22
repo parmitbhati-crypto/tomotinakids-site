@@ -57,30 +57,7 @@
   </header>
 
   <main id="main">
-    <section class="page-hero">
-  <div class="container">
-    <div class="page-hero-card reveal">
-      <div class="page-hero-grid">
-        <div>
-          <div class="breadcrumb">Home / Careers</div>
-          <span class="page-hero-kicker">Careers</span>
-          <h1 class="page-hero-title">Join a team that leads with care.</h1>
-          <p class="page-hero-sub">
-            If you’re passionate about early learning, special education, therapy support, and child‑centered progress,
-            we’d love to hear from you.
-          </p>
-          <div class="page-hero-actions">
-            <a class="btn btn-primary" href="#apply">Apply Now</a>
-            <a class="btn btn-outline" href="contact.html">Contact HR</a>
-          </div>
-        </div>
-        <div class="page-hero-media" aria-hidden="true">
-          <img src="assets/images/jointeam.jpg" alt="Join our team" />
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    <section class="compact-title-band careers-title"><div class="container"><p class="calm-eyebrow">Careers at Tomotina</p><h1>Bring your skills. <em>Help meaningful progress grow.</em></h1><p>Join a multidisciplinary team supporting children, adolescents, and families with patience, professionalism, and purpose.</p><a class="btn calm-btn-primary" href="#apply">View roles and apply</a></div></section>
 
     <section class="section" id="apply">
       <div class="container">
@@ -106,26 +83,25 @@
             <h2>Apply Now</h2>
             <p>Please share your details and we’ll contact you soon.</p>
 
-            <!-- Simple form: works with mailto for now -->
-            <form class="form" action="mailto:info@tomotinakids.com" method="post" enctype="text/plain">
+            <form class="form" data-job-application-form novalidate>
               <div class="form-row">
                 <label>Full Name</label>
-                <input type="text" name="Full Name" required />
+                <input type="text" name="full_name" required maxlength="120" />
               </div>
 
               <div class="form-row">
                 <label>Email</label>
-                <input type="email" name="Email" required />
+                <input type="email" name="email" required maxlength="254" />
               </div>
 
               <div class="form-row">
                 <label>Phone</label>
-                <input type="tel" name="Phone" />
+                <input type="tel" name="phone" />
               </div>
 
               <div class="form-row">
                 <label>Role Interested In</label>
-                <select name="Role">
+                <select name="role_interest" required>
                   <option>Special Educator</option>
                   <option>Speech & Language Therapist</option>
                   <option>Occupational Therapist</option>
@@ -138,16 +114,17 @@
 
               <div class="form-row">
                 <label>Experience (brief)</label>
-                <textarea name="Experience" rows="4" placeholder="Example: 3 years in special education, ABA basics, IEP support..."></textarea>
+                <textarea name="experience" rows="4" maxlength="3000" placeholder="Example: 3 years in special education, ABA basics, IEP support..."></textarea>
               </div>
 
               <div class="form-row">
                 <label>Resume Link (Google Drive / Dropbox)</label>
-                <input type="url" name="Resume Link" placeholder="https://..." />
+                <input type="url" name="resume_url" maxlength="1000" pattern="https://.*" placeholder="https://..." />
               </div>
-
-              <button class="btn btn-primary" type="submit">Submit Application</button>
-              <p class="form-hint">This will open your email app to send the details. (We can upgrade this later to a Google Form or Supabase form.)</p>
+              <label class="consent-row"><input type="checkbox" name="consent" required><span>I consent to Tomotina Kids using these details to review and respond to my application. See our <a href="privacy.html">Privacy Policy</a>.</span></label>
+              <button class="btn btn-primary" type="submit" data-job-submit>Submit Application</button>
+              <p class="form-hint">Share a viewable resume link from Google Drive, Dropbox, or another trusted service.</p>
+              <div class="form-status" data-job-status hidden></div>
             </form>
           </div>
 
@@ -184,7 +161,7 @@
     </div>
   </footer>
 
-  <script src="assets/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0"></script><script src="assets/js/env.js"></script><script src="assets/js/supabaseClient.js"></script><script src="assets/js/main.js"></script><script src="assets/js/job-application.js"></script>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 
   <div class="mobile-contact-bar" aria-label="Quick contact">
