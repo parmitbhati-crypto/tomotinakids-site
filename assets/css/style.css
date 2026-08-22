@@ -1878,3 +1878,40 @@ footer{border-top-color:rgba(15,118,110,.1)}
   .joyful-growth .page-hero-media{border-radius:120px 120px 20px 20px}
 }
 @media(prefers-reduced-motion:reduce){.joyful-growth .page-hero::before,.joyful-growth .page-hero::after{animation:none}}
+
+/* Dedicated service pages */
+.service-detail{background:#fff9f0}
+.service-hero{position:relative;overflow:hidden;padding:clamp(64px,9vw,116px) 0 68px;background:linear-gradient(135deg,#fff9f0,#edf5ee 56%,#f9e9df)}
+.service-shape{position:absolute;border-radius:50%;pointer-events:none;opacity:.62}
+.service-shape-one{width:360px;height:360px;left:-170px;top:-160px;background:#cfe8d8;animation:joyShapeOne 20s ease-in-out infinite}
+.service-shape-two{width:280px;height:280px;right:-110px;bottom:-150px;background:#f3cfc0;animation:joyShapeTwo 24s ease-in-out infinite}
+.service-hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,.82fr);gap:clamp(46px,7vw,92px);align-items:center}
+.service-hero h1{max-width:790px;margin:0;font-size:clamp(3.4rem,6.4vw,6.7rem);line-height:.92}
+.service-lead{max-width:650px;margin:26px 0 0;color:#58706c;font-size:clamp(1.05rem,1.6vw,1.2rem);line-height:1.75}
+.service-note{max-width:620px;margin:18px 0 0;color:#647a76;font-size:.82rem;line-height:1.55}
+.service-hero-media{min-height:540px;margin:0;overflow:hidden;border-radius:48% 48% 28px 28px;box-shadow:0 28px 70px rgba(42,75,68,.16)}
+.service-hero-media img{width:100%;height:100%;min-height:540px;object-fit:cover}
+.service-trust{padding:24px 0;background:#173c3a;color:#e8f1ea}
+.service-trust-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.service-trust-grid span{padding:8px 22px;text-align:center;font-size:.82rem;font-weight:700;letter-spacing:.03em}
+.service-trust-grid span+span{border-left:1px solid rgba(255,255,255,.18)}
+.service-section{padding:clamp(76px,9vw,118px) 0;background:#fff9f0}
+.service-soft{background:#edf5ee}
+.service-intro-grid,.service-method-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(44px,8vw,120px);align-items:start}
+.service-intro-grid h2,.service-method-grid h2,.service-heading h2{margin:0;font-size:clamp(2.8rem,5vw,4.9rem);line-height:1}
+.service-intro-grid>div:last-child>p,.service-method-grid>div>p{color:#58706c;font-size:1.05rem;line-height:1.8}
+.service-checks{display:grid;gap:14px;margin:26px 0 0;padding:0;list-style:none}
+.service-checks li{position:relative;padding:14px 18px 14px 48px;border-top:1px solid rgba(52,124,104,.14)}
+.service-checks li::before{content:"✓";position:absolute;left:14px;color:#e77969;font-weight:800}
+.service-heading{max-width:760px;margin:0 auto 46px;text-align:center}
+.service-process{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.service-process article{padding:28px;border:1px solid rgba(52,124,104,.13);border-radius:24px;background:rgba(255,255,255,.65)}
+.service-process span{font-family:"Newsreader",serif;color:#e77969;font-size:1.25rem}.service-process h3{margin:22px 0 10px;font-family:"Newsreader",serif;font-size:1.75rem;font-weight:500}.service-process p{margin:0;color:#58706c;font-size:.9rem;line-height:1.65}
+.service-method-grid{grid-template-columns:1.15fr .85fr;align-items:center}
+.service-panel{padding:34px;border-radius:28px;background:#173c3a;color:#fff;box-shadow:0 24px 60px rgba(42,75,68,.15)}
+.service-panel small{color:#afd2bd;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.service-panel ul{display:grid;gap:15px;margin:22px 0 0;padding-left:20px}.service-panel li::marker{color:#f5c85b}
+.service-faq{background:#f4ece3}
+.service-faq [data-faq]{max-width:850px;margin:auto}
+@media(max-width:920px){.service-hero-grid,.service-intro-grid,.service-method-grid{grid-template-columns:1fr}.service-hero-media{min-height:440px}.service-hero-media img{min-height:440px}.service-trust-grid,.service-process{grid-template-columns:1fr 1fr}.service-trust-grid span:nth-child(3){border-left:0}.service-trust-grid span:nth-child(n+3){border-top:1px solid rgba(255,255,255,.18)}}
+@media(max-width:620px){.service-hero h1{font-size:clamp(3.2rem,15vw,4.6rem)}.service-hero-media{min-height:380px;border-radius:130px 130px 22px 22px}.service-hero-media img{min-height:380px}.service-trust-grid,.service-process{grid-template-columns:1fr}.service-trust-grid span+span,.service-trust-grid span:nth-child(3){border-left:0;border-top:1px solid rgba(255,255,255,.18)}.service-heading{text-align:left}}
+@media(prefers-reduced-motion:reduce){.service-shape{animation:none}}

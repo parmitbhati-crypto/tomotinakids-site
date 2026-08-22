@@ -106,7 +106,16 @@
     'Sports Program': 'Children building coordination, fitness, teamwork, and confidence',
     'Art Program': 'Children who benefit from creative, sensory, and fine-motor expression',
     'Music Program': 'Children building listening, rhythm, communication, and social engagement',
-    'Dance & Movement Therapy (DMT)': 'Children who connect and regulate through movement and non-verbal expression'
+    'Dance & Movement Therapy (DMT)': 'Children who connect and regulate through movement and non-verbal expression',
+    'Adolescent Counselling': 'Teenagers seeking confidential support for emotional, academic, relational, or life concerns'
+  };
+  const programPages = {
+    'Special Education': 'special-education', 'School Readiness Program': 'school-readiness',
+    'NIOS Support': 'nios-support', 'Speech & Language Therapy': 'speech-language-therapy',
+    'Oral Placement Therapy (OPT)': 'oral-placement-therapy', 'Applied Behavior Analysis (ABA)': 'aba',
+    'Activities of Daily Living (ADL)': 'activities-daily-living', 'Occupational Therapy': 'occupational-therapy',
+    'Sports Program': 'sports-program', 'Art Program': 'art-program', 'Music Program': 'music-program',
+    'Dance & Movement Therapy (DMT)': 'dance-movement-therapy', 'Adolescent Counselling': 'adolescent-counselling'
   };
   document.querySelectorAll('.program-card .program-body').forEach((body) => {
     const heading = body.querySelector('h3');
@@ -115,7 +124,8 @@
     const name = heading.textContent.trim();
     const fit = document.createElement('div');
     fit.className = 'program-fit';
-    fit.innerHTML = `<strong>Best suited for</strong><span>${audience}</span><small>Process: consultation → individualized plan → sessions → family feedback</small><a class="program-enquire" href="contact.html?program=${encodeURIComponent(name)}#enquiry">Ask about this program →</a>`;
+    const detailsUrl = programPages[name] ? `services/${programPages[name]}.html` : `contact.html?program=${encodeURIComponent(name)}#enquiry`;
+    fit.innerHTML = `<strong>Best suited for</strong><span>${audience}</span><small>Process: consultation → individualized plan → sessions → family feedback</small><a class="program-enquire" href="${detailsUrl}">Explore this program →</a>`;
     body.appendChild(fit);
   });
 
