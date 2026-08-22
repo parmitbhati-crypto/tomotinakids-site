@@ -1984,3 +1984,35 @@ footer .icon-btn.instagram,.icon-btn.instagram{background:radial-gradient(circle
 footer .icon-btn.whatsapp,.icon-btn.whatsapp{background:#25d366!important;border-color:transparent!important;color:#fff!important;opacity:1!important;filter:none!important}
 footer .icon-btn.instagram svg,footer .icon-btn.whatsapp svg,.icon-btn.instagram svg,.icon-btn.whatsapp svg{fill:#fff!important;color:#fff!important;opacity:1!important}
 footer .icon-btn.instagram:hover,footer .icon-btn.whatsapp:hover{filter:brightness(1.08)!important;transform:translateY(-2px)}
+
+/* Final visual polish: a larger brand mark and a softly animated, lively palette */
+@media(min-width:981px){
+  .home-calm .brand,.joyful-growth .brand{min-width:250px}
+  .home-calm .brand img,.joyful-growth .brand img{width:238px;height:64px}
+  .home-calm .navbar,.joyful-growth .navbar{padding-block:11px}
+}
+.home-calm .site-header,.joyful-growth .site-header{position:sticky;background:linear-gradient(105deg,rgba(255,250,241,.94),rgba(244,250,246,.94) 48%,rgba(255,245,240,.94));box-shadow:0 10px 34px rgba(45,83,73,.07)}
+.home-calm .site-header::after,.joyful-growth .site-header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,#77bea8,#f4c864,#eb8e7f,#9ebddd,#77bea8);background-size:220% 100%;opacity:.7;animation:tomotinaRibbon 10s linear infinite}
+.home-calm .btn-primary,.joyful-growth .btn-primary,.calm-btn-primary{background:linear-gradient(135deg,#347c68,#3e9b83)!important;box-shadow:0 13px 32px rgba(52,124,104,.23),0 3px 0 rgba(255,255,255,.22) inset}
+.home-calm .nav-links>a:hover,.joyful-growth .nav-links>a:hover,.home-calm .about-menu>a:hover,.joyful-growth .about-menu>a:hover,.home-calm .program-menu>a:hover,.joyful-growth .program-menu>a:hover,.home-calm .team-menu>a:hover,.joyful-growth .team-menu>a:hover{background:linear-gradient(135deg,rgba(119,190,168,.14),rgba(244,200,100,.13));color:#276b59}
+
+.calm-hero{background:linear-gradient(125deg,#fbf6ea 0%,#edf7ef 42%,#edf5f8 70%,#faece6 100%);background-size:180% 180%;animation:tomotinaWash 18s ease-in-out infinite}
+.calm-hero::before{content:"";position:absolute;width:540px;height:540px;left:38%;top:-360px;border-radius:50%;background:radial-gradient(circle,rgba(244,200,100,.27),rgba(231,121,105,.12) 42%,transparent 70%);filter:blur(3px);animation:tomotinaGlow 12s ease-in-out infinite;pointer-events:none}
+.calm-orb-one{background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.94),rgba(119,190,168,.5) 48%,rgba(158,189,221,.18))}
+.calm-orb-two{background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.78),rgba(235,142,127,.44) 48%,rgba(244,200,100,.2))}
+.calm-hero h1 em{background:linear-gradient(100deg,#e76f62,#ed8e73 50%,#cf796f);background-clip:text;-webkit-background-clip:text;color:transparent}
+.calm-breathe{background:linear-gradient(145deg,rgba(255,253,247,.94),rgba(238,247,241,.9));box-shadow:0 18px 48px rgba(42,75,68,.14),0 0 0 9px rgba(255,255,255,.2)}
+.calm-breathe span{border-color:rgba(71,157,132,.46);box-shadow:0 0 0 12px rgba(244,200,100,.08)}
+.calm-section,.calm-trust,.calm-journey-section,.calm-enquiry-section{background-color:#faf7ef;background-image:radial-gradient(circle at 7% 18%,rgba(244,200,100,.11),transparent 21%),radial-gradient(circle at 94% 82%,rgba(158,189,221,.12),transparent 24%)}
+.calm-story-section,.calm-voices-section{background-color:#edf5ee;background-image:radial-gradient(circle at 87% 16%,rgba(235,142,127,.12),transparent 24%),radial-gradient(circle at 9% 82%,rgba(119,190,168,.14),transparent 23%)}
+.joyful-growth .section{background-color:#fff9f0;background-image:radial-gradient(circle at 3% 12%,rgba(244,200,100,.08),transparent 18%),radial-gradient(circle at 97% 88%,rgba(158,189,221,.09),transparent 20%)}
+.joyful-growth .section.alt,.joyful-growth .section-soft{background-color:#edf5ee;background-image:radial-gradient(circle at 90% 12%,rgba(235,142,127,.1),transparent 21%),radial-gradient(circle at 8% 86%,rgba(119,190,168,.1),transparent 22%)}
+.calm-program,.calm-voice,.calm-step,.joyful-growth .card,.joyful-growth .program-card{transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}
+.calm-program:hover,.calm-voice:hover,.calm-step:hover,.joyful-growth .card:hover,.joyful-growth .program-card:hover{transform:translateY(-5px);border-color:rgba(235,142,127,.28);box-shadow:0 24px 58px rgba(42,75,68,.13)}
+.compact-title-band{position:relative;overflow:hidden;background:linear-gradient(125deg,#fff8ec,#edf6ef 42%,#eef5f8 72%,#faeae4);background-size:180% 180%;animation:tomotinaWash 20s ease-in-out infinite}
+.compact-title-band::before,.compact-title-band::after{content:"";position:absolute;border-radius:50%;pointer-events:none}.compact-title-band::before{width:250px;height:250px;left:-100px;top:-130px;background:rgba(119,190,168,.18);animation:tomotinaGlow 11s ease-in-out infinite}.compact-title-band::after{width:190px;height:190px;right:-70px;bottom:-110px;background:rgba(235,142,127,.17);animation:tomotinaGlow 14s ease-in-out infinite reverse}.compact-title-band .container{position:relative;z-index:1}
+
+@keyframes tomotinaRibbon{to{background-position:220% 0}}
+@keyframes tomotinaWash{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes tomotinaGlow{0%,100%{transform:translate3d(0,0,0) scale(.94);opacity:.55}50%{transform:translate3d(34px,22px,0) scale(1.08);opacity:.9}}
+@media(prefers-reduced-motion:reduce){.home-calm .site-header::after,.joyful-growth .site-header::after,.calm-hero,.calm-hero::before,.compact-title-band,.compact-title-band::before,.compact-title-band::after{animation:none!important}}
