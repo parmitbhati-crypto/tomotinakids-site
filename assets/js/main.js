@@ -138,7 +138,7 @@
         aboutLink.setAttribute('aria-expanded', 'false');
         const panel = document.createElement('div');
         panel.className = 'about-menu-panel';
-        panel.innerHTML = `<a href="${rootPrefix}about.html">About Tomotina</a><a href="${rootPrefix}gallery.html">Gallery</a><a href="${rootPrefix}visit.html">Visit the Centre</a><a href="${rootPrefix}join-our-team.html">Careers</a>`;
+        panel.innerHTML = `<a href="${rootPrefix}about.html">About Tomotina</a><a href="${rootPrefix}gallery.html">Gallery</a><a href="${rootPrefix}visit.html">Visit the Centre</a>`;
         menu.appendChild(panel);
         const setOpen = (open) => { menu.classList.toggle('open', open); aboutLink.setAttribute('aria-expanded', String(open)); };
         menu.addEventListener('mouseenter', () => setOpen(true));
@@ -147,10 +147,33 @@
         menu.addEventListener('focusout', (event) => { if (!menu.contains(event.relatedTarget)) setOpen(false); });
         menu.addEventListener('keydown', (event) => { if (event.key === 'Escape') { setOpen(false); aboutLink.focus(); } });
       }
+      nav.querySelectorAll('a[href$="join-our-team.html"]').forEach((link) => {
+        if (!link.closest('.team-menu')) link.remove();
+      });
+      const teamLink = nav.querySelector('a[href$="team.html"]');
+      if (teamLink && !teamLink.closest('.team-menu')) {
+        const menu = document.createElement('div');
+        menu.className = 'team-menu';
+        teamLink.before(menu);
+        menu.appendChild(teamLink);
+        teamLink.setAttribute('aria-haspopup', 'true');
+        teamLink.setAttribute('aria-expanded', 'false');
+        if (current === 'join-our-team.html') teamLink.classList.add('active');
+        const panel = document.createElement('div');
+        panel.className = 'team-menu-panel';
+        panel.innerHTML = `<a href="${rootPrefix}team.html">Meet Our Team</a><a href="${rootPrefix}join-our-team.html">Careers</a>`;
+        menu.appendChild(panel);
+        const setOpen = (open) => { menu.classList.toggle('open', open); teamLink.setAttribute('aria-expanded', String(open)); };
+        menu.addEventListener('mouseenter', () => setOpen(true));
+        menu.addEventListener('mouseleave', () => setOpen(false));
+        menu.addEventListener('focusin', () => setOpen(true));
+        menu.addEventListener('focusout', (event) => { if (!menu.contains(event.relatedTarget)) setOpen(false); });
+        menu.addEventListener('keydown', (event) => { if (event.key === 'Escape') { setOpen(false); teamLink.focus(); } });
+      }
       const home = nav.querySelector('a[href$="index.html"]');
       const about = nav.querySelector('.about-menu');
       const programs = nav.querySelector('.program-menu') || nav.querySelector('a[href$="programs.html"]');
-      const team = nav.querySelector('a[href$="team.html"]');
+      const team = nav.querySelector('.team-menu') || nav.querySelector('a[href$="team.html"]');
       const events = nav.querySelector('a[href$="campaigns.html"]');
       const contact = nav.querySelector('a[href$="contact.html"]');
       nav.querySelectorAll('a[href$="contact.html"]').forEach((candidate) => { if (candidate !== contact) candidate.remove(); });
@@ -168,6 +191,10 @@
         ['Contact', 'contact.html']
       ];
       nav.innerHTML = links.map(([label, href]) => {
+        if (href === 'team.html') {
+          const active = current === 'team.html' || current === 'join-our-team.html' ? ' active' : '';
+          return `<details class="mobile-team-menu"><summary class="${active.trim()}">${label}</summary><div><a href="${rootPrefix}team.html">Meet Our Team</a><a href="${rootPrefix}join-our-team.html">Careers</a></div></details>`;
+        }
         const active = href === current ? ' class="active"' : '';
         return `<a href="${rootPrefix}${href}"${active}>${label}</a>`;
       }).join('');

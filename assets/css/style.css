@@ -1952,6 +1952,11 @@ footer{border-top-color:rgba(15,118,110,.1)}
 .joyful-growth .about-menu-panel a{display:block;padding:9px 11px;border-radius:9px;color:#395956;font-size:.8rem;font-weight:650}.joyful-growth .about-menu-panel a:hover,.joyful-growth .about-menu-panel a:focus-visible{background:#edf5ee;color:#276b59}
 @media(max-width:980px){.about-menu{display:contents}.about-menu-panel{display:none}}
 
+/* Team and careers navigation */
+.team-menu{position:relative;display:flex;align-items:center}.team-menu-panel{position:absolute;z-index:100;top:calc(100% + 10px);left:0;width:190px;padding:10px;border:1px solid rgba(52,124,104,.15);border-radius:17px;background:rgba(255,253,250,.98);box-shadow:0 24px 65px rgba(42,75,68,.16);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease}.team-menu-panel::before{content:"";position:absolute;left:0;right:0;top:-14px;height:14px}.team-menu.open .team-menu-panel{opacity:1;visibility:visible;transform:none}.joyful-growth .team-menu-panel a{display:block;padding:9px 11px;border-radius:9px;color:#395956;font-size:.8rem;font-weight:650}.joyful-growth .team-menu-panel a:hover,.joyful-growth .team-menu-panel a:focus-visible{background:#edf5ee;color:#276b59}
+.mobile-team-menu summary{padding:10px 12px;list-style:none;color:inherit;font-weight:inherit;cursor:pointer}.mobile-team-menu summary::-webkit-details-marker{display:none}.mobile-team-menu summary::after{content:"+";float:right}.mobile-team-menu[open] summary::after{content:"−"}.mobile-team-menu summary.active{color:#347c68}.mobile-team-menu>div{display:grid;padding:0 0 7px 14px}.mobile-team-menu>div a{font-size:.92em}
+@media(max-width:980px){.team-menu{display:contents}.team-menu-panel{display:none}}
+
 /* Simple professional About page */
 .about-simple h1,.about-simple h2{font-family:"Newsreader",Georgia,serif;font-weight:500;letter-spacing:-.045em}
 .about-hero{padding:clamp(70px,9vw,120px) 0;background:linear-gradient(135deg,#fff9f0,#edf5ee 60%,#f9e9df)}
