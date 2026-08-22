@@ -96,6 +96,9 @@
     const inServiceDirectory = window.location.pathname.includes('/services/');
     const servicePrefix = inServiceDirectory ? '' : 'services/';
     document.querySelectorAll('.navbar > .nav-links').forEach((nav) => {
+      nav.querySelectorAll('a').forEach((candidate) => {
+        if (/^admissions?$/i.test(candidate.textContent.trim())) candidate.remove();
+      });
       const link = nav.querySelector('a[href$="programs.html"]');
       if (!link || link.closest('.program-menu')) return;
       const menu = document.createElement('div');
@@ -150,7 +153,30 @@
       const team = nav.querySelector('a[href$="team.html"]');
       const events = nav.querySelector('a[href$="campaigns.html"]');
       const contact = nav.querySelector('a[href$="contact.html"]');
+      nav.querySelectorAll('a[href$="contact.html"]').forEach((candidate) => { if (candidate !== contact) candidate.remove(); });
       [home, about, programs, team, events, contact].filter(Boolean).forEach((item) => nav.appendChild(item));
+    });
+
+    // Mobile navigation mirrors the same six-item order on every public page.
+    document.querySelectorAll('[data-mobile-panel] .nav-links').forEach((nav) => {
+      const links = [
+        ['Home', 'index.html'],
+        ['About', 'about.html'],
+        ['Programs', 'programs.html'],
+        ['Our Team', 'team.html'],
+        ['Workshops & Events', 'campaigns.html'],
+        ['Contact', 'contact.html']
+      ];
+      nav.innerHTML = links.map(([label, href]) => {
+        const active = href === current ? ' class="active"' : '';
+        return `<a href="${rootPrefix}${href}"${active}>${label}</a>`;
+      }).join('');
+      nav.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          mobilePanel?.classList.remove('open');
+          hamburger?.setAttribute('aria-expanded', 'false');
+        });
+      });
     });
   }
 

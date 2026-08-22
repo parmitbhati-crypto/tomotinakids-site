@@ -11,7 +11,7 @@
     '/portal/session-history.html', '/portal/registrations.html', '/portal/registration-new.html',
     '/portal/registration-details.html', '/portal/teacher-attendance.html',
     '/portal/teacher-attendance-history.html', '/portal/enquiries.html', '/portal/system.html',
-    '/portal/promotions.html', '/portal/team.html', '/portal/team-new.html'
+    '/portal/promotions.html', '/portal/team.html', '/portal/team-new.html', '/portal/job-applications.html'
   ]);
   const inferredRole = adminPaths.has(path) ? 'admin' : 'teacher';
   const nav = {
@@ -23,6 +23,7 @@
       ['Attendance', '/portal/teacher-attendance.html', 'attendance'],
       ['Team', '/portal/team.html', 'team'],
       ['Enquiries', '/portal/enquiries.html', 'enquiries'],
+      ['Job applications', '/portal/job-applications.html', 'jobs'],
       ['Promotions', '/portal/promotions.html', 'megaphone'],
       ['System health', '/portal/system.html', 'shield']
     ],
@@ -39,6 +40,7 @@
     attendance: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M7 2v4M17 2v4M3 9h18m-14 5 2 2 4-4"/>',
     team: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M15 15.5a5 5 0 0 1 6 4.5"/>',
     enquiries: '<path d="M4 5h16v12H8l-4 4V5Z"/><path d="M8 9h8M8 13h5"/>',
+    jobs: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/>',
     megaphone: '<path d="m3 11 13-5v12L3 13v-2Z"/><path d="M7 14v5h4v-3M19 9v6"/>',
     shield: '<path d="M12 3 4.5 6v5.5c0 4.6 3.1 7.8 7.5 9.5 4.4-1.7 7.5-4.9 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-5"/>',
     today: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
