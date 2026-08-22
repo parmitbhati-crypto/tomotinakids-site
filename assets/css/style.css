@@ -1927,15 +1927,22 @@ footer{border-top-color:rgba(15,118,110,.1)}
 .programs-title-band>div>p:last-child{max-width:650px;margin:25px auto 0;color:#58706c;font-size:1.05rem;line-height:1.7}
 .programs-process-section{background:#edf5ee!important}
 .program-menu{position:relative;display:flex;align-items:center}
-.program-menu-panel{position:absolute;z-index:100;top:calc(100% + 16px);left:50%;width:min(780px,calc(100vw - 32px));padding:24px;border:1px solid rgba(52,124,104,.15);border-radius:24px;background:rgba(255,253,250,.98);box-shadow:0 28px 80px rgba(42,75,68,.18);opacity:0;visibility:hidden;transform:translate(-50%,10px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease}
+.program-menu-panel{position:absolute;z-index:100;top:calc(100% + 16px);left:50%;width:min(640px,calc(100vw - 32px));padding:24px;border:1px solid rgba(52,124,104,.15);border-radius:24px;background:rgba(255,253,250,.98);box-shadow:0 28px 80px rgba(42,75,68,.18);opacity:0;visibility:hidden;transform:translate(-50%,10px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease}
 .program-menu-panel::before{content:"";position:absolute;left:0;right:0;top:-18px;height:18px}
 .program-menu.open .program-menu-panel{opacity:1;visibility:visible;transform:translate(-50%,0)}
 .program-menu-head{display:flex;align-items:baseline;justify-content:space-between;gap:18px;padding:0 4px 17px;border-bottom:1px solid rgba(52,124,104,.12)}
 .program-menu-head small{color:#e77969;font-size:.68rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.program-menu-head strong{font-family:"Newsreader",serif;color:#173c3a;font-size:1.35rem;font-weight:500}
-.program-menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 12px;padding:16px 0 12px}
+.program-menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 12px;padding:16px 0 12px}
 .joyful-growth .program-menu-grid a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;color:#395956;font-size:.82rem;font-weight:650;line-height:1.3}
 .joyful-growth .program-menu-grid a:hover,.joyful-growth .program-menu-grid a:focus-visible{background:#edf5ee;color:#276b59}
 .program-menu-grid span{color:#e77969}.program-menu-all{display:flex!important;justify-content:center!important;gap:9px;padding:12px!important;border-radius:14px;background:#173c3a!important;color:#fff!important;font-size:.82rem!important;font-weight:700!important}
 @media(max-width:980px){.program-menu{display:contents}.program-menu-panel{display:none}}
 @media(max-width:620px){.programs-title-band{text-align:left}.programs-title-band h1{font-size:clamp(3.8rem,20vw,6rem)}.programs-title-band>div>p:last-child{margin-left:0}}
 @media(prefers-reduced-motion:reduce){.programs-title-band::before,.programs-title-band::after{animation:none}.program-menu-panel{transition:none}}
+.adolescent-program-section{background:#f4ece3!important}
+.adolescent-program-feature{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.15fr);max-width:100%;overflow:hidden}
+.adolescent-program-feature>img{width:100%;height:100%;min-height:380px;object-fit:cover;border-radius:0;box-shadow:none}
+.adolescent-program-feature .program-body{display:flex;flex-direction:column;justify-content:center;padding:clamp(30px,5vw,64px)}
+.adolescent-program-feature .program-body h3{font-family:"Newsreader",serif;font-size:clamp(2.3rem,4vw,4rem);font-weight:500;line-height:1;margin:8px 0 18px}
+.adolescent-program-feature .program-body>p:last-child{max-width:650px;color:#58706c;font-size:1rem;line-height:1.75}
+@media(max-width:760px){.adolescent-program-feature{grid-template-columns:1fr}.adolescent-program-feature>img{min-height:280px}}
