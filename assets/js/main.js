@@ -84,6 +84,40 @@
     if (href === current) link.classList.add('active');
   });
 
+  // Accessible desktop program mega-menu; mobile keeps the simpler page link.
+  if (isPublicSite) {
+    const serviceLinks = [
+      ['Special Education','special-education'],['School Readiness','school-readiness'],['NIOS Support','nios-support'],
+      ['Speech & Language Therapy','speech-language-therapy'],['Oral Placement Therapy','oral-placement-therapy'],['ABA','aba'],
+      ['Activities of Daily Living','activities-daily-living'],['Occupational Therapy','occupational-therapy'],['Sports Program','sports-program'],
+      ['Art Program','art-program'],['Music Program','music-program'],['Dance & Movement Therapy','dance-movement-therapy'],
+      ['Adolescent Counselling','adolescent-counselling']
+    ];
+    const inServiceDirectory = window.location.pathname.includes('/services/');
+    const servicePrefix = inServiceDirectory ? '' : 'services/';
+    document.querySelectorAll('.navbar > .nav-links').forEach((nav) => {
+      const link = nav.querySelector('a[href$="programs.html"]');
+      if (!link || link.closest('.program-menu')) return;
+      const menu = document.createElement('div');
+      menu.className = 'program-menu';
+      link.before(menu);
+      menu.appendChild(link);
+      link.classList.add('program-menu-trigger');
+      link.setAttribute('aria-haspopup', 'true');
+      link.setAttribute('aria-expanded', 'false');
+      const panel = document.createElement('div');
+      panel.className = 'program-menu-panel';
+      panel.innerHTML = `<div class="program-menu-head"><small>Programs & Services</small><strong>Choose a support area</strong></div><div class="program-menu-grid">${serviceLinks.map(([name,slug]) => `<a href="${servicePrefix}${slug}.html">${name}<span aria-hidden="true">→</span></a>`).join('')}</div><a class="program-menu-all" href="${inServiceDirectory ? '../programs.html' : 'programs.html'}">View all programs <span aria-hidden="true">→</span></a>`;
+      menu.appendChild(panel);
+      const setOpen = (open) => { menu.classList.toggle('open', open); link.setAttribute('aria-expanded', String(open)); };
+      menu.addEventListener('mouseenter', () => setOpen(true));
+      menu.addEventListener('mouseleave', () => setOpen(false));
+      menu.addEventListener('focusin', () => setOpen(true));
+      menu.addEventListener('focusout', (event) => { if (!menu.contains(event.relatedTarget)) setOpen(false); });
+      menu.addEventListener('keydown', (event) => { if (event.key === 'Escape') { setOpen(false); link.focus(); } });
+    });
+  }
+
   // Consistent legal and accessibility navigation across legacy footers.
   document.querySelectorAll('footer .footer-bottom').forEach((footerBottom) => {
     if (footerBottom.querySelector('.legal-links')) return;
