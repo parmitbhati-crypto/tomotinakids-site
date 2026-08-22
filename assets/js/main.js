@@ -47,6 +47,8 @@
 
 (function () {
   document.documentElement.classList.add('js');
+  const isPublicSite = !window.location.pathname.includes('/portal/');
+  if (isPublicSite) document.body.classList.add('joyful-growth');
 
   const hamburger = document.querySelector('[data-hamburger]');
   const mobilePanel = document.querySelector('[data-mobile-panel]');
@@ -66,6 +68,17 @@
   }
 
   const current = (window.location.pathname.split('/').pop() || 'index.html').split('?')[0];
+  if (isPublicSite) {
+    document.querySelectorAll('.nav-links').forEach((nav) => {
+      if (nav.querySelector('a[href="campaigns.html"]')) return;
+      const programs = nav.querySelector('a[href="programs.html"]');
+      if (!programs) return;
+      const events = document.createElement('a');
+      events.href = 'campaigns.html';
+      events.textContent = 'Workshops & Events';
+      programs.after(events);
+    });
+  }
   document.querySelectorAll('.nav-links a').forEach((link) => {
     const href = (link.getAttribute('href') || '').split('?')[0];
     if (href === current) link.classList.add('active');
@@ -111,6 +124,8 @@
   if (carousel) {
     const track = carousel.querySelector('[data-carousel-track]');
     const dotsWrap = carousel.querySelector('[data-carousel-dots]');
+    const previous = carousel.querySelector('[data-carousel-prev]');
+    const next = carousel.querySelector('[data-carousel-next]');
     const slides = Array.from(track?.children || []);
     let idx = 0;
     let timer = null;
@@ -132,6 +147,9 @@
       if (!slides.length) return;
       idx = (next + slides.length) % slides.length;
       track.style.transform = `translateX(-${idx * 100}%)`;
+      slides.forEach((slide, i) => {
+        slide.setAttribute('aria-hidden', String(i !== idx));
+      });
       dotsWrap?.querySelectorAll('.dot').forEach((d, i) => {
         d.classList.toggle('active', i === idx);
       });
@@ -151,10 +169,18 @@
 
     renderDots();
     goTo(0);
-    start();
+    if (carousel.hasAttribute('data-autoplay')) start();
 
+    previous?.addEventListener('click', () => goTo(idx - 1));
+    next?.addEventListener('click', () => goTo(idx + 1));
+    carousel.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') goTo(idx - 1);
+      if (event.key === 'ArrowRight') goTo(idx + 1);
+    });
     carousel.addEventListener('mouseenter', stop);
-    carousel.addEventListener('mouseleave', start);
+    carousel.addEventListener('mouseleave', () => {
+      if (carousel.hasAttribute('data-autoplay')) start();
+    });
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
   }
 
