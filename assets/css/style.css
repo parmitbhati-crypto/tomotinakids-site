@@ -1927,9 +1927,9 @@ footer{border-top-color:rgba(15,118,110,.1)}
 .programs-title-band>div>p:last-child{max-width:650px;margin:25px auto 0;color:#58706c;font-size:1.05rem;line-height:1.7}
 .programs-process-section{background:#edf5ee!important}
 .program-menu{position:relative;display:flex;align-items:center}
-.program-menu-panel{position:absolute;z-index:100;top:calc(100% + 16px);left:50%;width:min(390px,calc(100vw - 32px));padding:16px;border:1px solid rgba(52,124,104,.15);border-radius:22px;background:rgba(255,253,250,.98);box-shadow:0 28px 80px rgba(42,75,68,.18);opacity:0;visibility:hidden;transform:translate(-50%,10px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease}
+.program-menu-panel{position:absolute;z-index:100;top:calc(100% + 10px);left:0;width:min(390px,calc(100vw - 32px));padding:16px;border:1px solid rgba(52,124,104,.15);border-radius:22px;background:rgba(255,253,250,.98);box-shadow:0 28px 80px rgba(42,75,68,.18);opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease}
 .program-menu-panel::before{content:"";position:absolute;left:0;right:0;top:-18px;height:18px}
-.program-menu.open .program-menu-panel{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.program-menu.open .program-menu-panel{opacity:1;visibility:visible;transform:translateY(0)}
 .program-menu-grid{display:grid;grid-template-columns:1fr;gap:1px;padding:0 0 10px}
 .joyful-growth .program-menu-grid a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 11px;border-radius:10px;color:#395956;font-size:.79rem;font-weight:650;line-height:1.25}
 .joyful-growth .program-menu-grid a:hover,.joyful-growth .program-menu-grid a:focus-visible{background:#edf5ee;color:#276b59}
