@@ -107,7 +107,7 @@
       link.setAttribute('aria-expanded', 'false');
       const panel = document.createElement('div');
       panel.className = 'program-menu-panel';
-      panel.innerHTML = `<div class="program-menu-head"><small>Programs & Services</small><strong>Choose a support area</strong></div><div class="program-menu-grid">${serviceLinks.map(([name,slug]) => `<a href="${servicePrefix}${slug}.html">${name}<span aria-hidden="true">→</span></a>`).join('')}</div><a class="program-menu-all" href="${inServiceDirectory ? '../programs.html' : 'programs.html'}">View all programs <span aria-hidden="true">→</span></a>`;
+      panel.innerHTML = `<div class="program-menu-grid">${serviceLinks.map(([name,slug]) => `<a href="${servicePrefix}${slug}.html">${name}<span aria-hidden="true">→</span></a>`).join('')}</div><a class="program-menu-all" href="${inServiceDirectory ? '../programs.html' : 'programs.html'}">View all programs <span aria-hidden="true">→</span></a>`;
       menu.appendChild(panel);
       const setOpen = (open) => { menu.classList.toggle('open', open); link.setAttribute('aria-expanded', String(open)); };
       menu.addEventListener('mouseenter', () => setOpen(true));
