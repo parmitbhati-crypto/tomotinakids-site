@@ -118,6 +118,42 @@
     });
   }
 
+  // About menu and consistent primary navigation order.
+  if (isPublicSite) {
+    const inServiceDirectory = window.location.pathname.includes('/services/');
+    const rootPrefix = inServiceDirectory ? '../' : '';
+    document.querySelectorAll('.navbar > .nav-links').forEach((nav) => {
+      const aboutLink = nav.querySelector('a[href$="about.html"]');
+      if (aboutLink && !aboutLink.closest('.about-menu')) {
+        const galleryLink = nav.querySelector('a[href$="gallery.html"]');
+        galleryLink?.remove();
+        const menu = document.createElement('div');
+        menu.className = 'about-menu';
+        aboutLink.before(menu);
+        menu.appendChild(aboutLink);
+        aboutLink.setAttribute('aria-haspopup', 'true');
+        aboutLink.setAttribute('aria-expanded', 'false');
+        const panel = document.createElement('div');
+        panel.className = 'about-menu-panel';
+        panel.innerHTML = `<a href="${rootPrefix}about.html">About Tomotina</a><a href="${rootPrefix}gallery.html">Gallery</a><a href="${rootPrefix}visit.html">Visit the Centre</a><a href="${rootPrefix}join-our-team.html">Careers</a>`;
+        menu.appendChild(panel);
+        const setOpen = (open) => { menu.classList.toggle('open', open); aboutLink.setAttribute('aria-expanded', String(open)); };
+        menu.addEventListener('mouseenter', () => setOpen(true));
+        menu.addEventListener('mouseleave', () => setOpen(false));
+        menu.addEventListener('focusin', () => setOpen(true));
+        menu.addEventListener('focusout', (event) => { if (!menu.contains(event.relatedTarget)) setOpen(false); });
+        menu.addEventListener('keydown', (event) => { if (event.key === 'Escape') { setOpen(false); aboutLink.focus(); } });
+      }
+      const home = nav.querySelector('a[href$="index.html"]');
+      const about = nav.querySelector('.about-menu');
+      const programs = nav.querySelector('.program-menu') || nav.querySelector('a[href$="programs.html"]');
+      const team = nav.querySelector('a[href$="team.html"]');
+      const events = nav.querySelector('a[href$="campaigns.html"]');
+      const contact = nav.querySelector('a[href$="contact.html"]');
+      [home, about, programs, team, events, contact].filter(Boolean).forEach((item) => nav.appendChild(item));
+    });
+  }
+
   // Consistent legal and accessibility navigation across legacy footers.
   document.querySelectorAll('footer .footer-bottom').forEach((footerBottom) => {
     if (footerBottom.querySelector('.legal-links')) return;
