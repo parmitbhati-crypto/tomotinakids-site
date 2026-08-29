@@ -2154,3 +2154,13 @@ footer .icon-btn.instagram:hover,footer .icon-btn.whatsapp:hover{filter:brightne
 .calm-program h3{color:#fff;text-shadow:0 2px 14px rgba(9,7,29,.72)}
 .calm-program small{color:rgba(255,255,255,.92);text-shadow:0 1px 7px rgba(9,7,29,.7)}
 .calm-program p{color:rgba(255,255,255,.88);text-shadow:0 1px 8px rgba(9,7,29,.7)}
+
+/* Google review grid on the public homepage. */
+.calm-google-summary{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px;color:#625d78}
+.calm-google-summary strong{font-size:1.1rem;color:#2b225b}.calm-google-summary span,.calm-review-stars{color:#f0b53a;letter-spacing:.08em}.calm-google-summary small{font-size:.86rem}
+.calm-voices{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+.calm-voice{display:flex;min-height:310px;flex-direction:column;padding:28px;background:rgba(255,255,255,.82);box-shadow:0 14px 36px rgba(54,43,111,.07)}
+.calm-review-stars{font-size:1rem;line-height:1}.calm-voice blockquote{margin:20px 0 26px;font-size:1.16rem}.calm-voice figcaption{margin-top:auto}
+.calm-reviews-action{display:flex;justify-content:center;margin-top:36px}.calm-reviews-action .btn span{margin-left:6px}
+@media(max-width:980px){.calm-voices{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.calm-voices{grid-template-columns:1fr}.calm-google-summary{flex-wrap:wrap}.calm-voice{min-height:0}}
