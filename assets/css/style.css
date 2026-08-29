@@ -2071,3 +2071,80 @@ footer .icon-btn.instagram:hover,footer .icon-btn.whatsapp:hover{filter:brightne
 @keyframes serviceDotPulse{0%,100%{transform:scale(.8);opacity:.65}50%{transform:scale(1.2);opacity:1}}
 @keyframes servicePanelBreathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media(prefers-reduced-motion:reduce){.programs-title-band,.service-hero,.service-hero-media,.service-trust span::before,.service-panel{animation:none!important}.program-grid .program-card img{transition:none}}
+
+/* Distinct Tomotina colour identity: indigo, sky, sunflower, and berry */
+.home-calm{
+  --calm-ink:#2b225b;
+  --calm-copy:#625d78;
+  --calm-green:#5a4fc4;
+  --calm-coral:#d94f86;
+  --calm-sage:#e6e2ff;
+  --calm-mint:#f2f0ff;
+  --calm-cream:#fffaf0;
+  --calm-peach:#ffe4b8;
+  --calm-sky:#dceeff;
+}
+.joyful-growth{
+  --bg:#fbfaff;
+  --text:#2b225b;
+  --muted:#625d78;
+  --border:#ded9f2;
+  --primary:#5a4fc4;
+  --primary-2:#2e86d1;
+  --accent:#f0b53a;
+  --accent-2:#d94f86;
+  --ring:0 0 0 4px rgba(90,79,196,.2);
+}
+.home-calm .site-header,.joyful-growth .site-header{background:linear-gradient(105deg,rgba(255,250,240,.96),rgba(246,243,255,.96) 48%,rgba(237,247,255,.96));box-shadow:0 10px 34px rgba(54,43,111,.09)}
+.home-calm .site-header::after,.joyful-growth .site-header::after{background:linear-gradient(90deg,#5a4fc4,#48a8e8,#f0bd43,#d94f86,#5a4fc4)}
+.home-calm .nav-links a,.joyful-growth .nav-links a{color:#443b70}
+.home-calm .nav-links a.active,.joyful-growth .nav-links a.active{background:#e8e4ff;color:#3f35a0;border-color:rgba(90,79,196,.22)}
+.home-calm .nav-links>a:hover,.joyful-growth .nav-links>a:hover,.home-calm .about-menu>a:hover,.joyful-growth .about-menu>a:hover,.home-calm .program-menu>a:hover,.joyful-growth .program-menu>a:hover,.home-calm .team-menu>a:hover,.joyful-growth .team-menu>a:hover{background:linear-gradient(135deg,rgba(90,79,196,.13),rgba(72,168,232,.12));color:#3f35a0}
+.home-calm .btn-primary,.joyful-growth .btn-primary,.calm-btn-primary{border-color:#5a4fc4!important;background:linear-gradient(135deg,#5a4fc4,#7468d8)!important;box-shadow:0 13px 32px rgba(90,79,196,.25),0 3px 0 rgba(255,255,255,.22) inset}
+.home-calm .btn-primary:hover,.joyful-growth .btn-primary:hover,.calm-btn-primary:hover{background:linear-gradient(135deg,#473ca9,#6256c9)!important}
+.calm-btn-secondary:hover{border-color:#5a4fc4!important}
+.calm-hero{background:linear-gradient(125deg,#fff8e9 0%,#f0edff 38%,#e8f5ff 70%,#fff0f6 100%)}
+.calm-hero::before{background:radial-gradient(circle,rgba(240,189,67,.28),rgba(217,79,134,.11) 42%,transparent 70%)}
+.calm-orb-one{background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.96),rgba(159,150,239,.46) 48%,rgba(72,168,232,.15))}
+.calm-orb-two{background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.8),rgba(217,79,134,.3) 48%,rgba(240,189,67,.2))}
+.calm-hero h1 em,.programs-title-band h1 em,.compact-title-band h1 em{background:none;color:#d94f86;-webkit-text-fill-color:currentColor}
+.calm-eyebrow,.joyful-growth .kicker{color:#5a4fc4}
+.calm-reassurance,.calm-lead{color:#625d78}
+.calm-breathe{background:linear-gradient(145deg,rgba(255,253,247,.96),rgba(239,236,255,.94));box-shadow:0 18px 48px rgba(54,43,111,.15),0 0 0 9px rgba(255,255,255,.24)}
+.calm-breathe span{border-color:rgba(90,79,196,.44);box-shadow:0 0 0 12px rgba(240,189,67,.1)}
+.calm-breathe::before{border-color:rgba(90,79,196,.28)}
+.calm-breathe::after{background:#f0b53a;box-shadow:92px 83px 0 #d94f86,112px 22px 0 #48a8e8}
+.calm-section,.calm-trust,.calm-journey-section,.calm-enquiry-section{background-color:#fffaf1;background-image:radial-gradient(circle at 7% 18%,rgba(240,189,67,.12),transparent 21%),radial-gradient(circle at 94% 82%,rgba(90,79,196,.1),transparent 24%)}
+.calm-story-section,.calm-voices-section{background-color:#f1efff;background-image:radial-gradient(circle at 87% 16%,rgba(217,79,134,.1),transparent 24%),radial-gradient(circle at 9% 82%,rgba(72,168,232,.12),transparent 23%)}
+.joyful-growth .section{background-color:#fffaf1;background-image:radial-gradient(circle at 3% 12%,rgba(240,189,67,.09),transparent 18%),radial-gradient(circle at 97% 88%,rgba(90,79,196,.08),transparent 20%)}
+.joyful-growth .section.alt,.joyful-growth .section-soft{background-color:#f1efff;background-image:radial-gradient(circle at 90% 12%,rgba(217,79,134,.08),transparent 21%),radial-gradient(circle at 8% 86%,rgba(72,168,232,.1),transparent 22%)}
+.calm-space-section,.about-statement{background:#2b225b}
+.calm-space-section .calm-eyebrow,.calm-gallery-link span{color:#bcdfff}
+.calm-story-copy blockquote{border-color:#d94f86;color:#51458c}
+.calm-step-marker{border-color:rgba(90,79,196,.27);background:linear-gradient(145deg,#fffdf7,#ebe8ff);color:#5a4fc4;box-shadow:0 0 0 10px #fffaf1,0 12px 28px rgba(90,79,196,.13)}
+.calm-enquiry-shell{background:linear-gradient(130deg,#e5e1ff,#edf5ff 42%,#fff0c8 76%,#ffe4ef)}
+.compact-title-band,.programs-title-band,.service-hero,.about-hero,.events-title{background:linear-gradient(125deg,#fff7e5,#eeeaff 42%,#e7f4ff 72%,#ffeaf2)}
+.compact-title-band::before{background:rgba(90,79,196,.17)}.compact-title-band::after{background:rgba(217,79,134,.15)}
+.programs-title-band::before,.service-shape-one{background:radial-gradient(circle at 35% 35%,#fff4bc,#968bea 64%)}
+.programs-title-band::after,.service-shape-two{background:radial-gradient(circle at 35% 35%,#ffdbe9,#69b9e9 68%)}
+.program-grid .program-card::before{background:linear-gradient(90deg,#5a4fc4,#48a8e8,#f0b53a,#d94f86)}
+.program-menu-panel,.about-menu-panel,.team-menu-panel{border-color:rgba(90,79,196,.16);background:rgba(253,252,255,.98);box-shadow:0 28px 80px rgba(54,43,111,.17)}
+.joyful-growth .program-menu-grid a,.joyful-growth .about-menu-panel a,.joyful-growth .team-menu-panel a{color:#514979}
+.joyful-growth .program-menu-grid a:hover,.joyful-growth .about-menu-panel a:hover,.joyful-growth .team-menu-panel a:hover{background:#efedff;color:#4438a5}
+.program-menu-grid span,.about-principle-grid span,.about-space-links span,.events-card-link span{color:#d94f86}
+.program-menu-all{background:#2b225b!important}
+.about-section,.events-list{background:#fffaf1}.about-principles,.events-contact,.programs-process-section{background:#f1efff!important}
+.about-hero h1,.about-story h2,.about-principles h2,.about-space h2,.events-title h1,.events-list-head h2,.events-contact h2{color:#2b225b}
+.about-hero div>p:not(.calm-eyebrow),.about-story>div:last-child>p,.about-space>div>p,.events-title>div>p:last-child,.events-list-head>p,.events-contact p{color:#625d78}
+.about-space-links a,.events-card-link,.program-fit strong,.program-enquire,.service-family-note strong{color:#5a4fc4}
+.service-trust span::before{background:#d94f86}.service-trust span:nth-child(2)::before{background:#f0b53a}.service-trust span:nth-child(3)::before{background:#48a8e8}.service-trust span:nth-child(4)::before{background:#5a4fc4}
+.service-family-note{border-left-color:#d94f86;background:linear-gradient(120deg,rgba(255,244,215,.9),rgba(239,236,255,.82))}.service-family-note p{color:#625d78}
+@media(max-width:980px){.calm-breathe::after{box-shadow:65px 50px 0 #d94f86,74px 12px 0 #48a8e8}}
+.calm-hero h1,.calm-section-heading h2,.calm-story-copy h2,.calm-journey-section h2,.calm-enquiry-copy h2{color:#2b225b}
+.home-calm .enquiry-form label>span{color:#514979}
+.joyful-growth h1,.joyful-growth h2,.joyful-growth .page-hero-title,.joyful-growth .leader-copy h1,.joyful-growth .profile-copy h2{color:#2b225b}
+.joyful-growth .page-hero-kicker,.joyful-growth .kicker{color:#5a4fc4}
+.joyful-growth .cta,.joyful-growth .campaign-hero,.service-trust,.service-panel{background:#2b225b}
+.service-detail,.service-section{background:#fffaf1}.service-soft{background:#f1efff}
+.joyful-growth .promotion-type{background:#e9e5ff;color:#5a4fc4}.joyful-growth .campaign-meta>div{background:#f1efff}.joyful-growth .campaign-meta dt{color:#5a4fc4}
+.mobile-team-menu summary.active{color:#5a4fc4}
