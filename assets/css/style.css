@@ -2164,3 +2164,17 @@ footer .icon-btn.instagram:hover,footer .icon-btn.whatsapp:hover{filter:brightne
 .calm-reviews-action{display:flex;justify-content:center;margin-top:36px}.calm-reviews-action .btn span{margin-left:6px}
 @media(max-width:980px){.calm-voices{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.calm-voices{grid-template-columns:1fr}.calm-google-summary{flex-wrap:wrap}.calm-voice{min-height:0}}
+
+/* Public-site footer aligned with the indigo, violet and sky theme. */
+footer,.joyful-growth footer{
+  border-top-color:rgba(188,223,255,.16);
+  background:linear-gradient(135deg,#211947 0%,#2b225b 48%,#3f347d 100%);
+  color:#f8f6ff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+footer::before{height:3px;background:linear-gradient(90deg,transparent,#48a8e8 24%,#8b79eb 50%,#d94f86 76%,transparent);opacity:1}
+footer .footer-wrap h4{color:#fff}
+footer .footer-wrap p,footer .footer-wrap a,footer .footer-bottom,footer .legal-links a,.joyful-growth footer a{color:#dcd8f1}
+footer .footer-wrap a:hover,footer .legal-links a:hover{color:#fff}
+footer .footer-bottom{border-top-color:rgba(220,216,241,.16)}
+footer .icon-btn{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.09)}
