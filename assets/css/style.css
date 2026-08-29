@@ -2148,3 +2148,9 @@ footer .icon-btn.instagram:hover,footer .icon-btn.whatsapp:hover{filter:brightne
 .service-detail,.service-section{background:#fffaf1}.service-soft{background:#f1efff}
 .joyful-growth .promotion-type{background:#e9e5ff;color:#5a4fc4}.joyful-growth .campaign-meta>div{background:#f1efff}.joyful-growth .campaign-meta dt{color:#5a4fc4}
 .mobile-team-menu summary.active{color:#5a4fc4}
+
+/* Keep all copy legible on photographic program cards. */
+.calm-program-shade{background:linear-gradient(180deg,rgba(32,25,73,.04) 20%,rgba(32,25,73,.48) 58%,rgba(25,20,62,.94) 100%)}
+.calm-program h3{color:#fff;text-shadow:0 2px 14px rgba(9,7,29,.72)}
+.calm-program small{color:rgba(255,255,255,.92);text-shadow:0 1px 7px rgba(9,7,29,.7)}
+.calm-program p{color:rgba(255,255,255,.88);text-shadow:0 1px 8px rgba(9,7,29,.7)}
