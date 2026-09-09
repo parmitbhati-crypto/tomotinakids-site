@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f5f2e9" />
+  <meta name="description" content="Thank you for booking a free assessment with Tomotina Kids Development Centre." />
+  <link rel="canonical" href="https://tomotinakids.com/thankyou" />
+  <title>Thank You | Tomotina Kids Development Centre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/style.css?v=20260829-5" />
+  <style>
+    .thankyou-shell{min-height:72vh;display:grid;place-items:center;padding:72px 20px;background:linear-gradient(180deg,#f8f5ed 0%,#fff 100%)}
+    .thankyou-card{width:min(820px,100%);text-align:center;background:#fff;border:1px solid rgba(15,118,110,.14);border-radius:28px;padding:clamp(32px,6vw,64px);box-shadow:0 24px 70px rgba(35,55,50,.10)}
+    .thankyou-icon{width:74px;height:74px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;background:#e6f4ef;color:#0f766e;font-size:34px;font-weight:700}
+    .thankyou-card h1{margin:0 0 18px;font-family:'Newsreader',serif;font-size:clamp(38px,6vw,60px);line-height:1.02;color:#20342f}
+    .thankyou-card p{max-width:650px;margin:0 auto;color:#5f706b;font-size:18px;line-height:1.7}
+    .thankyou-actions{margin-top:32px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+    .thankyou-note{margin-top:30px!important;font-size:14px!important;color:#7b8985!important}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container">
+      <nav class="navbar" aria-label="Primary">
+        <a class="brand" href="/index.html" aria-label="Tomotina Kids home"><img src="/assets/images/logo.png" alt="Tomotina Kids logo" /></a>
+        <div class="nav-links" aria-label="Main menu">
+          <a href="/index.html">Home</a>
+          <a href="/about.html">About</a>
+          <a href="/programs.html">Programs</a>
+          <a href="/team.html">Our Team</a>
+          <a href="/campaigns.html">Workshops & Events</a>
+          <a href="/contact.html">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="thankyou-shell">
+    <section class="thankyou-card" aria-labelledby="thankyou-title">
+      <div class="thankyou-icon" aria-hidden="true">✓</div>
+      <p class="calm-eyebrow">Assessment request received</p>
+      <h1 id="thankyou-title">Thank you for booking the assessment.</h1>
+      <p>Someone from the Tomotina Kids team will evaluate your query and get back to you with the right guidance for your child.</p>
+      <div class="thankyou-actions">
+        <a class="btn btn-primary" href="/programs.html">Explore Our Programs</a>
+        <a class="btn btn-outline" href="/index.html">Back to Home</a>
+      </div>
+      <p class="thankyou-note">You can explore our programs while our team reviews your enquiry.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">© <span id="year"></span> Tomotina Kids Development Centre.</div>
+    </div>
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
